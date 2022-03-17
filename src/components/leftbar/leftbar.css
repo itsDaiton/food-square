@@ -1,0 +1,21 @@
+.leftbar {
+    flex: 2;
+    height: calc(100vh - 70px);
+}
+.leftbar-wrapper {
+    padding: 25px;   
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+.leftbar-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+.leftbar-list-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+}
+.leftbar-icon {
+    margin-right: 15px;
+}
