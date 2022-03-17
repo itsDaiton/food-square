@@ -4,19 +4,19 @@ import { Search } from "@material-ui/icons"
 
 export default function Topbar() {
   return (
-    <div className='topbarContainer'>
-        <div className='topbarLeft'>
+    <div className='topbar-container'>
+        <div className='topbar-left'>
           <span className="logo">Food Square</span>
         </div>
-        <div className="topbarCenter">
-          <div className="searchBar">
-            <Search className="searchIcon"/>
-            <input type="text" className="searchInput" placeholder='Search...'/>
+        <div className="topbar-center">
+          <div className="search-bar">
+            <Search className="search-icon"/>
+            <input type="text" className="search-input" placeholder='Search'/>
           </div>
         </div>
-        <div className="topbarRight">
-          <div className="profilePictureContainer">
-            <img src="/resources/OkayChamp.png" alt="Profile picture" className="profilePicture" />      
+        <div className="topbar-right">
+          <div className="profile-picture-container">
+            <img src="/resources/OkayChamp.png" alt="Profile picture" className="profile-picture" />      
           </div>
         </div>
     </div>

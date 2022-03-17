@@ -1,4 +1,4 @@
-.topbarContainer {
+.topbar-container {
     display: flex;
     height: 70px;
     width: 100%;
@@ -7,22 +7,22 @@
     position: sticky;
     top: 0;
 }
-.topbarLeft {
+.topbar-left {
     flex: 3;
 }
-.topbarCenter {
-    flex: 5;
-}
-.topbarRight {
+.topbar-center {
     flex: 4;
+}
+.topbar-right {
+    flex: 3;
     justify-content: space-between;
 }
-.profilePictureContainer {
+.profile-picture-container {
     display: flex;
     justify-content: flex-end;
     margin-right: 50px;
 }
-.profilePicture {
+.profile-picture {
     height: 45px;
     width: 45px;
     border-radius: 50%;
@@ -36,7 +36,7 @@
     font-weight: bold;
     cursor: pointer;
 }
-.searchBar {
+.search-bar {
     width: 100%;
     height: 40px;
     background-color: white;
@@ -44,15 +44,14 @@
     display: flex;
     align-items: center;
 }
-.searchIcon {
+.search-icon {
     font-size: 24px !important;
     margin-left: 10px;
 }
-.searchInput {
+.search-input {
     font-size: 18px;
     border: none;
     width: 70%;
-
 }
 .searchInput:focus {
     outline: none;  
