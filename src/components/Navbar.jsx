@@ -95,7 +95,7 @@ export const Navbar = () => {
   };
 
   return (
-    <AppBar position="sticky">
+    <AppBar position="sticky" sx={{height: 64}}>
       <StyledToolbar>
         <CustomBox>
           <Logo variant='p'>Food Square</Logo>

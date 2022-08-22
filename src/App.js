@@ -1,4 +1,4 @@
-import { Box, createTheme, Stack, ThemeProvider } from "@mui/material";
+import { Box, createTheme, Divider, Stack, ThemeProvider } from "@mui/material";
 import { useState } from "react";
 import { Create } from "./components/Create";
 import { Feed } from "./components/Feed";
@@ -41,7 +41,7 @@ const theme = createTheme({
     <ThemeProvider theme={theme}>
       <Box className="App" bgcolor={'background.default'} color={'text.primary'}>
       <Navbar></Navbar>
-      <Stack direction="row" justifyContent="center">
+      <Stack direction="row" justifyContent="center" divider={<Divider orientation="vertical" flexItem />}>
         <Leftbar setMode={setMode} mode={mode}></Leftbar>
         <Feed></Feed>
         <Rightbar></Rightbar> 

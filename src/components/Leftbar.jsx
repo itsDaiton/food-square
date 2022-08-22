@@ -6,17 +6,17 @@ export const Leftbar = ({ mode, setMode }) => {
   return (
     <Box
       flex={2}
-      p={2}
+      p={0}
       sx={{ display: { xs: "none", sm: "block"} }}         
     >
-      <Box position='fixed' /*boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px;'*/>
-        <List>
+      <Box sx={{ position: 'sticky', left: 0, top: 64 }}>
+        <List sx={{ padding: 1 }}>
             <ListItem disablePadding>
               <ListItemButton component="a" href="#">
                 <ListItemIcon>
                   <Home />
                 </ListItemIcon>
-                <ListItemText primary="Home" />
+                <ListItemText primary="Home"/>
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
@@ -75,7 +75,7 @@ export const Leftbar = ({ mode, setMode }) => {
                 <Switch onChange={(e) => setMode(mode === 'light' ? 'dark' : 'light')}/>
               </ListItemButton>
             </ListItem>
-          </List> 
+          </List>
       </Box>      
     </Box>
   )
