@@ -72,7 +72,7 @@ export const Leftbar = ({ mode, setMode }) => {
                 <ListItemIcon>
                   <DarkMode />
                 </ListItemIcon>
-                <Switch onChange={(e) => setMode(mode == 'light' ? 'dark' : 'light')}/>
+                <Switch onChange={(e) => setMode(mode === 'light' ? 'dark' : 'light')}/>
               </ListItemButton>
             </ListItem>
           </List> 
