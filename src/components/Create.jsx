@@ -1,5 +1,17 @@
-import { Box, Fab, IconButton, Modal, Tooltip, styled, Typography, FormControl, RadioGroup, FormControlLabel, Radio, Divider, TextField, Button, ButtonGroup} from '@mui/material'
-import { Add, Send } from '@mui/icons-material'
+import { 
+  Box,
+  Modal, 
+  styled, 
+  Typography,  
+  Divider, 
+  TextField, 
+  Button, 
+  ButtonGroup,
+  SpeedDial,
+  SpeedDialIcon,
+  SpeedDialAction
+} from '@mui/material'
+import { Send, Restaurant, Description, Forum } from '@mui/icons-material'
 import React, { useState } from 'react'
 import { UserAvatar, UserText } from './Rightbar'
 import { Recipe } from './content/Recipe'
@@ -20,48 +32,57 @@ const ModalBox = styled(Box)({
 
 export const Create = () => {
 
-  const [open, setOpen] = useState(false)
-  const [postType, setPostType] = useState('recipe')
+  const actions = [
+    { icon: <Restaurant />, name: 'recipe', tooltip: 'Recipe'},
+    { icon: <Description />, name: 'review', tooltip: 'Review' },
+    { icon: <Forum />, name: 'thread', tooltip: 'Thread' },
+  ];
+
+  const [postType, setPostType] = useState('')
+  const [openDial, setOpenDial] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleOpenDial = () => setOpenDial(true);
+  const handleCloseDial = () => setOpenDial(false);
+  const handleOpenModal = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
 
   return (
     <React.Fragment>
-      <Tooltip 
-        onClick={(e) => setOpen(true)}
-        title="Create a post" 
-        sx={{ 
-          position: 'fixed',
-          bottom: 25,
-          left: { xs: 'calc(100% - 105px)', md: 25}
-        }}
+        <SpeedDial
+          ariaLabel="Create a new post"
+          icon={<SpeedDialIcon />}
+          onClick={handleOpenDial}
+          onClose={handleCloseDial}
+          open={openDial}
+          sx={{ 
+            position: 'fixed',
+            bottom: 25,
+            left: { xs: 'calc(100% - 81px)', md: 25},
+          }}
         >
-        <IconButton>
-          <Fab color="primary" aria-label="add" sx={{ width: 70, height: 70 }}>
-            <Add/>
-          </Fab>
-        </IconButton>
-      </Tooltip>
-      <CustomModal
-        open={open}
-        onClose={(e) => {setOpen(false); setPostType('recipe')}}
+        {actions.map((action) => (
+        <SpeedDialAction
+          key={action.name}
+          icon={action.icon}
+          tooltipTitle={action.tooltip}
+          onClick={e => {
+            e.stopPropagation();
+            setPostType(action.name)
+            handleOpenModal()
+          }
+          } 
+        />
+        ))}
+        </SpeedDial>  
+        <CustomModal
+        open={openModal}
+        onClose={handleCloseModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box width={600} height={450} bgcolor={'background.default'} color={'text.primary'} borderRadius={5} p={3}>
-          <Typography textAlign='center' variant='h6'>Create a post</Typography>
-          <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-          <FormControl>
-              <RadioGroup
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
-                defaultValue="recipe"
-                row
-              >
-                <FormControlLabel onChange={(e) => {setPostType(e.target.value)}} value="recipe" labelPlacement="bottom" control={<Radio />} label="Recipe" />
-                <FormControlLabel onChange={(e) => {setPostType(e.target.value)}} value="review" labelPlacement="bottom" control={<Radio />} label="Review" />
-                <FormControlLabel onChange={(e) => {setPostType(e.target.value)}} value="thread" labelPlacement="bottom" control={<Radio />} label="Thread" />
-              </RadioGroup>
-            </FormControl>
-          </Box>
+          <Typography textAlign='center' variant='h6'>Create new {postType}</Typography>
           <Divider sx={{marginBottom: 2, marginTop: 2}}/>
           <ModalBox>
             <UserAvatar
@@ -100,7 +121,7 @@ export const Create = () => {
           </Button>             
         </ButtonGroup>    
         </Box>
-      </CustomModal>
+      </CustomModal> 
     </React.Fragment> 
   )
 }
