@@ -14,12 +14,10 @@ export const Feed = () => {
   }
 
   useEffect(() => {
-
     getPosts()
 
     const interval = setInterval(() => {
       getPosts()
-      console.log('reload')
     }, 10000)
 
     return () => clearInterval(interval)

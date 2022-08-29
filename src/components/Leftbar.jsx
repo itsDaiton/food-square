@@ -10,13 +10,13 @@ export const Leftbar = ({ mode, setMode }) => {
       sx={{ display: { xs: "none", sm: "block"} }}         
     >
       <Box sx={{ position: 'sticky', left: 0, top: 64 }}>
-        <List sx={{ padding: 1 }}>
+        <List sx={{ paddingTop: 2, paddingBottom: 2 }}>
             <ListItem disablePadding>
               <ListItemButton component="a" href="#">
                 <ListItemIcon>
                   <Home />
                 </ListItemIcon>
-                <ListItemText primary="Home"/>
+                <ListItemText primary='Home' />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>

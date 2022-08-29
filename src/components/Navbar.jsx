@@ -1,5 +1,5 @@
 import { Fastfood, Search, Settings, Logout, Person } from '@mui/icons-material'
-import { AppBar, Box, InputBase, ListItemIcon, Menu, MenuItem, styled, Toolbar, Typography } from '@mui/material'
+import { AppBar, Box, InputBase, ListItemIcon, Menu, MenuItem, styled, Toolbar, Typography, alpha } from '@mui/material'
 import Avatar from '@mui/material/Avatar';
 import React, { useState } from 'react';
 
@@ -11,7 +11,7 @@ const StyledToolbar = styled(Toolbar)({
 
 const SearchBar = styled("div")(({theme})=>({
   position: 'relative',
-  backgroundColor: 'gray',
+  backgroundColor: alpha(theme.palette.common.white, 0.25),
   borderRadius: 30,
   [theme.breakpoints.up('sm')]: {
     marginLeft: theme.spacing(1),
@@ -103,7 +103,7 @@ export const Navbar = () => {
         </CustomBox>       
         <SearchBar>
             <SearchIconWrapper>
-              <Search sx={{color: 'inherit'}} />
+              <Search />
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search"
