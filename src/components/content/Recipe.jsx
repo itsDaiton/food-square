@@ -12,8 +12,8 @@ export const Recipe = ( { handleCloseModal } ) => {
   //placeholder for post
   const postData = {
       createdAt: null,
-      appUser: 3,
-      meal: 31,
+      appUser: 1,
+      meal: 4,
       review: null,
       thread: null
   }
@@ -55,7 +55,8 @@ export const Recipe = ( { handleCloseModal } ) => {
       })
     }).catch(error => {
       console.log(error)
-    })        
+    })
+
   }
 
   return (
