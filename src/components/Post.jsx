@@ -8,9 +8,10 @@ const CardText = styled(Typography)({
   marginRight: 10
 })
 
-export const Post = () => {
+export const Post = ({ post }) => {
   return (
-    <Card sx={{margin: {md: 5, xs: 2}}}>
+    post.map(p => (
+      <Card key={p.id} sx={{margin: {md: 5, xs: 2}}}>
         <CardHeader
           avatar={
             <Avatar 
@@ -39,7 +40,7 @@ export const Post = () => {
                   color: 'gray'
                   }}
                 >
-                  @itsDaiton
+                  @{p.appUser.userName}
               </CardText>
               <CardText>15 minutes ago</CardText>             
             </React.Fragment>
@@ -68,5 +69,6 @@ export const Post = () => {
           </IconButton>
         </CardActions>
       </Card>
+    ))
   )
 }

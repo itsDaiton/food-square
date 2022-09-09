@@ -1,5 +1,5 @@
 import { Fastfood, Search, Settings, Logout, Person } from '@mui/icons-material'
-import { AppBar, Box, InputBase, ListItemIcon, Menu, MenuItem, styled, Toolbar, Typography } from '@mui/material'
+import { AppBar, Box, InputBase, ListItemIcon, Menu, MenuItem, styled, Toolbar, Typography, alpha } from '@mui/material'
 import Avatar from '@mui/material/Avatar';
 import React, { useState } from 'react';
 
@@ -11,8 +11,8 @@ const StyledToolbar = styled(Toolbar)({
 
 const SearchBar = styled("div")(({theme})=>({
   position: 'relative',
+  backgroundColor: alpha(theme.palette.common.white, 0.25),
   borderRadius: 30,
-  backgroundColor: "white",
   [theme.breakpoints.up('sm')]: {
     marginLeft: theme.spacing(1),
     width: 'auto',
@@ -32,7 +32,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
 }))
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'black',
+  color: 'inherit',
   fontSize: 18,
   '& .MuiInputBase-input': {
     padding: theme.spacing(1, 1, 1, 1),
@@ -95,7 +95,7 @@ export const Navbar = () => {
   };
 
   return (
-    <AppBar position="sticky" bgcolor={'background.default'}>
+    <AppBar position="sticky" sx={{height: 64}}>
       <StyledToolbar>
         <CustomBox>
           <Logo variant='p'>Food Square</Logo>
@@ -103,7 +103,7 @@ export const Navbar = () => {
         </CustomBox>       
         <SearchBar>
             <SearchIconWrapper>
-              <Search sx={{color: "black"}} />
+              <Search />
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search"
