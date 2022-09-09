@@ -13,7 +13,7 @@ export const Recipe = ( { handleCloseModal } ) => {
   const postData = {
       createdAt: null,
       appUser: 1,
-      meal: 4,
+      meal: 1,
       review: null,
       thread: null
   }
