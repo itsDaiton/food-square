@@ -1,7 +1,8 @@
 import { Fastfood, Search, Settings, Logout, Person } from '@mui/icons-material'
-import { AppBar, Box, InputBase, ListItemIcon, Menu, MenuItem, styled, Toolbar, Typography, alpha } from '@mui/material'
+import { AppBar, Box, InputBase, ListItemIcon, Menu, MenuItem, styled, Toolbar, Typography, alpha, Link, Button } from '@mui/material'
 import Avatar from '@mui/material/Avatar';
 import React, { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
@@ -100,7 +101,7 @@ export const Navbar = () => {
         <CustomBox>
           <Logo variant='p'>Food Square</Logo>
           <LogoIcon/>
-        </CustomBox>       
+        </CustomBox>    
         <SearchBar>
             <SearchIconWrapper>
               <Search />
@@ -110,7 +111,9 @@ export const Navbar = () => {
               inputProps={{ 'aria-label': 'search' }}
             />
         </SearchBar>
+        
         <CustomBox sx={{justifyContent: "flex-end"}}>
+          {/*
           <Avatar 
             alt="picture" 
             src="/resources/OkayChamp.png" 
@@ -120,8 +123,17 @@ export const Navbar = () => {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           />
-        </CustomBox>              
-      </StyledToolbar>      
+          */}
+          <Button variant='contained'>
+            <Link component={RouterLink} to="/register" sx={{ color: 'white' }}>Register</Link>
+          </Button>
+          <Button variant='contained'>
+            <Link component={RouterLink} to="/login" sx={{ color: 'white' }}>Login</Link>
+          </Button>
+        </CustomBox>
+            
+      </StyledToolbar> 
+      {/*}     
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
@@ -176,6 +188,7 @@ export const Navbar = () => {
           Logout
         </MenuItem>
       </Menu>
+      */}
     </AppBar>
   )
 }
