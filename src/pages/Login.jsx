@@ -1,15 +1,23 @@
 import { Visibility, VisibilityOff, Login as LoginIcon } from '@mui/icons-material'
-import { Avatar, Button, CssBaseline, Grid, Link, Paper, TextField, Typography, Box, InputAdornment, IconButton } from '@mui/material'
+import { Avatar, Button, CssBaseline, Grid, Link, Paper, TextField, Typography, Box, InputAdornment, IconButton, Snackbar, Alert, Stack } from '@mui/material'
+import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import  Authentication from '../services/Authentication';
 
 export const Login = () => {
 
   const [values, setValues] = useState({
+    username: '',
     password: '',
-    showPassword: false
   })
+
+  const [showPassword, setShowPassword] = useState(false)
+
+  const [error, setError] = useState('')
+
+  let navigate = useNavigate()
 
   const handleChange = (prop) => (e) => {
     setValues({ 
@@ -19,18 +27,35 @@ export const Login = () => {
   }
 
   const handleClickShowPassword = () => {
-    setValues({
-      ...values,
-      showPassword: !values.showPassword,
-    })
+    setShowPassword(!showPassword)
   }
 
   const handleMouseDownPassword = (e) => {
     e.preventDefault()
   }
 
+  const clearError = () => {
+    setError('')
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
+    
+    axios.post('http://localhost:8080/api/v1/auth/login', values, { withCredentials: true }).then((response) => {
+      clearError()
+      console.log(response)   
+      if (response.data.username) {
+        localStorage.setItem('user', JSON.stringify(response.data))
+        navigate('/')
+        console.log(response.data)
+      } 
+    }).catch((error) => {
+      if (error.response.data) {
+        clearError()  
+        console.log(error.response.data)  
+        setError(error.response.data.message) 
+      }  
+    })   
   }
 
   return (
@@ -42,7 +67,7 @@ export const Login = () => {
         sm={5}
         md={7}
         sx={{
-          backgroundImage: 'url(https://source.unsplash.com/random)',
+          backgroundImage: 'url(https://picsum.photos/800)',
           backgroundRepeat: 'no-repeat',
           backgroundColor: (t) =>
             t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
@@ -75,20 +100,25 @@ export const Login = () => {
           </Typography>    
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1}}>
               <TextField
-                margin="normal"
-                id="email"
-                label="Email"
-                name="email"
-                autoComplete="email"
-                fullWidth
+              error={error ? true : false}
+              margin="normal"
+              fullWidth
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
+              value={values.username}
+              onChange={handleChange('username')}
               />
               <TextField
+                error={error ? true : false}
+                helperText={error}
                 margin="normal"
                 name="password"
                 label="Password"
                 id="password"
                 autoComplete="current-password"
-                type={values.showPassword ? 'text' : 'password'}
+                type={showPassword ? 'text' : 'password'}
                 value={values.password}
                 onChange={handleChange('password')}
                 InputProps={{
@@ -100,7 +130,7 @@ export const Login = () => {
                         onMouseDown={handleMouseDownPassword}
                         edge="end"
                       >
-                        {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
                   )

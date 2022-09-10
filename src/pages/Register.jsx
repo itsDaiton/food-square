@@ -1,15 +1,26 @@
 import { Visibility, VisibilityOff, PersonAdd } from '@mui/icons-material'
 import { Avatar, Button, CssBaseline, Grid, Link, Paper, TextField, Typography, Box, InputAdornment, IconButton } from '@mui/material'
+import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import  Authentication from '../services/Authentication';
 
 export const Register = () => {
 
   const [values, setValues] = useState({
+    username: '',
+    email: '',
     password: '',
-    showPassword: false
   })
+
+  const [showPassword, setShowPassword] = useState(false)
+
+  const [emailError, setEmailError] = useState('')
+  const [usernameError, setUsernameError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+
+  let navigate = useNavigate()
 
   const handleChange = (prop) => (e) => {
     setValues({ 
@@ -19,20 +30,49 @@ export const Register = () => {
   }
 
   const handleClickShowPassword = () => {
-    setValues({
-      ...values,
-      showPassword: !values.showPassword,
-    })
+    setShowPassword(!showPassword)
   }
 
   const handleMouseDownPassword = (e) => {
     e.preventDefault()
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+  const clearErrors = () => {
+    setEmailError('')
+    setPasswordError('')
+    setUsernameError('')
   }
 
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    axios.post('http://localhost:8080/api/v1/auth/register', values).then((response) => {
+      clearErrors()
+      axios.post('http://localhost:8080/api/v1/auth/login', {username: values.username, password: values.password}, { withCredentials: true }).then((response) => {
+        localStorage.setItem('user', JSON.stringify(response.data))
+        navigate('/')
+      })
+      console.log(response)
+    }).catch((error) => {
+      console.log(error.response.data.errorList)
+      if(error.response.data.errorList) {
+      clearErrors()
+       error.response.data.errorList.forEach(err => {       
+        if(err.field === 'email') {
+          setEmailError(err.message)
+        }
+        
+        if(err.field === 'password') {
+          setPasswordError(err.message)
+        }
+
+        if(err.field === 'username') {
+          setUsernameError(err.message)
+        }
+       })
+      }
+    })
+  }
 
   return (
     <Grid container component="main" sx={{ height: '100vh'}}>
@@ -43,7 +83,7 @@ export const Register = () => {
       sm={5}
       md={7}
       sx={{
-        backgroundImage: 'url(https://source.unsplash.com/random)',
+        backgroundImage: 'url(https://picsum.photos/800)',
         backgroundRepeat: 'no-repeat',
         backgroundColor: (t) =>
           t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
@@ -74,32 +114,41 @@ export const Register = () => {
         <Typography component='h1' variant='h5'>
           Creat a new account
         </Typography>    
-        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
             <TextField
+              error={usernameError ? true : false}
+              helperText={usernameError}
               margin="normal"
               fullWidth
               id="username"
               label="Username"
               name="username"
               autoComplete="username"
-              
+              value={values.username}
+              onChange={handleChange('username')}
             />
             <TextField
+              error={emailError ? true : false}
+              helperText={emailError}
               margin="normal"
               fullWidth
               id="email"
               label="Email"
               name="email"
               autoComplete="email"
+              value={values.email}
+              onChange={handleChange('email')}
             />
             <TextField
+              error={passwordError ? true : false}
+              helperText={passwordError}
               margin="normal"
               fullWidth
               name="password"
               label="Password"
               id="password"
               autoComplete="current-password"
-              type={values.showPassword ? 'text' : 'password'}
+              type={showPassword ? 'text' : 'password'}
               value={values.password}
               onChange={handleChange('password')}
               InputProps={{
@@ -111,7 +160,7 @@ export const Register = () => {
                       onMouseDown={handleMouseDownPassword}
                       edge="end"
                     >
-                      {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
                 )

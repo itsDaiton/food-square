@@ -1,8 +1,11 @@
 import { Fastfood, Search, Settings, Logout, Person } from '@mui/icons-material'
-import { AppBar, Box, InputBase, ListItemIcon, Menu, MenuItem, styled, Toolbar, Typography, alpha, Link, Button } from '@mui/material'
+import { AppBar, Box, InputBase, ListItemIcon, Menu, MenuItem, styled, Toolbar, Typography, alpha, Link, Button, Divider } from '@mui/material'
 import Avatar from '@mui/material/Avatar';
 import React, { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
+import  Authentication from '../services/Authentication';
+import axios from 'axios';
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
@@ -95,6 +98,26 @@ export const Navbar = () => {
     setAnchorEl(null);
   };
 
+  const [user, setUser] = useState()
+
+  let navigate = useNavigate()
+
+  useEffect(() => {
+    const currentUser = Authentication.getCurrentUser()
+    if (currentUser) {
+      setUser(currentUser)
+    }
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem('user')
+    axios.post('http://localhost:8080/api/v1/auth/logout', {}, {withCredentials: true}).then((response) => {
+      console.log(response.data)
+      navigate("/login")
+    })
+
+  }
+
   return (
     <AppBar position="sticky" sx={{height: 64}}>
       <StyledToolbar>
@@ -113,7 +136,7 @@ export const Navbar = () => {
         </SearchBar>
         
         <CustomBox sx={{justifyContent: "flex-end"}}>
-          {/*
+          {user ?      
           <Avatar 
             alt="picture" 
             src="/resources/OkayChamp.png" 
@@ -123,17 +146,19 @@ export const Navbar = () => {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           />
-          */}
+          :
+          <>
           <Button variant='contained'>
-            <Link component={RouterLink} to="/register" sx={{ color: 'white' }}>Register</Link>
+              <Link component={RouterLink} to="/register" sx={{ color: 'white' }}>Register</Link>
+            </Button>
+            <Button variant='contained'>
+              <Link component={RouterLink} to="/login" sx={{ color: 'white' }}>Login</Link>
           </Button>
-          <Button variant='contained'>
-            <Link component={RouterLink} to="/login" sx={{ color: 'white' }}>Login</Link>
-          </Button>
+          </>}   
         </CustomBox>
             
       </StyledToolbar> 
-      {/*}     
+      {user ?     
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
@@ -173,6 +198,13 @@ export const Navbar = () => {
           <ListItemIcon>
             <Person fontSize="small" />
           </ListItemIcon>
+          {user.username}
+        </MenuItem>
+        <Divider/>
+        <MenuItem>
+          <ListItemIcon>
+            <Person fontSize="small" />
+          </ListItemIcon>
           Profile
         </MenuItem>
         <MenuItem>
@@ -181,14 +213,15 @@ export const Navbar = () => {
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem>
+        <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
           Logout
         </MenuItem>
       </Menu>
-      */}
+      : ''
+      }
     </AppBar>
   )
 }
