@@ -1,16 +1,17 @@
 import { Fastfood, Search, Settings, Logout, Person } from '@mui/icons-material'
-import { AppBar, Box, InputBase, ListItemIcon, Menu, MenuItem, styled, Toolbar, Typography, alpha, Link, Button, Divider } from '@mui/material'
+import { AppBar, Box, InputBase, ListItemIcon, Menu, MenuItem, styled, Toolbar, Typography, alpha, Link, Divider } from '@mui/material'
 import Avatar from '@mui/material/Avatar';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import  Authentication from '../services/Authentication';
 import axios from 'axios';
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
   justifyContent: "space-between",
-  alignItems: "center"
+  alignItems: "center",
+  height: 64
 })
 
 const SearchBar = styled("div")(({theme})=>({
@@ -42,13 +43,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     padding: theme.spacing(1, 1, 1, 1),
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     [theme.breakpoints.up('1150')] : {
-      width: '70ch',
+      width: '60ch',
     },
     [theme.breakpoints.down('1150')] : {
-      width: '50ch',    
+      width: '35ch',    
     },
     [theme.breakpoints.down('950')] : {
-      width: '25ch',
+      width: '20ch',
     },
     [theme.breakpoints.down('500')] : {
       width: '15ch',
@@ -122,7 +123,7 @@ export const Navbar = () => {
     <AppBar position="sticky" sx={{height: 64}}>
       <StyledToolbar>
         <CustomBox>
-          <Logo variant='p'>Food Square</Logo>
+          <Logo>Food Square</Logo>
           <LogoIcon/>
         </CustomBox>    
         <SearchBar>
@@ -147,14 +148,22 @@ export const Navbar = () => {
             aria-expanded={open ? 'true' : undefined}
           />
           :
-          <>
-          <Button variant='contained'>
-              <Link component={RouterLink} to="/register" sx={{ color: 'white' }}>Register</Link>
-            </Button>
-            <Button variant='contained'>
-              <Link component={RouterLink} to="/login" sx={{ color: 'white' }}>Login</Link>
-          </Button>
-          </>}   
+          <Box 
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              typography: 'body1',
+              '& > :not(style) + :not(style)': {
+                mr: 2,
+                ml: 2
+              }
+            }}
+          >
+            <Link underline='none' variant='body1' component={RouterLink} to="/register" sx={{ color: 'white' }}>Register</Link>
+            <Link underline='none' variant='body1' component={RouterLink} to="/login" sx={{ color: 'white' }}>Login</Link>
+          </Box>
+          }
         </CustomBox>
             
       </StyledToolbar> 

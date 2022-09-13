@@ -1,5 +1,5 @@
 import { Visibility, VisibilityOff, Login as LoginIcon } from '@mui/icons-material'
-import { Avatar, Button, CssBaseline, Grid, Link, Paper, TextField, Typography, Box, InputAdornment, IconButton, Snackbar, Alert, Stack } from '@mui/material'
+import { Avatar, Button, CssBaseline, Grid, Link, Paper, TextField, Typography, Box, InputAdornment, IconButton, Snackbar, Alert } from '@mui/material'
 import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
@@ -7,6 +7,8 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import  Authentication from '../services/Authentication';
 
 export const Login = () => {
+
+  let navigate = useNavigate()
 
   const [values, setValues] = useState({
     username: '',
@@ -16,8 +18,6 @@ export const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
 
   const [error, setError] = useState('')
-
-  let navigate = useNavigate()
 
   const handleChange = (prop) => (e) => {
     setValues({ 
@@ -38,9 +38,26 @@ export const Login = () => {
     setError('')
   }
 
+  const [open, setOpen] = useState(false)
+
+  const handleClose = (e, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    setOpen(false)
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
-    
+
+    if (Authentication.getCurrentUser() !== null) {
+      setOpen(true)
+      setTimeout(() => {
+        navigate('/')
+      }, 3000)
+    }
+    else {    
     axios.post('http://localhost:8080/api/v1/auth/login', values, { withCredentials: true }).then((response) => {
       clearError()
       console.log(response)   
@@ -55,7 +72,8 @@ export const Login = () => {
         console.log(error.response.data)  
         setError(error.response.data.message) 
       }  
-    })   
+    }) 
+    }  
   }
 
   return (
@@ -95,7 +113,7 @@ export const Login = () => {
           <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
             <LoginIcon/>
           </Avatar>
-          <Typography component='h1' variant='h5'>
+          <Typography component='h1' variant='h5' sx={{ textAlign: { xs: 'center'}}}>
             Log into your account
           </Typography>    
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1}}>
@@ -145,6 +163,11 @@ export const Login = () => {
               >
                 Sign In
               </Button>
+              <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} variant='filled' severity="error" sx={{ width: '100%' }}>
+                  You are already logged in! Redirecting to home page.
+                </Alert>
+              </Snackbar> 
               <Grid container sx={{ flexDirection: 'column', alignItems: 'center'}}>
                 <Grid item>
                   <Link href="#" variant="body2" component={RouterLink} to="/register">

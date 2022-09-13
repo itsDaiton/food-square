@@ -1,5 +1,5 @@
 import { Visibility, VisibilityOff, PersonAdd } from '@mui/icons-material'
-import { Avatar, Button, CssBaseline, Grid, Link, Paper, TextField, Typography, Box, InputAdornment, IconButton } from '@mui/material'
+import { Avatar, Button, CssBaseline, Grid, Link, Paper, TextField, Typography, Box, InputAdornment, IconButton, Alert, Snackbar } from '@mui/material'
 import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
@@ -7,6 +7,8 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import  Authentication from '../services/Authentication';
 
 export const Register = () => {
+  
+  let navigate = useNavigate()
 
   const [values, setValues] = useState({
     username: '',
@@ -20,7 +22,15 @@ export const Register = () => {
   const [usernameError, setUsernameError] = useState('')
   const [passwordError, setPasswordError] = useState('')
 
-  let navigate = useNavigate()
+  const [open, setOpen] = useState(false)
+
+  const handleClose = (e, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    setOpen(false)
+  }
 
   const handleChange = (prop) => (e) => {
     setValues({ 
@@ -46,13 +56,20 @@ export const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    axios.post('http://localhost:8080/api/v1/auth/register', values).then((response) => {
-      clearErrors()
-      axios.post('http://localhost:8080/api/v1/auth/login', {username: values.username, password: values.password}, { withCredentials: true }).then((response) => {
-        localStorage.setItem('user', JSON.stringify(response.data))
+    if (Authentication.getCurrentUser() !== null) {
+      setOpen(true)
+      setTimeout(() => {
         navigate('/')
-      })
-      console.log(response)
+      }, 3000)
+    }
+    else {    
+      axios.post('http://localhost:8080/api/v1/auth/register', values).then((response) => {
+        clearErrors()
+        axios.post('http://localhost:8080/api/v1/auth/login', {username: values.username, password: values.password}, { withCredentials: true }).then((response) => {
+          localStorage.setItem('user', JSON.stringify(response.data))
+          navigate('/')
+        })
+        console.log(response)
     }).catch((error) => {
       console.log(error.response.data.errorList)
       if(error.response.data.errorList) {
@@ -72,6 +89,7 @@ export const Register = () => {
        })
       }
     })
+    }
   }
 
   return (
@@ -111,8 +129,8 @@ export const Register = () => {
         <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
           <PersonAdd/>
         </Avatar>
-        <Typography component='h1' variant='h5'>
-          Creat a new account
+        <Typography component='h1' variant='h5' sx={{ textAlign: { xs: 'center'} }}> 
+          Create a new account
         </Typography>    
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
             <TextField
@@ -174,7 +192,12 @@ export const Register = () => {
             >
               Sign Up
             </Button>
-            <Grid container sx={{ flexDirection: 'column', alignItems: 'center'}}>
+            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+              <Alert onClose={handleClose} variant='filled' severity="error" sx={{ width: '100%' }}>
+                You are already logged in! Redirecting to home page.
+              </Alert>
+            </Snackbar>  
+            <Grid container sx={{ flexDirection: 'column', alignItems: 'center' }}>
               <Grid item>
                 <Link href="#" variant="body2" component={RouterLink} to="/login">
                   {"Already have an account? Sign In"}
@@ -182,7 +205,7 @@ export const Register = () => {
               </Grid>
             </Grid>
           </Box>
-      </Box>
+      </Box>  
     </Grid>
   </Grid>
   )
