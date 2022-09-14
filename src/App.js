@@ -1,10 +1,9 @@
-import { Box, createTheme, Divider, Stack, ThemeProvider } from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material";
 import { useState } from "react";
-import { Create } from "./components/Create";
-import { Feed } from "./components/Feed";
-import { Leftbar } from "./components/Leftbar";
-import { Navbar } from "./components/Navbar";
-import { Rightbar } from "./components/Rightbar";
+import { Route, Routes } from "react-router";
+import { Home } from "./pages/Home";
+import { Login } from "./pages/Login";
+import { Register } from "./pages/Register"
 
 function App() {
 
@@ -39,15 +38,11 @@ const theme = createTheme({
 
   return (
     <ThemeProvider theme={theme}>
-      <Box className="App" bgcolor={'background.default'} color={'text.primary'}>
-      <Navbar></Navbar>
-      <Stack direction="row" justifyContent="center" divider={<Divider orientation="vertical" flexItem />}>
-        <Leftbar setMode={setMode} mode={mode}></Leftbar>
-        <Feed></Feed>
-        <Rightbar></Rightbar> 
-      </Stack>
-      <Create/>
-      </Box>
+      <Routes>
+        <Route path="/" element={<Home mode={mode} setMode={setMode} />}/>
+        <Route path="/login" element={<Login/>}/>
+        <Route path="/register" element={<Register/>}/>
+      </Routes>
     </ThemeProvider>
   );
 }

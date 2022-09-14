@@ -1,12 +1,17 @@
 import { Fastfood, Search, Settings, Logout, Person } from '@mui/icons-material'
-import { AppBar, Box, InputBase, ListItemIcon, Menu, MenuItem, styled, Toolbar, Typography, alpha } from '@mui/material'
+import { AppBar, Box, InputBase, ListItemIcon, Menu, MenuItem, styled, Toolbar, Typography, alpha, Link, Divider } from '@mui/material'
 import Avatar from '@mui/material/Avatar';
 import React, { useState } from 'react';
+import { useEffect } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import  Authentication from '../services/Authentication';
+import axios from 'axios';
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
   justifyContent: "space-between",
-  alignItems: "center"
+  alignItems: "center",
+  height: 64
 })
 
 const SearchBar = styled("div")(({theme})=>({
@@ -38,13 +43,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     padding: theme.spacing(1, 1, 1, 1),
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     [theme.breakpoints.up('1150')] : {
-      width: '70ch',
+      width: '60ch',
     },
     [theme.breakpoints.down('1150')] : {
-      width: '50ch',    
+      width: '35ch',    
     },
     [theme.breakpoints.down('950')] : {
-      width: '25ch',
+      width: '20ch',
     },
     [theme.breakpoints.down('500')] : {
       width: '15ch',
@@ -94,13 +99,33 @@ export const Navbar = () => {
     setAnchorEl(null);
   };
 
+  const [user, setUser] = useState()
+
+  let navigate = useNavigate()
+
+  useEffect(() => {
+    const currentUser = Authentication.getCurrentUser()
+    if (currentUser) {
+      setUser(currentUser)
+    }
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem('user')
+    axios.post('http://localhost:8080/api/v1/auth/logout', {}, {withCredentials: true}).then((response) => {
+      console.log(response.data)
+      navigate("/login")
+    })
+
+  }
+
   return (
     <AppBar position="sticky" sx={{height: 64}}>
       <StyledToolbar>
         <CustomBox>
-          <Logo variant='p'>Food Square</Logo>
+          <Logo>Food Square</Logo>
           <LogoIcon/>
-        </CustomBox>       
+        </CustomBox>    
         <SearchBar>
             <SearchIconWrapper>
               <Search />
@@ -110,7 +135,9 @@ export const Navbar = () => {
               inputProps={{ 'aria-label': 'search' }}
             />
         </SearchBar>
+        
         <CustomBox sx={{justifyContent: "flex-end"}}>
+          {user ?      
           <Avatar 
             alt="picture" 
             src="/resources/OkayChamp.png" 
@@ -120,8 +147,27 @@ export const Navbar = () => {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           />
-        </CustomBox>              
-      </StyledToolbar>      
+          :
+          <Box 
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              typography: 'body1',
+              '& > :not(style) + :not(style)': {
+                mr: 2,
+                ml: 2
+              }
+            }}
+          >
+            <Link underline='none' variant='body1' component={RouterLink} to="/register" sx={{ color: 'white' }}>Register</Link>
+            <Link underline='none' variant='body1' component={RouterLink} to="/login" sx={{ color: 'white' }}>Login</Link>
+          </Box>
+          }
+        </CustomBox>
+            
+      </StyledToolbar> 
+      {user ?     
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
@@ -161,6 +207,13 @@ export const Navbar = () => {
           <ListItemIcon>
             <Person fontSize="small" />
           </ListItemIcon>
+          {user.username}
+        </MenuItem>
+        <Divider/>
+        <MenuItem>
+          <ListItemIcon>
+            <Person fontSize="small" />
+          </ListItemIcon>
           Profile
         </MenuItem>
         <MenuItem>
@@ -169,13 +222,15 @@ export const Navbar = () => {
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem>
+        <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
           Logout
         </MenuItem>
       </Menu>
+      : ''
+      }
     </AppBar>
   )
 }
