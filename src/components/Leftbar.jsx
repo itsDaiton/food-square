@@ -1,15 +1,27 @@
 import { Box, List, ListItem, ListItemButton, ListItemText, ListItemIcon, Switch } from '@mui/material'
 import { Home, Tag, Restaurant, Description, Forum, Person, Settings, DarkMode } from '@mui/icons-material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import Authentication from '../services/Authentication'
 
 export const Leftbar = ({ mode, setMode }) => {
+
+  const [user, setUser] = useState()
+
+  useEffect(() => {
+    const currentUser = Authentication.getCurrentUser()
+    if (currentUser) {
+      setUser(currentUser)
+    }
+  }, [])
+
+
   return (
     <Box
       flex={2}
       p={0}
       sx={{ display: { xs: "none", sm: "block"} }}         
     >
-      <Box sx={{ position: 'sticky', left: 0, top: 64 }}>
+      <Box sx={{ position: 'fixed' }}>
         <List sx={{ paddingTop: 2, paddingBottom: 2 }}>
             <ListItem disablePadding>
               <ListItemButton component="a" href="#">
@@ -51,6 +63,8 @@ export const Leftbar = ({ mode, setMode }) => {
                 <ListItemText primary="Threads" />
               </ListItemButton>
             </ListItem>
+            {user &&
+            <>
             <ListItem disablePadding>
               <ListItemButton component="a" href="#">
                 <ListItemIcon>
@@ -67,6 +81,8 @@ export const Leftbar = ({ mode, setMode }) => {
                 <ListItemText primary="Settings" />
               </ListItemButton>
             </ListItem>
+            </>
+            }
             <ListItem disablePadding>
               <ListItemButton>
                 <ListItemIcon>

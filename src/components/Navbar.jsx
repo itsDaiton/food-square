@@ -11,7 +11,7 @@ const StyledToolbar = styled(Toolbar)({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  height: 64
+  height: '7vh'
 })
 
 const SearchBar = styled("div")(({theme})=>({
@@ -120,7 +120,7 @@ export const Navbar = () => {
   }
 
   return (
-    <AppBar position="sticky" sx={{height: 64}}>
+    <AppBar position="sticky" sx={{height: '7vh'}}>
       <StyledToolbar>
         <CustomBox>
           <Logo>Food Square</Logo>

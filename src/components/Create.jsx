@@ -8,11 +8,12 @@ import {
   SpeedDialAction
 } from '@mui/material'
 import { Restaurant, Description, Forum } from '@mui/icons-material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { UserAvatar, UserText } from './Rightbar'
 import { Recipe } from './content/Recipe'
 import { Review } from './content/Review'
 import { Thread } from './content/Thread'
+import Authentication from '../services/Authentication'
 
 const CustomModal = styled(Modal)({
   display: 'flex',
@@ -39,12 +40,22 @@ export const Create = () => {
   const [openDial, setOpenDial] = useState(false)
   const [openModal, setOpenModal] = useState(false)
 
+  const [user, setUser] = useState()
+
+  useEffect(() => {
+    const currentUser = Authentication.getCurrentUser()
+    if (currentUser) {
+      setUser(currentUser)
+    }
+  }, [])
+
   const handleOpenDial = () => setOpenDial(true)
   const handleCloseDial = () => setOpenDial(false)
   const handleOpenModal = () => setOpenModal(true)
   const handleCloseModal = () => setOpenModal(false)
 
   return (
+    user &&
     <React.Fragment>
         <SpeedDial
           ariaLabel="Create a new post"
@@ -98,11 +109,11 @@ export const Create = () => {
           </ModalBox>
         <Typography variant='p'>
           {postType === 'recipe' && <Recipe handleCloseModal={handleCloseModal}/>}
-          {postType === 'review' && <Review/>} 
-          {postType === 'thread' && <Thread/>}             
+          {postType === 'review' && <Review handleCloseModal={handleCloseModal}/>} 
+          {postType === 'thread' && <Thread handleCloseModal={handleCloseModal}/>}             
         </Typography>   
         </Box>
       </CustomModal> 
-    </React.Fragment> 
+    </React.Fragment>
   )
 }

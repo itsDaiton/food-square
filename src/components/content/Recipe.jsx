@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Send } from '@mui/icons-material'
 import { FormControl, FormLabel, TextField, styled, ButtonGroup, Button } from '@mui/material'
 import axios from 'axios'
+import Authentication from '../../services/Authentication'
 
 const CustomTextField = styled(TextField)({
   margin: 10 
@@ -9,14 +10,14 @@ const CustomTextField = styled(TextField)({
 
 export const Recipe = ( { handleCloseModal } ) => {
 
-  //placeholder for post
-  const postData = {
-      createdAt: null,
-      appUser: 1,
-      meal: 1,
-      review: null,
-      thread: null
-  }
+  const [user, setUser] = useState()
+
+  useEffect(() => {
+    const currentUser = Authentication.getCurrentUser()
+    if (currentUser) {
+      setUser(currentUser)
+    }
+  }, [])
 
   const [inputs, setInputs] = useState({
     name: '',
@@ -25,6 +26,8 @@ export const Recipe = ( { handleCloseModal } ) => {
     timeToPrepare: '',
     timeToCook: '',
   })
+
+  const [mealId, setMealId] = useState(null);
 
   const handleChange = (e) => {
    setInputs({
@@ -35,32 +38,43 @@ export const Recipe = ( { handleCloseModal } ) => {
 
   const handleSubmit = (e) => {
     e.preventDefault() 
-    handleCloseModal()  
+    handleCloseModal()
+
+    const modifedInputs = {
+      appUser: user.id,
+      name: inputs.name,
+      description: inputs.description,
+      instructions: inputs.instructions,
+      timeToPrepare: inputs.timeToPrepare,
+      timeToCook: inputs.timeToCook
+    }
     
-    axios.post('https://daiton-food-square-api.herokuapp.com/api/v1/meals/add', inputs , {
+    axios.post('http://localhost:8080/api/v1/meals/add', modifedInputs , { withCredentials: true }, {
       headers: {
         'Content-Type': 'application/json'
       }
     }).then((response) => {
       console.log(response)
-      axios.post('https://daiton-food-square-api.herokuapp.com/api/v1/posts/add', postData, {
+      setMealId(response.data.id)
+      console.log(mealId)
+      axios.post('http://localhost:8080/api/v1/posts/add', {appUser: user.id, meal: response.data.id }, { withCredentials: true }, {
         headers: {
           'Content-Type': 'application/json'
         }
       }).then((response) => {
         console.log(response)
         console.log(response.data)
+        console.log(mealId)
       }).catch(error => {
         console.log(error)
       })
     }).catch(error => {
       console.log(error)
     })
-
   }
 
   return (
-    <FormControl>
+    <FormControl fullWidth>
       <FormLabel id="form-recipe" sx={{ marginBottom: 2}}>New recipe</FormLabel>
       <CustomTextField name='name' id="recipe-name" label="Name" variant="outlined" onChange={handleChange}/>
       <CustomTextField name='description' id="recipe-description" label="Description" variant="outlined" onChange={handleChange}/>

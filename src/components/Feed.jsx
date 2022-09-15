@@ -8,7 +8,7 @@ export const Feed = () => {
   const [post, setPost] = useState([])
 
   const getPosts = () => {
-    axios.get('https://daiton-food-square-api.herokuapp.com/api/v1/posts/getAll').then((response) => {
+    axios.get('http://localhost:8080/api/v1/posts/getAll').then((response) => {
       setPost(response.data)
     })
   }
