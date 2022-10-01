@@ -1,23 +1,23 @@
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { Post } from './Post'
+import { Recipe } from './Recipe'
 import axios from 'axios'
 
 export const Feed = () => {
 
-  const [post, setPost] = useState([])
+  const [recipe, setRecipe] = useState(null)
 
-  const getPosts = () => {
-    axios.get('http://localhost:8080/api/v1/posts/getAll').then((response) => {
-      setPost(response.data)
+  const getRecipes = () => {
+    axios.get('http://localhost:8080/api/v1/recipes/getAll').then((response) => {
+      setRecipe(response.data)
     })
   }
 
   useEffect(() => {
-    getPosts()
+    getRecipes()
 
     const interval = setInterval(() => {
-      getPosts()
+      getRecipes()
     }, 10000)
 
     return () => clearInterval(interval)
@@ -25,8 +25,8 @@ export const Feed = () => {
   }, [])
 
   return (
-    <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}}>  
-      <Post post={post} />
+    <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}}>
+      <Recipe recipe={recipe} />
     </Box>
   )
 }

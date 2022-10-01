@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { Send } from '@mui/icons-material'
 import { FormControl, FormLabel, TextField, styled, ButtonGroup, Button } from '@mui/material'
 import axios from 'axios'
-import Authentication from '../../services/Authentication'
+import Authentication from '../services/Authentication'
 
 const CustomTextField = styled(TextField)({
   margin: 10 
 })
 
-export const Recipe = ( { handleCloseModal } ) => {
+export const Add = ( { handleCloseModal } ) => {
 
   const [user, setUser] = useState()
 

@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import  Authentication from '../services/Authentication';
 
-export const Login = () => {
+export const Login = ({}) => {
 
   let navigate = useNavigate()
 

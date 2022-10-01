@@ -1,103 +1,32 @@
-import { Fastfood, Search, Settings, Logout, Person } from '@mui/icons-material'
-import { AppBar, Box, InputBase, ListItemIcon, Menu, MenuItem, styled, Toolbar, Typography, alpha, Link, Divider } from '@mui/material'
+import * as React from 'react';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Menu from '@mui/material/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
+import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import MenuItem from '@mui/material/MenuItem';
+import FastfoodIcon from '@mui/icons-material/Fastfood';
+import { useState, useEffect } from 'react';
+import Authentication from '../services/Authentication';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import  Authentication from '../services/Authentication';
+import { Divider, Link, ListItemIcon } from '@mui/material';
 import axios from 'axios';
-
-const StyledToolbar = styled(Toolbar)({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  height: '7vh'
-})
-
-const SearchBar = styled("div")(({theme})=>({
-  position: 'relative',
-  backgroundColor: alpha(theme.palette.common.white, 0.25),
-  borderRadius: 30,
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(1),
-    width: 'auto',
-  },
-  [theme.breakpoints.down(275)] : {
-    display: 'none' 
-  }
-}))
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}))
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  fontSize: 18,
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 1),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    [theme.breakpoints.up('1150')] : {
-      width: '60ch',
-    },
-    [theme.breakpoints.down('1150')] : {
-      width: '35ch',    
-    },
-    [theme.breakpoints.down('950')] : {
-      width: '20ch',
-    },
-    [theme.breakpoints.down('500')] : {
-      width: '15ch',
-    },
-    [theme.breakpoints.down('350')] : {
-      width: '8ch',
-    },
-  }
-}))
-
-const CustomBox = styled(Box)({
-  width: 175,
-  display: "flex"
-})
-
-const Logo = styled(Typography)(({ theme }) => ({
-  fontWeight: 700,
-  fontSize: 26,
-  fontFamily: 'Poppins',
-  cursor: 'pointer',
-  [theme.breakpoints.down('700')] : {
-    display: 'none'  
-  },
-  [theme.breakpoints.up('700')] : {
-    display: 'block'
-  }
-}))
-
-const LogoIcon = styled(Fastfood)(({ theme }) => ({
-  width: 40,
-  height: 40,
-  [theme.breakpoints.down('700')] : {
-    display: 'block'  
-  },
-  [theme.breakpoints.up('700')] : {
-    display: 'none'
-  }
-}))
+import { Logout, Person, Settings } from '@mui/icons-material';
 
 export const Navbar = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const [anchorElUser, setAnchorElUser] = useState(null)
+
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget)
+  }
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null)
+  }
 
   const [user, setUser] = useState()
 
@@ -120,36 +49,75 @@ export const Navbar = () => {
   }
 
   return (
-    <AppBar position="sticky" sx={{height: '7vh'}}>
-      <StyledToolbar>
-        <CustomBox>
-          <Logo>Food Square</Logo>
-          <LogoIcon/>
-        </CustomBox>    
-        <SearchBar>
-            <SearchIconWrapper>
-              <Search />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-        </SearchBar>
-        
-        <CustomBox sx={{justifyContent: "flex-end"}}>
-          {user ?      
-          <Avatar 
-            alt="picture" 
-            src="/resources/OkayChamp.png" 
-            sx={{width: 45, height: 45, cursor: "pointer"}}       
-            onClick={handleClick}
-            aria-controls={open ? 'account-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-          />
-          :
-          <Box 
+    <AppBar position="sticky">
+      <Container maxWidth="xxl">
+        <Toolbar disableGutters>
+          <Box display='flex' alignItems='center'>
+            <FastfoodIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 2 }} />
+            <Typography
+              component="a"
+              sx={{
+                mr: 2,
+                display: { xs: 'none', md: 'flex' },
+                fontWeight: 700,
+                fontSize: 24,
+                textDecoration: 'none',
+              }}
+            >
+              Food Square
+            </Typography>
+          </Box>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+          </Box>
+          <FastfoodIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <Typography
+            component="a"
             sx={{
+              mr: 2,
+              display: { xs: 'flex', md: 'none' },
+              flexGrow: 1,
+              fontWeight: 700,
+              fontSize: 24,
+              textDecoration: 'none',
+            }}
+          >
+            Food Square
+          </Typography>
+          <Box 
+          sx={{ 
+            flexGrow: 1,
+            display: { xs: 'none', md: 'flex' },
+          }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center'
+              }}
+          >
+              {user && <Link underline='none' variant='body1' component={RouterLink} to="/" sx={{ color: 'white', mr: 1, ml: 1 }}>Home</Link>}
+              <Link underline='none' variant='body1' component={RouterLink} to="/" sx={{ color: 'white', mr: 1, ml: 1 }}>Discover</Link>
+              <Link underline='none' variant='body1' component={RouterLink} to="/" sx={{ color: 'white', mr: 1, ml: 1 }}>Recipes</Link>
+            </Box>
+          </Box>
+          <Box sx={{ flexGrow: 0 }}>
+            {user ?
+            <Box display='flex' alignItems='center'>
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt="Remy Sharp" src="/resources/OkayChamp.png"  />
+              </IconButton>
+            </Box>
+            :
+            <Box sx={{
               display: 'flex',
               flexWrap: 'wrap',
               justifyContent: 'center',
@@ -158,79 +126,58 @@ export const Navbar = () => {
                 mr: 2,
                 ml: 2
               }
-            }}
-          >
-            <Link underline='none' variant='body1' component={RouterLink} to="/register" sx={{ color: 'white' }}>Register</Link>
-            <Link underline='none' variant='body1' component={RouterLink} to="/login" sx={{ color: 'white' }}>Login</Link>
+            }}>
+              <Link underline='none' variant='body1' component={RouterLink} to="/register" sx={{ color: 'white' }}>Register</Link>
+              <Link underline='none' variant='body1' component={RouterLink} to="/login" sx={{ color: 'white' }}>Login</Link>   
+            </Box>       
+            }
+            {user ?
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              <MenuItem>
+                <ListItemIcon>
+                <Person fontSize="small" />
+                </ListItemIcon>
+                {user.username}
+              </MenuItem>
+              <Divider/>
+              <MenuItem>
+                <ListItemIcon>
+                  <Person fontSize="small" />
+                </ListItemIcon>
+                Profile
+              </MenuItem>
+              <MenuItem>
+                <ListItemIcon>
+                  <Settings fontSize="small" />
+                </ListItemIcon>
+                Settings
+              </MenuItem>
+              <MenuItem onClick={handleLogout}>
+                <ListItemIcon>
+                  <Logout fontSize="small" />
+                </ListItemIcon>
+                Logout
+              </MenuItem>
+            </Menu>
+            : '' }
           </Box>
-          }
-        </CustomBox>
-            
-      </StyledToolbar> 
-      {user ?     
-      <Menu
-        anchorEl={anchorEl}
-        id="account-menu"
-        open={open}     
-        onClose={handleClose}
-        onClick={handleClose}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            mt: 1.5,
-            '& .MuiAvatar-root': {
-              width: 32,
-              height: 32,
-              ml: -0.5,
-              mr: 1,
-            },
-            '&:before': {
-              content: '""',
-              display: 'block',
-              position: 'absolute',
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: 'background.paper',
-              transform: 'translateY(-50%) rotate(45deg)',
-              zIndex: 0,
-            },
-          },
-        }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      >
-        <MenuItem>
-          <ListItemIcon>
-            <Person fontSize="small" />
-          </ListItemIcon>
-          {user.username}
-        </MenuItem>
-        <Divider/>
-        <MenuItem>
-          <ListItemIcon>
-            <Person fontSize="small" />
-          </ListItemIcon>
-          Profile
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
-        <MenuItem onClick={handleLogout}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
-      </Menu>
-      : ''
-      }
+        </Toolbar>
+      </Container>
     </AppBar>
   )
 }

@@ -3,17 +3,14 @@ import {
   Modal, 
   styled, 
   Typography,  
-  SpeedDial,
-  SpeedDialIcon,
-  SpeedDialAction
+  Fab,
+  Tooltip
 } from '@mui/material'
-import { Restaurant, Description, Forum } from '@mui/icons-material'
 import React, { useEffect, useState } from 'react'
 import { UserAvatar, UserText } from './Rightbar'
-import { Recipe } from './content/Recipe'
-import { Review } from './content/Review'
-import { Thread } from './content/Thread'
+import { Add } from './Add'
 import Authentication from '../services/Authentication'
+import AddIcon from '@mui/icons-material/Add';
 
 const CustomModal = styled(Modal)({
   display: 'flex',
@@ -30,14 +27,6 @@ const ModalBox = styled(Box)({
 
 export const Create = () => {
 
-  const actions = [
-    { icon: <Restaurant />, name: 'recipe', tooltip: 'Recipe'},
-    { icon: <Description />, name: 'review', tooltip: 'Review' },
-    { icon: <Forum />, name: 'thread', tooltip: 'Thread' },
-  ];
-
-  const [postType, setPostType] = useState('')
-  const [openDial, setOpenDial] = useState(false)
   const [openModal, setOpenModal] = useState(false)
 
   const [user, setUser] = useState()
@@ -49,40 +38,26 @@ export const Create = () => {
     }
   }, [])
 
-  const handleOpenDial = () => setOpenDial(true)
-  const handleCloseDial = () => setOpenDial(false)
   const handleOpenModal = () => setOpenModal(true)
   const handleCloseModal = () => setOpenModal(false)
 
   return (
     user &&
     <React.Fragment>
-        <SpeedDial
-          ariaLabel="Create a new post"
-          icon={<SpeedDialIcon />}
-          onOpen={handleOpenDial}
-          onClose={handleCloseDial}
-          open={openDial}
-          sx={{ 
+      <Tooltip title='Create a new recipe' placement='right'>
+        <Fab 
+          color="primary" 
+          aria-label='Create a new recipe'
+          size='large'
+          onClick={handleOpenModal}
+          sx={{
             position: 'fixed',
             bottom: 25,
             left: { xs: 'calc(100% - 81px)', md: 25},
-          }}
-        >
-        {actions.map((action) => (
-        <SpeedDialAction
-          key={action.name}
-          icon={action.icon}
-          tooltipTitle={action.tooltip}
-          onClick={e => {
-            setPostType(action.name)
-            handleOpenModal()
-            e.stopPropagation()
-          }
-          } 
-        />
-        ))}
-        </SpeedDial>  
+        }}>
+          <AddIcon />
+        </Fab>
+      </Tooltip>
         <CustomModal
         disableRestoreFocus
         open={openModal}
@@ -91,7 +66,7 @@ export const Create = () => {
         aria-describedby="modal-modal-description"
       >
         <Box width={600} height={'auto'} bgcolor={'background.default'} color={'text.primary'} borderRadius={5} p={3}>
-          <Typography textAlign='center' variant='h6'>Create new {postType}</Typography>
+          <Typography textAlign='center' variant='h6'>Create new Recipe</Typography>
           <ModalBox>
             <UserAvatar
               sx={{marginRight: 1.5}}
@@ -108,9 +83,7 @@ export const Create = () => {
             </UserText>    
           </ModalBox>
         <Typography variant='p'>
-          {postType === 'recipe' && <Recipe handleCloseModal={handleCloseModal}/>}
-          {postType === 'review' && <Review handleCloseModal={handleCloseModal}/>} 
-          {postType === 'thread' && <Thread handleCloseModal={handleCloseModal}/>}             
+          <Add handleCloseModal={handleCloseModal}/>        
         </Typography>   
         </Box>
       </CustomModal> 
