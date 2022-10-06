@@ -19,7 +19,7 @@ export const Leftbar = ({ mode, setMode }) => {
     <Box
       flex={2}
       p={0}
-      sx={{ display: { xs: "none", sm: "block"} }}         
+      sx={{ display: { xs: "none", md: "block"} }}         
     >
       <Box sx={{ position: 'fixed' }}>
         <List sx={{ paddingTop: 2, paddingBottom: 2 }}>
@@ -88,7 +88,7 @@ export const Leftbar = ({ mode, setMode }) => {
                 <ListItemIcon>
                   <DarkMode />
                 </ListItemIcon>
-                <Switch onChange={(e) => setMode(mode === 'light' ? 'dark' : 'light')}/>
+                <Switch checked={mode === 'dark' ? true : false} onChange={(e) => setMode(mode === 'light' ? 'dark' : 'light')}/>
               </ListItemButton>
             </ListItem>
           </List>

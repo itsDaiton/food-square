@@ -47,7 +47,7 @@ export const Rightbar = () => {
   return (
     <Box
       flex={2}
-      sx={{ display: { xs: "none", sm: "block" } }}
+      sx={{ display: { xs: "none", md: "block" } }}
     >
       <Box position='fixed' /*boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px;'*/>
         <Typography component={'span'} variant='h4' sx={{

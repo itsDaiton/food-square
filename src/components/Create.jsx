@@ -45,7 +45,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import axios from 'axios';
 import { Error} from '@mui/icons-material';
 
-const CustomTextField = styled(TextField)({
+export const CustomTextField = styled(TextField)({
   margin: 8 
 })
 
@@ -575,7 +575,6 @@ export const Create = () => {
           <AddIcon />
         </Fab>
       </Tooltip>
-
       <Dialog
       disableRestoreFocus
       open={openDialog}
@@ -621,7 +620,6 @@ export const Create = () => {
         </React.Fragment>
         </Box>
     </Dialog>
-
     <Dialog
       disableRestoreFocus
       open={openHelp}

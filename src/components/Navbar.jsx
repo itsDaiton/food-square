@@ -13,9 +13,36 @@ import FastfoodIcon from '@mui/icons-material/Fastfood';
 import { useState, useEffect } from 'react';
 import Authentication from '../services/Authentication';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { Divider, Link, ListItemIcon } from '@mui/material';
+import { Badge, Divider, Link, ListItemIcon, styled } from '@mui/material';
 import axios from 'axios';
 import { Logout, Person, Settings } from '@mui/icons-material';
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    backgroundColor: '#44b700',
+    color: '#44b700',
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+  }
+}));
+
+export const stringToColor = (string) => {
+  let hash = 0;
+  let i;
+
+  for (i = 0; i < string.length; i += 1) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  let color = '#';
+
+  for (i = 0; i < 3; i += 1) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += `00${value.toString(16)}`.slice(-2);
+  }
+
+  return color;
+}
+
 
 export const Navbar = () => {
   const [anchorElUser, setAnchorElUser] = useState(null)
@@ -46,6 +73,15 @@ export const Navbar = () => {
       navigate("/login")
     })
 
+  }
+
+  const stringAvatar = (username) => {
+    return {
+      sx: {
+        bgcolor: stringToColor(username),
+      },
+      children: `${username.charAt(0)}`,
+    };
   }
 
   return (
@@ -106,15 +142,20 @@ export const Navbar = () => {
           >
               {user && <Link underline='none' variant='body1' component={RouterLink} to="/" sx={{ color: 'white', mr: 1, ml: 1 }}>Home</Link>}
               <Link underline='none' variant='body1' component={RouterLink} to="/" sx={{ color: 'white', mr: 1, ml: 1 }}>Discover</Link>
-              <Link underline='none' variant='body1' component={RouterLink} to="/" sx={{ color: 'white', mr: 1, ml: 1 }}>Recipes</Link>
             </Box>
           </Box>
           <Box sx={{ flexGrow: 0 }}>
             {user ?
             <Box display='flex' alignItems='center'>
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/resources/OkayChamp.png"  />
-              </IconButton>
+              <StyledBadge
+                overlap="circular"
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                variant="dot"
+              >
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar {...stringAvatar(user.username)} /*src="/resources/OkayChamp.png"*/  />
+                </IconButton>
+              </StyledBadge>
             </Box>
             :
             <Box sx={{
@@ -148,10 +189,7 @@ export const Navbar = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem>
-                <ListItemIcon>
-                <Person fontSize="small" />
-                </ListItemIcon>
+              <MenuItem sx={{ pointerEvents: 'none', justifyContent: 'center' }}>
                 {user.username}
               </MenuItem>
               <Divider/>
