@@ -95,7 +95,15 @@ export const Recipe = ({ recipe }) => {
   const [alertType, setAlertType] = useState(null)
   const [alertMessage, setAlertMessage] = useState('')
 
+  const [checkFollow, setCheckFollow] = useState(null)
+  const [checkFavorite, setCheckFavorite] = useState()
+  const [checkReview, setCheckReview] = useState()
+
   const [menuItem, setMenuItem] = useState(null)
+
+  const [mode, setMode] = useState('add')
+
+  const [reviewId, setReviewId] = useState(null)
 
   const tiny = useMediaQuery(theme.breakpoints.down(500))
   const small = useMediaQuery(theme.breakpoints.down(900))
@@ -128,6 +136,31 @@ export const Recipe = ({ recipe }) => {
       setAverageRating(response.data)
     })
   }
+
+  const getFollowCheck = () => {
+    axios.get('http://localhost:8080/api/v1/follows/follows/' + recipe.appUser.id , { withCredentials: true }).then((response) => {
+      setCheckFollow(response.data)
+    })
+  }
+
+  const getFavoriteCheck = () => {
+    axios.get('http://localhost:8080/api/v1/users/checkFavorite/' + recipe.id, { withCredentials: true }).then((response) => {
+      setCheckFavorite(response.data)
+    })
+  }
+
+  const getReviewCheck = () => {
+    axios.get('http://localhost:8080/api/v1/reviews/containsReview/' + recipe.id, { withCredentials: true }).then((response) => {
+      setCheckReview(response.data)
+    })
+  }
+
+  useEffect(() => {
+    getFollowCheck()
+    getFavoriteCheck()
+    getReviewCheck()
+    // eslint-disable-next-line
+  }, [])
   
   useEffect(() => {
     getReviewCount()
@@ -141,7 +174,6 @@ export const Recipe = ({ recipe }) => {
     }, 10000)
 
     return () => clearInterval(interval)
-
     // eslint-disable-next-line
   }, [])
 
@@ -164,8 +196,6 @@ export const Recipe = ({ recipe }) => {
   }
 
   const handleOpenReviewDialog = (e) => {
-    e.stopPropagation()
-    e.preventDefault()
     setOpenAlert(false)
     setOpenReviewDialog(true)
     setReviewInputs({
@@ -173,6 +203,7 @@ export const Recipe = ({ recipe }) => {
       appUser: user.id,
       recipe: recipe.id
     })
+    handleCloseMenuMore()
   }
 
   const handleCloseReviewDialog = () => {
@@ -225,27 +256,70 @@ export const Recipe = ({ recipe }) => {
   const handleReviewSubmit = (e) => {
     e.preventDefault()
 
-    axios.post('http://localhost:8080/api/v1/reviews/add', reviewInputs, { withCredentials: true }).then((response) => {
-      handleCloseReviewDialog()
-      setAlertMessage(response.data.message)
-      setAlertType('success')
-      setOpenAlert(true)
-    }).catch((error) => {
-      if (error.response.data.errorList) {
+    if (mode === 'add') {
+      axios.post('http://localhost:8080/api/v1/reviews/add', reviewInputs, { withCredentials: true }).then((response) => {
+        handleCloseReviewDialog()
+        setAlertMessage(response.data.message)
+        setAlertType('success')
+        setOpenAlert(true)
+        getReviewCount()
+        getReviewCheck()
+        getAverageRating() 
+      }).catch((error) => {
         clearReviewErrors()
-        error.response.data.errorList.forEach(err => {
-          if (err.field === 'text') {
-            setReviewTextError(err.message)
-          }
-          if (err.field === 'rating') {
-            setRatingError(err.message)     
-          }
-        })
-        setAlertMessage('Something went wrong. Please check individual fields for error description.')
-        setAlertType('error')
-        setOpenAlert(true) 
-      }
-    })
+        if (error.response.data.errorList) {
+          error.response.data.errorList.forEach(err => {
+            if (err.field === 'text') {
+              setReviewTextError(err.message)
+            }
+            if (err.field === 'rating') {
+              setRatingError(err.message)     
+            }
+          })
+          setAlertMessage('Something went wrong. Please check individual fields for error description.')
+          setAlertType('error')
+          setOpenAlert(true) 
+        }
+        else {
+          setAlertMessage(error.response.data.message)
+          setAlertType('error')
+          setOpenAlert(true)
+        }
+      })
+    }
+    else {
+      axios.put('http://localhost:8080/api/v1/reviews/update/' + reviewId, 
+      { text: reviewInputs.text, rating: reviewInputs.rating },
+      { withCredentials: true }).then((response) => {
+        handleCloseReviewDialog()
+        setAlertMessage(response.data.message)
+        setAlertType('success')
+        setOpenAlert(true)
+        getReviewCount()
+        getReviewCheck()
+        getAverageRating()     
+      }).catch((error) => {
+        clearReviewErrors()
+        if (error.response.data.errorList) {
+          error.response.data.errorList.forEach(err => {
+            if (err.field === 'text') {
+              setReviewTextError(err.message)
+            }
+            if (err.field === 'rating') {
+              setRatingError(err.message)     
+            }
+          })
+          setAlertMessage('Something went wrong. Please check individual fields for error description.')
+          setAlertType('error')
+          setOpenAlert(true) 
+        }
+        else {
+          setAlertMessage(error.response.data.message)
+          setAlertType('error')
+          setOpenAlert(true)
+        }
+      })
+    }
   }
 
   const handleCommentSubmit = (e) => {
@@ -256,6 +330,7 @@ export const Recipe = ({ recipe }) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)
+      getCommentCount()
     }).catch((error) => {
       if (error.response.data.errorList) {
         clearCommentErrors()
@@ -269,6 +344,121 @@ export const Recipe = ({ recipe }) => {
         setOpenAlert(true)
       }
     })
+  }
+
+  const handleFollow = (e) => {
+    e.preventDefault()
+
+    axios.post('http://localhost:8080/api/v1/follows/follow', 
+    { follower: user.id, followed: recipe.appUser.id }, 
+    { withCredentials: true }).then((response) => {
+      handleCloseMenuMore()
+      setAlertMessage(response.data.message)
+      setAlertType('success')
+      setOpenAlert(true)
+      getFollowCheck()
+    }).catch((error) => {
+      setAlertMessage(error.response.data.message)
+      setAlertType('error')
+      setOpenAlert(true)    
+    })
+  }
+
+  const handleUnfollow = (e) => {
+    e.preventDefault()
+    
+    axios.delete('http://localhost:8080/api/v1/follows/unfollow/' + recipe.appUser.id, { withCredentials: true }).then((response) => {
+      setAlertMessage(response.data.message)
+      handleCloseMenuMore() 
+      setAlertType('success')
+      setOpenAlert(true)
+      getFollowCheck()
+    }).catch((error) => {
+      setAlertMessage(error.response.data.message)
+      setAlertType('error')
+      setOpenAlert(true)  
+    })
+  }
+
+  const handleFavorite = (e) => {
+    e.preventDefault()
+
+    axios.put('http://localhost:8080/api/v1/users/favoriteRecipe',
+    { appUser: user.id, recipe: recipe.id },
+    { withCredentials: true }).then((response) => {
+      handleCloseMenuMore()
+      setAlertMessage(response.data.message)
+      setAlertType('success')
+      setOpenAlert(true)  
+      getFavoriteCheck()
+    }).catch((error) => {
+      setAlertMessage(error.response.data.message)
+      setAlertType('error')
+      setOpenAlert(true)    
+    })
+  }
+
+  const handleUnfavorite = (e) => {
+    e.preventDefault()
+
+    axios.put('http://localhost:8080/api/v1/users/unfavoriteRecipe',
+    { appUser: user.id, recipe: recipe.id },
+    { withCredentials: true }).then((response) => {
+      handleCloseMenuMore()
+      setAlertMessage(response.data.message)
+      setAlertType('success')
+      setOpenAlert(true)
+      getFavoriteCheck() 
+    }).catch((error) => {
+      setAlertMessage(error.response.data.message)
+      setAlertType('error')
+      setOpenAlert(true)    
+    })
+  }
+
+  const handleReviewDelete = (e) => {
+    e.preventDefault()
+
+    axios.delete('http://localhost:8080/api/v1/reviews/deleteForUser/' + recipe.id, { withCredentials: true }).then((response) => {
+      setAlertMessage(response.data.message)
+      setAlertType('success')
+      setOpenAlert(true)
+      getReviewCheck()
+      getReviewCount()
+      getAverageRating()
+      handleCloseMenuMore() 
+    }).catch((error) => {
+      setAlertMessage(error.response.data.message)
+      setAlertType('error')
+      setOpenAlert(true)  
+    })
+  }
+
+  const handleReviewAdd = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setMode('add')
+    handleOpenReviewDialog()
+  }
+
+  const handleReviewEdit = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setMode('edit')
+
+    axios.get('http://localhost:8080/api/v1/reviews/getByRecipe/' + recipe.id, { withCredentials: true }).then((response) => {
+      setReviewInputs({
+        ...reviewInputs,
+        text: response.data.text,
+        rating: response.data.rating
+      })
+      setReviewId(response.data.id)
+    }).catch((error) => {
+      setAlertMessage(error.response.data.message)
+      setAlertType('error')
+      setOpenAlert(true)    
+    })
+    handleOpenReviewDialog()
   }
 
   const handleCloseAlert = (e, reason) => {
@@ -423,30 +613,52 @@ export const Recipe = ({ recipe }) => {
               onClick={e => e.stopPropagation()}
               onMouseDown={e => e.stopPropagation()}
             >
-              <MenuItem>
+              {checkFollow === false ?
+              <MenuItem onClick={handleFollow} disabled={checkFollow === null ? true : false}>
                 <ListItemIcon>
-                  <PersonAdd fontSize="small" />
+                  <PersonAdd fontSize="small"/>
                 </ListItemIcon>
                 Follow user @{recipe.appUser.userName}
               </MenuItem>
-              <MenuItem>
+              :
+              <MenuItem onClick={handleUnfollow} disabled={checkFollow === null ? true : false}>
+                <ListItemIcon>
+                  <PersonRemove fontSize="small"/>
+                </ListItemIcon>
+                Unfollow user @{recipe.appUser.userName}
+              </MenuItem>
+              }
+              {checkFavorite === false ?
+              <MenuItem onClick={handleFavorite} disabled={checkFavorite === null ? true : false}>
                 <ListItemIcon>
                   <BookmarkAdd fontSize="small" />
                 </ListItemIcon>
                 Favorite this recipe
               </MenuItem>
-              <MenuItem>
+              :
+              <MenuItem onClick={handleUnfavorite} disabled={checkFavorite === null ? true : false}>
                 <ListItemIcon>
-                  <Edit fontSize="small" />
+                  <BookmarkRemove fontSize="small" />
                 </ListItemIcon>
-                Edit your review
+                Unfavorite this recipe
               </MenuItem>
-              <MenuItem>
-                <ListItemIcon>
-                  <Delete fontSize="small" />
-                </ListItemIcon>
-                Delete your review
-              </MenuItem>
+              }
+              {checkReview === true &&
+                <MenuItem onClick={handleReviewEdit}>
+                  <ListItemIcon>
+                    <Edit fontSize="small" />
+                  </ListItemIcon>
+                  Edit your review
+                </MenuItem>
+              }     
+              {checkReview === true &&
+                <MenuItem onClick={handleReviewDelete}>
+                  <ListItemIcon>
+                    <Delete fontSize="small" />
+                  </ListItemIcon>
+                  Delete your review
+                </MenuItem>
+              }
             </Menu>
         {/*{p.appUser.pathToImage &&*/}
         <CardMedia
@@ -482,7 +694,7 @@ export const Recipe = ({ recipe }) => {
         <CardActions sx={{ ml: 1}}>
           <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
             <Tooltip title='Add a review'>
-              <IconButton aria-label="reviews" onClick={handleOpenReviewDialog} onMouseDown={e => e.stopPropagation()}>
+              <IconButton aria-label="reviews" onClick={handleReviewAdd} onMouseDown={e => e.stopPropagation()}>
                 <RateReviewOutlined sx={{ width: 38, height: 38, color: 'text.primary' }} />
               </IconButton>
             </Tooltip>
@@ -494,7 +706,12 @@ export const Recipe = ({ recipe }) => {
           </Box>
           <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
             <Tooltip title='Add a comment'>
-              <IconButton aria-label="comments" onClick={handleOpenCommentDialog} onMouseDown={e => e.stopPropagation()}>
+              <IconButton 
+                aria-label="comments" 
+                onClick={
+                  handleOpenCommentDialog
+                } 
+                onMouseDown={e => e.stopPropagation()}>
                 <ChatOutlined sx={{ width: 38, height: 38, color: 'text.primary' }}/>
               </IconButton>
             </Tooltip>
@@ -519,7 +736,7 @@ export const Recipe = ({ recipe }) => {
         }}
       >
         <Box bgcolor={'background.default'} color={'text.primary'} p={3}>
-          <Typography textAlign='center' variant='h6' sx={{ fontWeight: 'bold', mb: 5 }}>Add a review</Typography>
+          <Typography textAlign='center' variant='h6' sx={{ fontWeight: 'bold', mb: 5 }}>{mode === 'add' ? 'Add a review' : 'Edit a review'}</Typography>
           <Box display='flex' flexDirection={tiny ? 'column' : 'row'} justifyContent='start' alignItems='center' sx={{ }}>
             <CardHeader
               sx={{ p: 0 }}
@@ -593,7 +810,12 @@ export const Recipe = ({ recipe }) => {
             {ratingError ? <Typography color='error' variant='body2' sx={{ m: 1 }}>{ratingError}</Typography> : ''}
           </FormControl>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button variant='contained' sx={{ mt: 3, ml: 1, mr: 1 }} onClick={handleReviewSubmit}>Submit</Button>
+            <Button 
+              variant='contained' 
+              sx={{ mt: 3, ml: 1, mr: 1 }} 
+              onClick={handleReviewSubmit}>
+                {mode === 'add' ? 'Submit' : 'Confirm'}
+            </Button>
           </Box>
         </Box>
       </Dialog>

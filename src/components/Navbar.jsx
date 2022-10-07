@@ -133,16 +133,6 @@ export const Navbar = () => {
             flexGrow: 1,
             display: { xs: 'none', md: 'flex' },
           }}>
-            <Box
-              sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'center'
-              }}
-          >
-              {user && <Link underline='none' variant='body1' component={RouterLink} to="/" sx={{ color: 'white', mr: 1, ml: 1 }}>Home</Link>}
-              <Link underline='none' variant='body1' component={RouterLink} to="/" sx={{ color: 'white', mr: 1, ml: 1 }}>Discover</Link>
-            </Box>
           </Box>
           <Box sx={{ flexGrow: 0 }}>
             {user ?
