@@ -570,7 +570,7 @@ export const Create = () => {
           sx={{
             position: 'fixed',
             bottom: 25,
-            left: { xs: 'calc(100% - 81px)', md: 25},
+            left: 25
         }}>
           <AddIcon />
         </Fab>

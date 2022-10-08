@@ -13,9 +13,9 @@ import FastfoodIcon from '@mui/icons-material/Fastfood';
 import { useState, useEffect } from 'react';
 import Authentication from '../services/Authentication';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { Badge, Divider, Link, ListItemIcon, styled } from '@mui/material';
+import { Badge, Divider, Link, ListItemIcon, styled, Switch } from '@mui/material';
 import axios from 'axios';
-import { Logout, Person, Settings } from '@mui/icons-material';
+import { DarkMode, Logout, Person, Settings } from '@mui/icons-material';
 import AvatarService from '../services/AvatarService'
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -26,7 +26,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   }
 }));
 
-export const Navbar = () => {
+export const Navbar = ({ mode, setMode }) => {
   const [anchorElUser, setAnchorElUser] = useState(null)
 
   const handleOpenUserMenu = (event) => {
@@ -152,7 +152,7 @@ export const Navbar = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem sx={{ pointerEvents: 'none', justifyContent: 'center' }}>
+              <MenuItem sx={{ pointerEvents: 'none', fontWeight: 'bold'}}>
                 {user.username}
               </MenuItem>
               <Divider/>
@@ -173,6 +173,13 @@ export const Navbar = () => {
                   <Logout fontSize="small" />
                 </ListItemIcon>
                 Logout
+              </MenuItem>
+              <Divider/>
+              <MenuItem>
+                <ListItemIcon>
+                  <DarkMode fontSize="small" />
+                </ListItemIcon>
+                <Switch checked={mode === 'dark' ? true : false} onChange={(e) => setMode(mode === 'light' ? 'dark' : 'light')}/>
               </MenuItem>
             </Menu>
             : '' }

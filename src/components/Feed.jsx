@@ -60,7 +60,7 @@ export const Feed = () => {
   }
   else { 
     return (
-      <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}}>
+      <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}} id='back-to-top-anchor'>
         <Typography variant='h5' align='center' sx={{ mb: 2, fontWeight: 'bold' }}>Welcome to Food Square!</Typography>
         <Typography component='p' variant='body1' align='center' sx={{ mb: 1 }}>
           Unfortunately, at this momement, we couldn't find any recipes.

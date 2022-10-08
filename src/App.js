@@ -1,6 +1,6 @@
 import { createTheme, ThemeProvider } from "@mui/material";
 import { useState } from "react";
-import { Route, Routes } from "react-router";
+import { Route, Routes, Navigate } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register"
@@ -39,9 +39,11 @@ const theme = createTheme({
   return (
     <ThemeProvider theme={theme}>
       <Routes>
-        <Route path="/" element={<Home mode={mode} setMode={setMode} />}/>
+        <Route path="/" element={<Navigate to="/home" replace/>}/>
+        <Route path="/home" element={<Home mode={mode} setMode={setMode}/>}/>
         <Route path="/login" element={<Login/>}/>
         <Route path="/register" element={<Register/>}/>
+        <Route path="*" element={<div>Error page placeholder.</div>}/>
       </Routes>
     </ThemeProvider>
   );

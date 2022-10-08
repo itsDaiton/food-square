@@ -1,9 +1,26 @@
-import { Box, List, ListItem, ListItemButton, ListItemText, ListItemIcon, Switch } from '@mui/material'
-import { Home, Tag, Restaurant, Description, Forum, Person, Settings, DarkMode } from '@mui/icons-material'
+import { 
+  Box,
+  List, 
+  ListItem, 
+  ListItemButton, 
+  ListItemText, 
+  ListItemIcon, 
+} 
+from '@mui/material'
+import { 
+  Home, 
+  Tag, 
+  Restaurant, 
+  Description, 
+  Person, 
+  Settings, 
+  LunchDining, 
+  Favorite }
+from '@mui/icons-material'
 import React, { useEffect, useState } from 'react'
 import Authentication from '../services/Authentication'
 
-export const Leftbar = ({ mode, setMode }) => {
+export const Leftbar = () => {
 
   const [user, setUser] = useState()
 
@@ -19,48 +36,56 @@ export const Leftbar = ({ mode, setMode }) => {
     <Box
       flex={2}
       p={0}
-      sx={{ display: { xs: "none", md: "block"} }}         
+      sx={{ display: { xs: "none", md: "block"} }}  
     >
       <Box sx={{ position: 'fixed' }}>
-        <List sx={{ paddingTop: 2, paddingBottom: 2 }}>
+        <List sx={{ p: 1 }}>
             <ListItem disablePadding>
               <ListItemButton component="a" href="#">
                 <ListItemIcon>
-                  <Home />
+                  <Home sx={{ fontSize: 30 }} />
                 </ListItemIcon>
-                <ListItemText primary='Home' />
+                <ListItemText primary='Home' primaryTypographyProps={{ fontSize: 20 }} /> 
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
               <ListItemButton component="a" href="#">
                 <ListItemIcon>
-                  <Tag />
+                  <Tag sx={{ fontSize: 30 }} />
                 </ListItemIcon>
-                <ListItemText primary="Discover" />
+                <ListItemText primary="Discover" primaryTypographyProps={{ fontSize: 20 }} />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
               <ListItemButton component="a" href="#">
                 <ListItemIcon>
-                  <Restaurant />
+                  <LunchDining sx={{ fontSize: 30 }} />
                 </ListItemIcon>
-                <ListItemText primary="Recipes" />
+                <ListItemText primary="Ingredients" primaryTypographyProps={{ fontSize: 20 }} />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
               <ListItemButton component="a" href="#">
                 <ListItemIcon>
-                  <Description />
+                  <Favorite sx={{ fontSize: 30 }} />
                 </ListItemIcon>
-                <ListItemText primary="Reviews" />
+                <ListItemText primary="Favorites" primaryTypographyProps={{ fontSize: 20 }} />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
               <ListItemButton component="a" href="#">
                 <ListItemIcon>
-                  <Forum />
+                  <Description sx={{ fontSize: 30 }} />
                 </ListItemIcon>
-                <ListItemText primary="Threads" />
+                <ListItemText primary="Reviews" primaryTypographyProps={{ fontSize: 20 }} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton component="a" href="#">
+                <ListItemIcon>
+                  <Restaurant sx={{ fontSize: 30 }} />
+                </ListItemIcon>
+                <ListItemText primary="Meal planning" primaryTypographyProps={{ fontSize: 20 }} />
               </ListItemButton>
             </ListItem>
             {user &&
@@ -68,29 +93,21 @@ export const Leftbar = ({ mode, setMode }) => {
             <ListItem disablePadding>
               <ListItemButton component="a" href="#">
                 <ListItemIcon>
-                  <Person />
+                  <Person sx={{ fontSize: 30 }} />
                 </ListItemIcon>
-                <ListItemText primary="Profile" />
+                <ListItemText primary="Profile" primaryTypographyProps={{ fontSize: 20 }} />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
               <ListItemButton component="a" href="#">
                 <ListItemIcon>
-                  <Settings />
+                  <Settings sx={{ fontSize: 30 }} />
                 </ListItemIcon>
-                <ListItemText primary="Settings" />
+                <ListItemText primary="Settings" primaryTypographyProps={{ fontSize: 20 }} />
               </ListItemButton>
             </ListItem>
             </>
             }
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  <DarkMode />
-                </ListItemIcon>
-                <Switch checked={mode === 'dark' ? true : false} onChange={(e) => setMode(mode === 'light' ? 'dark' : 'light')}/>
-              </ListItemButton>
-            </ListItem>
           </List>
       </Box>      
     </Box>
