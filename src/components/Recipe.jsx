@@ -39,11 +39,11 @@ import {
  } from '@mui/icons-material'
 import React, { useEffect } from 'react'
 import { useState } from 'react';
-import { stringToColor } from './Navbar';
 import { Box } from '@mui/system';
 import axios from 'axios';
 import { CustomTextField } from './Create';
 import Authentication from '../services/Authentication';
+import AvatarService from '../services/AvatarService'
 
 const CardText = styled(Typography)({
   fontFamily: 'Poppins',
@@ -525,17 +525,6 @@ export const Recipe = ({ recipe }) => {
     }
   }
 
-  const stringAvatar = (username) => {
-    return {
-      sx: {
-        bgcolor: stringToColor(username),
-        width: 45,
-        height: 45
-      },
-      children: `${username.charAt(0)}`,
-    };
-  }
-
   return (
     <React.Fragment>
       <Card sx={{margin: {md: 5, xs: 2}}}>
@@ -554,7 +543,7 @@ export const Recipe = ({ recipe }) => {
             }}
             onMouseDown={e => e.stopPropagation()}
           >
-            <Avatar {...stringAvatar(recipe.appUser.userName)} />
+            <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)} />
           </IconButton>
          }
           action={
@@ -741,7 +730,7 @@ export const Recipe = ({ recipe }) => {
             <CardHeader
               sx={{ p: 0 }}
               avatar={
-                <Avatar {...stringAvatar(recipe.appUser.userName)} />
+                <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)}/>
               }
               title={
                 <Box display='flex' flexDirection={tiny ? 'column' : 'row'} justifyContent='start' alignItems='center'>
@@ -836,7 +825,7 @@ export const Recipe = ({ recipe }) => {
             <CardHeader
                 sx={{ p: 0 }}
                 avatar={
-                  <Avatar {...stringAvatar(recipe.appUser.userName)} />
+                  <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)}/>
                 }
                 title={
                   <Box display='flex' flexDirection={tiny ? 'column' : 'row'} justifyContent='start' alignItems='center'>

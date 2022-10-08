@@ -16,6 +16,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Badge, Divider, Link, ListItemIcon, styled } from '@mui/material';
 import axios from 'axios';
 import { Logout, Person, Settings } from '@mui/icons-material';
+import AvatarService from '../services/AvatarService'
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -24,25 +25,6 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
   }
 }));
-
-export const stringToColor = (string) => {
-  let hash = 0;
-  let i;
-
-  for (i = 0; i < string.length; i += 1) {
-    hash = string.charCodeAt(i) + ((hash << 5) - hash);
-  }
-
-  let color = '#';
-
-  for (i = 0; i < 3; i += 1) {
-    const value = (hash >> (i * 8)) & 0xff;
-    color += `00${value.toString(16)}`.slice(-2);
-  }
-
-  return color;
-}
-
 
 export const Navbar = () => {
   const [anchorElUser, setAnchorElUser] = useState(null)
@@ -73,15 +55,6 @@ export const Navbar = () => {
       navigate("/login")
     })
 
-  }
-
-  const stringAvatar = (username) => {
-    return {
-      sx: {
-        bgcolor: stringToColor(username),
-      },
-      children: `${username.charAt(0)}`,
-    };
   }
 
   return (
@@ -143,7 +116,7 @@ export const Navbar = () => {
                 variant="dot"
               >
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar {...stringAvatar(user.username)} /*src="/resources/OkayChamp.png"*/  />
+                  <Avatar {...AvatarService.stringAvatar(user.username)}/>
                 </IconButton>
               </StyledBadge>
             </Box>

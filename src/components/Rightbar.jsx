@@ -1,68 +1,156 @@
-import { Box, Typography, List, ListItem, ListItemText, ListItemAvatar, Avatar, styled} from '@mui/material'
-import React from 'react'
+import { 
+  Box,
+  Typography,
+  List, 
+  ListItem, 
+  ListItemText, 
+  ListItemAvatar, 
+  Avatar, 
+  styled, 
+  IconButton, 
+  Button,
+  CircularProgress,
+} from '@mui/material'
+import axios from 'axios'
+import React, { useEffect } from 'react'
+import { useState } from 'react'
+import Authentication from '../services/Authentication'
+import AvatarService from '../services/AvatarService'
 
 export const UserAvatar = styled(Avatar)({
   width: 45, 
   height: 45,
-  cursor: 'pointer',
-  marginRight: 20
+  p: 0
 })
 
 export const UserText = styled(Typography)({
   fontFamily: 'Poppins',
-  display: 'inline',  
+  display: 'inline'
 })
 
-const FriendsListItem = ({ fullname, username, picture }) => {
+const FriendsListItem = ({ firstname, lastname, username, picture }) => {
   return (
     <ListItem>
         <ListItemAvatar>
-          <UserAvatar src={picture}/>
+          <IconButton>
+            <UserAvatar src={picture} {...AvatarService.stringAvatar(username)}/>
+          </IconButton>
         </ListItemAvatar>
+        {(firstname === null && lastname === null) ?
+          <ListItemText primary={
+            <UserText component={'span'}
+              sx={{
+                fontWeight: 'bold',
+                fontSize: 20,
+                ml: 1
+              }}
+            >
+              {username}
+            </UserText>         
+          }
+        />
+        :
         <ListItemText primary={
           <UserText component={'span'}
             sx={{
               fontWeight: 'bold',
-              fontSize: 20
+              fontSize: 20,
+              ml: 1
             }}
           >
-            {fullname}
-          </UserText>            
+            {firstname} {lastname}
+          </UserText>         
         }
         secondary={
           <UserText component={'span'}
             sx={{
-              color: 'gray'
+              color: 'gray',
+              ml: 1
               }}
             >
               @{username}
           </UserText>
         }
       />
-      </ListItem>
+      }
+    </ListItem>
   )  
 }
 
 export const Rightbar = () => {
+
+  const [follows, setFollows] = useState([])
+  const [user, setUser] = useState()
+  const [loading, setLoading] = useState(true)
+ 
+  useEffect(() => {
+    const currentUser = Authentication.getCurrentUser()
+    if (currentUser) {
+      setUser(currentUser)
+    }
+    // eslint-disable-next-line
+  }, [])
+  
+  const getFollows = () => {
+    axios.get('http://localhost:8080/api/v1/follows/followers/' + user.id).then((response) => {
+      setFollows(response.data)
+      setLoading(false)
+    })
+  }
+  
+  useEffect(() => {
+    if (user) {
+      getFollows()
+    }
+
+    const interval = setInterval(() => {
+      getFollows()
+    }, 10000)
+
+    return () => clearInterval(interval)
+    // eslint-disable-next-line
+  }, [user])
+
+  if (loading) {
+    return (
+      <Box
+      flex={2}
+      sx={{ display: { xs: "none", md: "block" } }}
+      >
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '25%'
+        }}>
+          <CircularProgress size={50} />
+        </Box>
+      </Box>    
+    )
+  }
+
   return (
     <Box
       flex={2}
       sx={{ display: { xs: "none", md: "block" } }}
     >
-      <Box position='fixed' /*boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px;'*/>
+      <Box position='fixed' sx={{ p: 3 }}>
         <Typography component={'span'} variant='h4' sx={{
           fontWeight: 'bold',
         }}
         >
-          Friends
+          My follows
         </Typography>
-        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-          <FriendsListItem fullname={'David Poslušný'} username={'davidposlusny'}  picture={'/resources/Despair.png'} />
-          <FriendsListItem fullname={'Antonín Dvořák'} username={'antonindvorak'}  picture={'/resources/KEKW.png'} />
-          <FriendsListItem fullname={'Josef Strašný'} username={'josefstrasny'}  picture={'/resources/monkaS.png'} />
-          <FriendsListItem fullname={'Tereza Rychlá'} username={'terezarychla'}  picture={'/resources/OkayChamp.png'} />
-          <FriendsListItem fullname={'Lucie Pomalá'} username={'luciepomala'}  picture={'/resources/YEP.png'} />
-        </List>     
+        <List sx={{ width: '100%', maxWidth: 360,  }}>
+          {follows.slice(0, 5).map(f => (
+            <FriendsListItem key={f.id} firstname={f.followed.firstName} lastname={f.followed.lastName} username={f.followed.userName} />
+          ))}
+        </List>
+        {follows.length >= 5 &&
+        <Box display='flex' justifyContent='center'>
+          <Button sx={{ width: '80%', m: 1 }} variant='contained'>Show more</Button>
+        </Box> 
+        } 
       </Box>
     </Box>
   )
