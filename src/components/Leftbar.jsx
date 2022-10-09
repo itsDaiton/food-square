@@ -19,6 +19,8 @@ import {
 from '@mui/icons-material'
 import React, { useEffect, useState } from 'react'
 import { getCurrentUser } from '../services/Authentication'
+import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom';
 
 export const Leftbar = () => {
 
@@ -31,6 +33,8 @@ export const Leftbar = () => {
     }
   }, [])
 
+  const route = useLocation()
+
   return (
     <Box
       flex={2}
@@ -38,27 +42,52 @@ export const Leftbar = () => {
       sx={{ display: { xs: "none", md: "block"} }}  
     >
       <Box sx={{ position: 'fixed' }}>
+
         <List sx={{ p: 1 }}>
-            <ListItem disablePadding>
-              <ListItemButton component="a" href="#">
+          <Box>
+            <ListItem
+              disablePadding
+              component={RouterLink}
+              to='/home'
+              style={{ color: 'inherit' }}     
+            >
+              <ListItemButton>
                 <ListItemIcon>
                   <Home sx={{ fontSize: 30 }} />
                 </ListItemIcon>
-                <ListItemText primary='Home' primaryTypographyProps={{ fontSize: 20 }} /> 
+                <ListItemText 
+                  primary='Home' 
+                  primaryTypographyProps={{
+                    fontSize: 20, 
+                    fontWeight: route.pathname === '/home' ? 'bold' : '' 
+                    }} 
+                /> 
               </ListItemButton>
             </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton component="a" href="#">
+            </Box>
+            <ListItem 
+              disablePadding
+              component={RouterLink}
+              to='/discover'
+              style={{ color: 'inherit' }} 
+            >
+              <ListItemButton>
                 <ListItemIcon>
                   <Tag sx={{ fontSize: 30 }} />
                 </ListItemIcon>
-                <ListItemText primary="Discover" primaryTypographyProps={{ fontSize: 20 }} />
+                <ListItemText 
+                  primary='Discover' 
+                  primaryTypographyProps={{
+                    fontSize: 20, 
+                    fontWeight: route.pathname === '/discover' ? 'bold' : '' 
+                    }} 
+                /> 
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
               <ListItemButton component="a" href="#">
                 <ListItemIcon>
-                  <LunchDining sx={{ fontSize: 30 }} />
+                  <LunchDining sx={{ fontSize: 30 }} />    
                 </ListItemIcon>
                 <ListItemText primary="Ingredients" primaryTypographyProps={{ fontSize: 20 }} />
               </ListItemButton>
@@ -108,7 +137,7 @@ export const Leftbar = () => {
             </>
             }
           </List>
-      </Box>      
+      </Box>                
     </Box>
   )
 }

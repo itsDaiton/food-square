@@ -1,6 +1,7 @@
 import { createTheme, ThemeProvider } from "@mui/material";
 import { useState } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
+import { Discover } from "./pages/Discover";
 import { Error } from "./pages/Error";
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
@@ -43,6 +44,7 @@ function App() {
         <Route path="/login" element={<Login/>}/>
         <Route path="/register" element={<Register/>}/>
         <Route path='/home' element={<Home mode={mode} setMode={setMode}/>}/>
+        <Route path='/discover' element={<Discover/>}/>
         <Route path="/" element={<Navigate to="/home" replace/>}/>
         <Route path="*" element={<Error/>}/>
       </Routes>
