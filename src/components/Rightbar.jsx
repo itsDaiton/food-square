@@ -14,7 +14,7 @@ import {
 import axios from 'axios'
 import React, { useEffect } from 'react'
 import { useState } from 'react'
-import Authentication from '../services/Authentication'
+import { getCurrentUser } from '../services/Authentication'
 import AvatarService from '../services/AvatarService'
 
 export const UserAvatar = styled(Avatar)({
@@ -84,7 +84,7 @@ export const Rightbar = () => {
   const [loading, setLoading] = useState(true)
  
   useEffect(() => {
-    const currentUser = Authentication.getCurrentUser()
+    const currentUser = getCurrentUser()
     if (currentUser) {
       setUser(currentUser)
     }
@@ -141,16 +141,22 @@ export const Rightbar = () => {
         >
           My follows
         </Typography>
+        {follows.length > 0 ?
         <List sx={{ width: '100%', maxWidth: 360,  }}>
           {follows.slice(0, 5).map(f => (
             <FriendsListItem key={f.id} firstname={f.followed.firstName} lastname={f.followed.lastName} username={f.followed.userName} />
           ))}
         </List>
+        :
+        <Box sx={{ mt: 2, mb: 2 }}>
+          <Typography>You are currently not following anyone.</Typography>
+        </Box>
+        }
         {follows.length >= 5 &&
         <Box display='flex' justifyContent='center'>
           <Button sx={{ width: '80%', m: 1 }} variant='contained'>Show more</Button>
         </Box> 
-        } 
+        }
       </Box>
     </Box>
   )

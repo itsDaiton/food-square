@@ -7,7 +7,7 @@ import {
 import React, { useEffect, useState } from 'react'
 import { Recipe } from './Recipe'
 import { Link as RouterLink } from 'react-router-dom';
-import Authentication from '../services/Authentication';
+import { getCurrentUser } from '../services/Authentication';
 import axios from 'axios'
 
 export const Feed = () => {
@@ -35,7 +35,7 @@ export const Feed = () => {
   }, [])
 
   useEffect(() => {
-    const currentUser = Authentication.getCurrentUser()
+    const currentUser = getCurrentUser()
     if (currentUser) {
       setUser(currentUser)
     }

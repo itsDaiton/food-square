@@ -11,7 +11,7 @@ import Avatar from '@mui/material/Avatar';
 import MenuItem from '@mui/material/MenuItem';
 import FastfoodIcon from '@mui/icons-material/Fastfood';
 import { useState, useEffect } from 'react';
-import Authentication from '../services/Authentication';
+import { getCurrentUser } from '../services/Authentication';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Badge, Divider, Link, ListItemIcon, styled, Switch } from '@mui/material';
 import axios from 'axios';
@@ -42,7 +42,7 @@ export const Navbar = ({ mode, setMode }) => {
   let navigate = useNavigate()
 
   useEffect(() => {
-    const currentUser = Authentication.getCurrentUser()
+    const currentUser = getCurrentUser()
     if (currentUser) {
       setUser(currentUser)
     }
@@ -51,10 +51,8 @@ export const Navbar = ({ mode, setMode }) => {
   const handleLogout = () => {
     localStorage.removeItem('user')
     axios.post('http://localhost:8080/api/v1/auth/logout', {}, {withCredentials: true}).then((response) => {
-      console.log(response.data)
       navigate("/login")
     })
-
   }
 
   return (

@@ -42,7 +42,7 @@ import { useState } from 'react';
 import { Box } from '@mui/system';
 import axios from 'axios';
 import { CustomTextField } from './Create';
-import Authentication from '../services/Authentication';
+import { getCurrentUser } from '../services/Authentication';
 import AvatarService from '../services/AvatarService'
 
 const CardText = styled(Typography)({
@@ -113,7 +113,7 @@ export const Recipe = ({ recipe }) => {
   let stars = []
 
   useEffect(() => {
-    const currentUser = Authentication.getCurrentUser()
+    const currentUser = getCurrentUser()
     if (currentUser) {
       setUser(currentUser)
     }

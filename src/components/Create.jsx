@@ -38,7 +38,7 @@ import {
   Link
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import Authentication from '../services/Authentication'
+import { getCurrentUser } from '../services/Authentication'
 import AddIcon from '@mui/icons-material/Add';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -193,7 +193,7 @@ export const Create = () => {
   }
 
   useEffect(() => {
-    const currentUser = Authentication.getCurrentUser()
+    const currentUser = getCurrentUser()
     if (currentUser) {
       setUser(currentUser)
     }

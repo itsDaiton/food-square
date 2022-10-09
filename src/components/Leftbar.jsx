@@ -18,19 +18,18 @@ import {
   Favorite }
 from '@mui/icons-material'
 import React, { useEffect, useState } from 'react'
-import Authentication from '../services/Authentication'
+import { getCurrentUser } from '../services/Authentication'
 
 export const Leftbar = () => {
 
   const [user, setUser] = useState()
 
   useEffect(() => {
-    const currentUser = Authentication.getCurrentUser()
+    const currentUser = getCurrentUser()
     if (currentUser) {
       setUser(currentUser)
     }
   }, [])
-
 
   return (
     <Box
