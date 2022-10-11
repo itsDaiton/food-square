@@ -139,7 +139,7 @@ export const Rightbar = () => {
           fontWeight: 'bold',
         }}
         >
-          My follows
+          Follows
         </Typography>
         {follows.length > 0 ?
         <List sx={{ width: '100%', maxWidth: 360,  }}>

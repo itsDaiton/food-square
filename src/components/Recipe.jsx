@@ -23,10 +23,19 @@ import {
   ListItemIcon,
   CardActionArea,
   Link,
+  Collapse,
+  Tab,
+  Tabs,
+  TableContainer,
+  Table,
+  TableCell,
+  TableBody,
+  TableRow,
+  Skeleton,
+  TableHead,
 } from '@mui/material'
 import { 
   MoreVert,
-  Star,
   ChatOutlined,
   RateReviewOutlined,
   StarBorderOutlined,
@@ -35,9 +44,13 @@ import {
   BookmarkAdd,
   BookmarkRemove,
   Edit,
-  Delete
+  Delete,
+  AccessAlarm,
+  ReceiptLongOutlined,
+  Equalizer,
  } from '@mui/icons-material'
 import React, { useEffect } from 'react'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useState } from 'react';
 import { Box } from '@mui/system';
 import axios from 'axios';
@@ -50,6 +63,17 @@ const CardText = styled(Typography)({
   display: 'inline',
   marginRight: 10
 })
+
+const ExpandMore = styled((props) => {
+  const { expand, ...other } = props
+  return <IconButton {...other} />
+})(({ theme, expand }) => ({
+  transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+  marginLeft: 'auto',
+  transition: theme.transitions.create('transform', {
+    duration: theme.transitions.duration.shortest,
+  }),
+}));
 
 export const Recipe = ({ recipe }) => {
 
@@ -79,10 +103,13 @@ export const Recipe = ({ recipe }) => {
   const [commentCount, setCommentCount] = useState()
   const [averageRating, setAverageRating] = useState()
 
+  const [recipeIngredients, setRecipeIngredients] = useState([])
+
   const [user, setUser] = useState()
 
   const [openReviewDialog, setOpenReviewDialog] = useState(false)
   const [openCommentDialog, setOpenCommentDialog] = useState(false)
+  const [openIngredientDialog, setOpenIngredientDialog] = useState(false)
 
   const [reviewInputs, setReviewInputs] = useState(defaultReview)
   const [commentInputs, setCommentInputs] = useState(defaultComment)
@@ -105,12 +132,15 @@ export const Recipe = ({ recipe }) => {
 
   const [reviewId, setReviewId] = useState(null)
 
-  const tiny = useMediaQuery(theme.breakpoints.down(500))
-  const small = useMediaQuery(theme.breakpoints.down(900))
-  const medium = useMediaQuery(theme.breakpoints.down(1050))
-  const big = useMediaQuery(theme.breakpoints.up(1050))
+  const [expanded, setExpanded] = useState(false)
 
-  let stars = []
+  const [tab, setTab] = useState(1)
+
+  const [loading, setLoading] = useState(true)
+
+  const [selectedIngredient, setSelectedIngredient] = useState(null)
+
+  const tiny = useMediaQuery(theme.breakpoints.down(500))
 
   useEffect(() => {
     const currentUser = getCurrentUser()
@@ -155,10 +185,18 @@ export const Recipe = ({ recipe }) => {
     })
   }
 
+  const getRecipeIngredients = () => {
+    axios.get('http://localhost:8080/api/v1/recipe-ingredients/getByRecipe/' + recipe.id).then((response) => {
+      setRecipeIngredients(response.data)
+      setLoading(false)
+    })
+  }
+
   useEffect(() => {
     getFollowCheck()
     getFavoriteCheck()
     getReviewCheck()
+    getRecipeIngredients()
     // eslint-disable-next-line
   }, [])
   
@@ -166,6 +204,7 @@ export const Recipe = ({ recipe }) => {
     getReviewCount()
     getCommentCount()
     getAverageRating()
+    getRecipeIngredients()
 
     const interval = setInterval(() => {
       getReviewCount()
@@ -229,6 +268,17 @@ export const Recipe = ({ recipe }) => {
     setOpenCommentDialog(false)
     setCommentInputs(defaultComment)
     clearCommentErrors()
+    handleCloseAlert()
+  }
+
+  const handleOpenIngredientDialog = (e) => {
+    setOpenAlert(false)
+    setOpenIngredientDialog(true)
+  }
+
+  const handleCloseIngredientDialog = (e) => {
+    setOpenIngredientDialog(false)
+    setSelectedIngredient(null)
     handleCloseAlert()
   }
 
@@ -461,11 +511,136 @@ export const Recipe = ({ recipe }) => {
     handleOpenReviewDialog()
   }
 
+  const handleExpandClick = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setExpanded(!expanded)
+  }
+
+  const handleTabChange = (e, newValue) => {
+    setTab(newValue)
+  }
+
   const handleCloseAlert = (e, reason) => {
     if (reason === 'clickaway') {
       return
     }
     setOpenAlert(false)
+  }
+
+  const loadTabsContent = (num) => {
+    switch (num) {
+      case 1:
+        return (
+          <Box>
+            <Box display='flex'>
+              <Typography paragraph mr={1}>
+                Instructions
+              </Typography>
+              <ReceiptLongOutlined/>
+            </Box>
+            <Typography paragraph sx={{ mb: 4, ml: 2, mt: 2 }} variant='body2'>
+              {recipe.instructions}
+            </Typography>
+            <Box display='flex'>
+              <Typography paragraph mr={1}>
+                Preparation time
+              </Typography>
+              <AccessAlarm/>
+            </Box>
+            <Typography paragraph sx={{ mb: 4, ml: 2, mt: 2 }} variant='body2'>
+              {recipe.timeToPrepare} minutes
+            </Typography>
+            <Box display='flex'>
+              <Typography paragraph mr={1}>
+                Cooking time 
+              </Typography>
+              <AccessAlarm/>
+            </Box>
+            <Typography paragraph sx={{ ml: 2, mt: 2 }} variant='body2'>
+              {recipe.timeToCook} minutes 
+            </Typography>
+          </Box>
+        )
+      case 2:
+        return (
+          <TableContainer>
+            <Table>
+              <TableBody>
+                {recipe.categories.map(c => (
+                  <TableRow key={c.name}>
+                    <TableCell>{editStringFormat(c.name)}</TableCell>
+                  </TableRow>
+                ))}           
+            </TableBody>            
+          </Table>
+        </TableContainer>
+        )
+      case 3:
+        if (!recipeIngredients.length > 0 ) {
+          return <Typography sx={{ m: 2 }}>This recipe does not contain any ingredients.</Typography>
+        }
+        return (
+          <Box>
+            <Typography sx={{ m: 2 }}>Content per <b>100g</b> edible portion.</Typography>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Ingredient</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: 'bold' }}>Amount</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: 'bold' }}>Calories</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: 'bold' }}>Fat&nbsp;(g)</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: 'bold' }}>Carbs&nbsp;(g)</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: 'bold' }}>Protein&nbsp;(g)</TableCell> 
+                    <TableCell align="center" ></TableCell>                  
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {recipeIngredients.map((ri) => (
+                    <TableRow
+                      key={ri.ingredient.code}
+                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    >
+                      <TableCell>{ri.ingredient.name}</TableCell>
+                      <TableCell align="center">{ri.amount}x</TableCell>
+                      <TableCell align="center">{ri.ingredient.calories}</TableCell>
+                      <TableCell align="center">{ri.ingredient.fat}</TableCell>
+                      <TableCell align="center">{ri.ingredient.carbohydrateTotal}</TableCell>
+                      <TableCell align="center">{ri.ingredient.protein}</TableCell>
+                      <TableCell align="center">
+                        <Tooltip title='Show full details'>
+                          <IconButton onClick={() => {
+                            setSelectedIngredient(ri.ingredient)
+                            handleOpenIngredientDialog()
+                            }}
+                          >
+                            <Equalizer sx={{ width: 38, height: 38, color: 'text.primary' }}/>
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>                 
+          </Box>
+        )
+      default:
+        return (
+        <Typography>Error - this tab does not exist.</Typography>
+        )
+    }
+  }
+
+  const editStringFormat = (string) => {
+    const words = string.replace('_', ' ').toLowerCase().split(' ')
+
+    for (let i = 0; i < words.length; i++) {
+      words[i] = words[i][0].toUpperCase() + words[i].substr(1)
+    }
+
+    return words.join(' ')
   }
 
   const convertToTimestamp = (date) => {
@@ -506,28 +681,9 @@ export const Recipe = ({ recipe }) => {
     return ret
   }
 
-  for (let i = 0; i < 5; i++) {
-    stars.push(<Star key={i} sx={{ width: 35, height: 35, color: '#FFA500' }}/>)
-  }
-
-  const renderStars = () => {
-    if (tiny) {
-      return <Star sx={{ width: 35, height: 35, color: '#FFA500' }} />
-    }
-    if (small && !tiny) {
-      return stars;    
-    }
-    if (medium && !small && !tiny) {
-      return <Star sx={{ width: 35, height: 35, color: '#FFA500' }} />
-    }
-    if (big) {
-      return stars;    
-    }
-  }
-
   return (
     <React.Fragment>
-      <Card sx={{margin: {md: 5, xs: 2}}}>
+      <Card sx={{margin: {md: 5, xs: 2}, borderRadius: 5}} elevation={10}>
         <CardActionArea 
           component={Link}
           href='https://mui.com/'
@@ -535,6 +691,9 @@ export const Recipe = ({ recipe }) => {
         >
         <CardHeader
          avatar={
+          loading ? 
+          ( <Skeleton animation="wave" variant="circular" width={40} height={40} /> )
+          :
           <IconButton 
             sx={{ p: 0 }} 
             onClick={e => {
@@ -547,11 +706,20 @@ export const Recipe = ({ recipe }) => {
           </IconButton>
          }
           action={
+            loading ? null :
             <IconButton aria-label="settings" onClick={handleOpenMenuMore} onMouseDown={e => e.stopPropagation()}>
             <MoreVert />
           </IconButton>
           }
           title={
+            loading ? 
+            ( <Skeleton
+                animation="wave"
+                height={34}
+                width="20%"
+              />
+            ) 
+            :
             <React.Fragment>
                 <CardText
                 sx={{
@@ -650,6 +818,13 @@ export const Recipe = ({ recipe }) => {
               }
             </Menu>
         {/*{p.appUser.pathToImage &&*/}
+        {loading ? 
+        (
+        <Skeleton variant="rectangular" width="100%">
+          <div style={{ paddingTop: '57%' }} />
+        </Skeleton>     
+        ) 
+        :
         <CardMedia
           component="img"
           height={'20%'}
@@ -657,61 +832,135 @@ export const Recipe = ({ recipe }) => {
           image="https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
           alt="Paella dish"
         />
+        }
         {/*}*/}
         <CardContent>
           <Box display='flex' flexDirection='row' justifyContent='space-between'>
+            {loading ?
+            (
+              <Skeleton
+                animation="wave"
+                height={34}
+                width="50%"
+              />
+            )     
+            :
             <Typography variant='h6'>
               {recipe.name}
             </Typography>
-            {averageRating >= 1.0 ?
+            }
+            {loading ? 
+            (
+              <Skeleton
+                animation="wave"
+                height={34}
+                width="20%"
+              />
+            )
+            :
+            averageRating >= 1.0 ?
             <Box display='flex' alignItems='center'>     
               <Typography variant='h6' sx={{ mr: 1, fontWeight: 'bold' }}>{averageRating}</Typography>
-              {renderStars()}
+              <Rating readOnly value={averageRating} precision={0.5} size='large' />
             </Box>
             :
             <Box display='flex' alignItems='center'>
               <Typography variant='body1' sx={{ mr: 1 }}>No reviews yet.</Typography>
               <StarBorderOutlined sx={{ width: 35, height: 35 }} />
             </Box>
-            }
+             
+            }       
           </Box>
           <Divider sx={{ mt: 2, mb: 2 }}/>
+          {loading ? 
+          (
+            <Skeleton
+                animation="wave"
+                height={34}
+                width="100%"
+              />
+          )
+          :
           <Typography variant="body1">
             {recipe.description}
-          </Typography>   
+          </Typography> 
+          }  
         </CardContent>
-        <CardActions sx={{ ml: 1}}>
-          <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
-            <Tooltip title='Add a review'>
-              <IconButton aria-label="reviews" onClick={handleReviewAdd} onMouseDown={e => e.stopPropagation()}>
-                <RateReviewOutlined sx={{ width: 38, height: 38, color: 'text.primary' }} />
-              </IconButton>
-            </Tooltip>
-            {reviewCount > 0 ? 
-            <Typography sx={{ mr: 3, ml: 1 }}>{reviewCount}</Typography>
+        <CardActions sx={{ ml: 1, display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>
+          <Box display='flex' flexDirection='row'>
+            {loading ? 
+            (<Skeleton animation="wave" variant="circular" width={45} height={45} sx={{ m: 2 }} />)
             :
-            <Typography sx={{ mr: 4, ml: 1 }}></Typography>       
-          } 
-          </Box>
-          <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
-            <Tooltip title='Add a comment'>
-              <IconButton 
-                aria-label="comments" 
-                onClick={
-                  handleOpenCommentDialog
-                } 
-                onMouseDown={e => e.stopPropagation()}>
-                <ChatOutlined sx={{ width: 38, height: 38, color: 'text.primary' }}/>
-              </IconButton>
-            </Tooltip>
-            {commentCount > 0 ?
-            <Typography sx={{ mr: 3, ml: 1 }}>{commentCount}</Typography>
-            :
-            <Typography sx={{ mr: 4, ml: 1 }}></Typography>
+            <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
+              <Tooltip title='Add a review'>
+                <IconButton aria-label="reviews" onClick={handleReviewAdd} onMouseDown={e => e.stopPropagation()}>
+                  <RateReviewOutlined sx={{ width: 38, height: 38, color: 'text.primary' }} />
+                </IconButton>
+              </Tooltip>
+              {reviewCount > 0 ? 
+              <Typography sx={{ mr: 3, ml: 1 }}>{reviewCount}</Typography>
+              :
+              <Typography sx={{ mr: 4, ml: 1 }}></Typography>       
+            } 
+            </Box>
             }
-          </Box>   
+            {loading ? 
+            (<Skeleton animation="wave" variant="circular" width={45} height={45} sx={{ m: 2 }} />)
+            :
+            <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
+              <Tooltip title='Add a comment'>
+                <IconButton 
+                  aria-label="comments" 
+                  onClick={
+                    handleOpenCommentDialog
+                  } 
+                  onMouseDown={e => e.stopPropagation()}
+                >
+                  <ChatOutlined sx={{ width: 38, height: 38, color: 'text.primary' }}/>
+                </IconButton>
+              </Tooltip>
+              {commentCount > 0 ?
+              <Typography sx={{ mr: 3, ml: 1 }}>{commentCount}</Typography>
+              :
+              <Typography sx={{ mr: 4, ml: 1 }}></Typography>
+              }
+            </Box>
+            }
+          </Box>
+          {loading ? (<Skeleton animation="wave" variant="circular" width={45} height={45} sx={{ m: 2 }} />)
+          : 
+          <ExpandMore
+            aria-label="show more"
+            expand={expanded}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            onMouseDown={e => e.stopPropagation()}
+          >
+            <Tooltip title={expanded ? 'Hide details' : 'Show details'}>
+              <ExpandMoreIcon sx={{ width: 38, height: 38, color: 'text.primary' }}/>
+            </Tooltip>
+          </ExpandMore>
+          }  
         </CardActions>
         </CardActionArea>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <Divider/>
+          <Tabs
+            value={tab}
+            onChange={handleTabChange}
+            textColor="primary"
+            indicatorColor="primary"
+            variant='fullWidth'
+            orientation={tiny ? 'vertical' : 'horizontal'}
+          >
+            <Tab value={1} label="Details" sx={{ typography: 'body1' }}/>
+            <Tab value={2} label="Categories" sx={{ typography: 'body1' }}/>
+            <Tab value={3} label="Ingredients" sx={{ typography: 'body1' }}/>
+          </Tabs>
+          <CardContent>
+            {loadTabsContent(tab)}
+          </CardContent>
+      </Collapse>
       </Card>
       <Dialog
         disableRestoreFocus
@@ -885,6 +1134,92 @@ export const Recipe = ({ recipe }) => {
           </Box>
         </Box>
       </Dialog>
+      {selectedIngredient &&
+      <Dialog
+        disableRestoreFocus
+        open={openIngredientDialog}
+        onClose={handleCloseIngredientDialog}
+        scroll='paper'
+        fullWidth
+        maxWidth="md"  
+      >
+        <Box bgcolor={'background.default'} color={'text.primary'} p={3}>
+          <Typography textAlign='center' variant='h6' sx={{ fontWeight: 'bold' }}>{selectedIngredient.name}</Typography>
+          <Typography sx={{ m: 2 }}>Content per <b>100g</b> edible portion.</Typography>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Component</TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>Value</TableCell>                
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell>Calories</TableCell>
+                  <TableCell align="center">{selectedIngredient.calories} [kcal]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Fat</TableCell>
+                  <TableCell align="center">{selectedIngredient.fat} [g]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Fatty acids, saturated</TableCell>
+                  <TableCell align="center">{selectedIngredient.saturatedFattyAcids} [g]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Fatty acids, monounsaturated</TableCell>
+                  <TableCell align="center">{selectedIngredient.monounsaturatedFattyAcids} [g]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Fatty acids, polyunsaturated</TableCell>
+                  <TableCell align="center">{selectedIngredient.polyunsaturatedFattyAcids} [g]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Fatty acids, trans</TableCell>
+                  <TableCell align="center">{selectedIngredient.transFattyAcids} [g]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Carbohydrate (total)</TableCell>
+                  <TableCell align="center">{selectedIngredient.carbohydrateTotal} [g]</TableCell>
+                </TableRow>    
+                <TableRow>
+                  <TableCell>Carbohydrate (available)</TableCell>
+                  <TableCell align="center">{selectedIngredient.carbohydrateAvailable} [g]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Fibre</TableCell>
+                  <TableCell align="center">{selectedIngredient.fibre} [g]</TableCell>
+                </TableRow> 
+                <TableRow>
+                  <TableCell>Sugar</TableCell>
+                  <TableCell align="center">{selectedIngredient.sugar} [g]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Protein</TableCell>
+                  <TableCell align="center">{selectedIngredient.protein} [g]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Sodium</TableCell>
+                  <TableCell align="center">{selectedIngredient.sodium} [mg]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Salt</TableCell>
+                  <TableCell align="center">{selectedIngredient.salt} [g]</TableCell>
+                </TableRow>  
+                <TableRow>
+                  <TableCell>Water</TableCell>
+                  <TableCell align="center">{selectedIngredient.water} [g]</TableCell>
+                </TableRow>         
+              </TableBody>
+            </Table>
+          </TableContainer> 
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button variant='contained' sx={{ mt: 3, ml: 1, mr: 1 }} onClick={handleCloseIngredientDialog}>Close</Button>
+          </Box>
+        </Box>
+      </Dialog>
+      }
       <Snackbar open={openAlert} autoHideDuration={5000} onClose={handleCloseAlert}>
         <Alert onClose={handleCloseAlert} variant='filled' severity={alertType} sx={{ width: '100%' }}>
           {alertMessage}        

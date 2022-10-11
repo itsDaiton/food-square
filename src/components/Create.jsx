@@ -44,6 +44,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import ClearIcon from '@mui/icons-material/Clear';
 import axios from 'axios';
 import { Error} from '@mui/icons-material';
+import { useRef } from 'react';
+import validator from 'validator';
 
 export const CustomTextField = styled(TextField)({
   margin: 8 
@@ -124,6 +126,8 @@ export const Create = () => {
 
   const [activeStep, setActiveStep] = useState(0)
 
+  let formRef = useRef()
+
   const mobile = useMediaQuery(theme.breakpoints.down(500))
 
   const [openAlertError, setOpenAlertError] = useState(false)
@@ -185,7 +189,64 @@ export const Create = () => {
   }
 
   const handleNext= () => {
-    setActiveStep(activeStep + 1)
+    switch (activeStep) {
+      case 0:
+        if (validator.isEmpty(recipeInputs.name)) {
+          setNameError('This field is required.')
+        }
+        else {
+          setNameError('')
+        }
+        if (validator.isEmpty(recipeInputs.description)) {
+          setDescriptionError('This field is required.')
+        }
+        else {
+          setDescriptionError('')
+        }
+        if (validator.isEmpty(recipeInputs.meal)) {
+          setMealError('This field is required.')
+        }
+        else {
+          setMealError('')
+        }
+        if (!validator.isEmpty(recipeInputs.name) && !validator.isEmpty(recipeInputs.description) && !validator.isEmpty(recipeInputs.meal)) {
+          setActiveStep(activeStep + 1)
+        }
+        break
+      case 1:
+        if (!addedIngredients.length > 0) {
+          setIngredientsError(true)
+        } 
+        else {
+          setActiveStep(activeStep + 1)
+        }
+        break
+      case 2:
+        if (validator.isEmpty(recipeInputs.instructions)) {
+          setInstructionsError('This field is required.')
+        }
+        else {
+          setInstructionsError('')
+        }
+        if (validator.isEmpty(recipeInputs.timeToPrepare)) {
+          setTimeToPrepError('This field is required.')
+        }
+        else {
+          setTimeToPrepError('')
+        }
+        if (validator.isEmpty(recipeInputs.timeToCook)) {
+          setTimeToCookError('This field is required.')
+        }
+        else {
+          setTimeToCookError('')
+        }
+        if (!validator.isEmpty(recipeInputs.instructions) && !validator.isEmpty(recipeInputs.timeToPrepare) && !validator.isEmpty(recipeInputs.timeToCook)) {
+          setActiveStep(activeStep + 1)
+        }
+        break
+      default:
+        setActiveStep(activeStep + 1)
+    }
   }
 
   const handleBack = () => {
@@ -329,7 +390,7 @@ export const Create = () => {
     switch (step) {
       case 0:
         return ( 
-        <FormControl fullWidth>
+        <FormControl fullWidth ref={formRef}>
           <Typography variant='body1' gutterBottom sx={{ fontWeight: 'bold' }}>
             Recipe information
           </Typography>
