@@ -1,22 +1,38 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import MenuItem from '@mui/material/MenuItem';
-import FastfoodIcon from '@mui/icons-material/Fastfood';
 import { useState, useEffect } from 'react';
-import { getCurrentUser } from '../services/Authentication';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { Badge, Divider, Link, ListItemIcon, styled, Switch } from '@mui/material';
-import axios from 'axios';
-import { DarkMode, Logout, Person, Settings } from '@mui/icons-material';
+import { 
+  Badge, 
+  Divider, 
+  Drawer, 
+  Link, 
+  ListItemIcon, 
+  styled, 
+  Switch,
+  Avatar,
+  Container,
+  Typography,
+  IconButton,
+  Toolbar,
+  MenuItem,
+  Menu,
+  Box,
+  AppBar,
+} 
+from '@mui/material';
+import { 
+  DarkMode,
+  Logout,  
+  Person, 
+  Settings,
+} 
+from '@mui/icons-material';
+import MenuIcon from '@mui/icons-material/Menu';
+import FastfoodIcon from '@mui/icons-material/Fastfood';
 import AvatarService from '../services/AvatarService'
+import { getCurrentUser } from '../services/Authentication';
+import { Navigation } from './Navigation';
+import axios from 'axios';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -39,6 +55,8 @@ export const Navbar = ({ mode, setMode }) => {
 
   const [user, setUser] = useState()
 
+  const [openDrawer, setOpenDrawer] = useState(false)
+
   let navigate = useNavigate()
 
   useEffect(() => {
@@ -54,9 +72,17 @@ export const Navbar = ({ mode, setMode }) => {
       navigate("/login")
     })
   }
-
   return (
     <AppBar position="sticky">
+      <Drawer
+        open={openDrawer}
+        onClose={() => setOpenDrawer(false)}
+        anchor='left'
+      >
+        <Box p={2} width={250} textAlign='center' role='presentation'>
+          <Navigation/>
+        </Box>
+      </Drawer>
       <Container maxWidth="xxl">
         <Toolbar disableGutters>
           <Box display='flex' alignItems='center'>
@@ -76,13 +102,14 @@ export const Navbar = ({ mode, setMode }) => {
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
+              onClick={() => setOpenDrawer(true)}
               size="large"
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
               color="inherit"
             >
-              <MenuIcon />
+              <MenuIcon sx={{ width: 40, height: 40 }}/>
             </IconButton>
           </Box>
           <FastfoodIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />

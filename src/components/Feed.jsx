@@ -23,7 +23,8 @@ import { Recipe } from './Recipe'
 import { Link as RouterLink } from 'react-router-dom';
 import { getCurrentUser } from '../services/Authentication';
 import axios from 'axios'
-import { AccessAlarm, FilterList, FormatListBulleted, Restaurant } from '@mui/icons-material';
+import { AccessAlarm, Clear, FilterList, FormatListBulleted, Restaurant } from '@mui/icons-material';
+import { useTheme } from '@emotion/react';
 
 export const Feed = () => {
 
@@ -72,6 +73,8 @@ export const Feed = () => {
     prepTime: '',
     cookTime: '' 
   }
+
+  const theme = useTheme()
 
   const [filterInputs, setFilterInputs] = useState(noFilters)
 
@@ -226,10 +229,10 @@ export const Feed = () => {
   if (recipes.length > 0 ) {
     return (
       <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}}>
-        <Box display='flex' justifyContent='center'>
+        <Box display='flex' justifyContent='space-between'>
           <Paper 
             elevation={4} 
-            sx={{ width: 60, height: 60, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%'}}
+            sx={{ width: 60, height: 60, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', ml: 6, mb: 2 }}
           >
             <Tooltip title='Filter your feed'>
               <IconButton onClick={handleOpenDialog}>
@@ -237,6 +240,18 @@ export const Feed = () => {
               </IconButton>
             </Tooltip>
           </Paper>
+          {filteredRecipes &&
+          <Paper 
+            elevation={4} 
+            sx={{ width: 60, height: 60, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', mr: 6, mb: 2, background: theme.palette.error.main }}
+          >
+            <Tooltip title='Clear all filters'>
+              <IconButton onClick={clearFilters}>
+                <Clear sx={{ color: 'text.primary' }}/>
+              </IconButton>
+            </Tooltip>
+          </Paper>
+          }          
           <Dialog
           disableRestoreFocus
           open={openFilterDialog}
@@ -348,7 +363,14 @@ export const Feed = () => {
         </Box>
         {
           filteredRecipes ? (filteredRecipes.length > 0 ? filteredRecipes.map(r => (<Recipe key={r.id} recipe={r} loading={loading}/>)) 
-          : <Typography>čau</Typography>) 
+          : 
+          <Box sx={{ padding: 4 }}>
+            <Typography variant='h5' align='center' sx={{ mb: 2, fontWeight: 'bold' }}>No recipes found.</Typography>
+            <Typography component='p' variant='body1' align='center' sx={{ mb: 1 }}>
+              No recipes fit the filters you have chosen. Try different setting.
+            </Typography>
+          </Box>
+        ) 
           : recipes.map(r => (<Recipe key={r.id} recipe={r} loading={loading}/>))
         }
       </Box>     
@@ -356,7 +378,7 @@ export const Feed = () => {
   }
   else { 
     return (
-      <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}} id='back-to-top-anchor'>
+      <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}}>
         <Typography variant='h5' align='center' sx={{ mb: 2, fontWeight: 'bold' }}>Welcome to Food Square!</Typography>
         <Typography component='p' variant='body1' align='center' sx={{ mb: 1 }}>
           Unfortunately, at this momement, we couldn't find any recipes.

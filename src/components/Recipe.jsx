@@ -33,6 +33,7 @@ import {
   TableRow,
   Skeleton,
   TableHead,
+  Paper,
 } from '@mui/material'
 import { 
   MoreVert,
@@ -593,17 +594,14 @@ export const Recipe = ({ recipe }) => {
         return (
           <Box>
             <Typography sx={{ m: 2 }}>Content per <b>100g</b> edible portion.</Typography>
-            <TableContainer>
+            <Box justifyContent='center' display='flex'>
+            <TableContainer component={Paper}>
               <Table>
                 <TableHead>
                   <TableRow>
                     <TableCell sx={{ fontWeight: 'bold' }}>Ingredient</TableCell>
                     <TableCell align="center" sx={{ fontWeight: 'bold' }}>Amount</TableCell>
-                    <TableCell align="center" sx={{ fontWeight: 'bold' }}>Calories</TableCell>
-                    <TableCell align="center" sx={{ fontWeight: 'bold' }}>Fat&nbsp;(g)</TableCell>
-                    <TableCell align="center" sx={{ fontWeight: 'bold' }}>Carbs&nbsp;(g)</TableCell>
-                    <TableCell align="center" sx={{ fontWeight: 'bold' }}>Protein&nbsp;(g)</TableCell> 
-                    <TableCell align="center" ></TableCell>                  
+                    <TableCell align="center" sx={{ fontWeight: 'bold' }}>Composition</TableCell>                  
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -614,10 +612,6 @@ export const Recipe = ({ recipe }) => {
                     >
                       <TableCell>{ri.ingredient.name}</TableCell>
                       <TableCell align="center">{ri.amount}x</TableCell>
-                      <TableCell align="center">{ri.ingredient.calories}</TableCell>
-                      <TableCell align="center">{ri.ingredient.fat}</TableCell>
-                      <TableCell align="center">{ri.ingredient.carbohydrateTotal}</TableCell>
-                      <TableCell align="center">{ri.ingredient.protein}</TableCell>
                       <TableCell align="center">
                         <Tooltip title='Show full details'>
                           <IconButton onClick={() => {
@@ -633,7 +627,8 @@ export const Recipe = ({ recipe }) => {
                   ))}
                 </TableBody>
               </Table>
-            </TableContainer>                 
+            </TableContainer>                       
+            </Box>                
           </Box>
         )
       default:

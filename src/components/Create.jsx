@@ -61,6 +61,7 @@ export const Create = () => {
     instructions: '',
     timeToPrepare: '',
     timeToCook: '',
+    image: null,
     inputs: {
       gluten: false,
       crustaceans: false,
@@ -288,6 +289,28 @@ export const Create = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
     setIngredientsError(false)
+    
+    /*
+    const formData = new FormData()
+    formData.append('name', recipeInputs.name)
+    formData.append('description', recipeInputs.description)
+    formData.append('instructions', recipeInputs.instructions)
+    formData.append('timeToPrepare', recipeInputs.timeToPrepare)
+    formData.append('timeToCook', recipeInputs.timeToCook)
+    formData.append('image', recipeInputs.image)
+    formData.append('appUser', recipeInputs.appUser)
+    formData.append('meal', recipeInputs.meal)
+    formData.append('inputs', recipeInputs.inputs)
+    console.log([...formData])
+    */
+
+    /*
+    headers: {
+      'content-type': 'multipart/form-data'
+    }
+    */
+
+    console.log(recipeInputs)
 
     if(addedIngredients.length > 0) {
       axios.post('http://localhost:8080/api/v1/recipes/add', recipeInputs, { withCredentials: true }).then((response) => {
@@ -312,6 +335,7 @@ export const Create = () => {
         )
       }
     }).catch((error) => {
+      console.log(error.response)
       if(error.response.data.errorList) {
         clearRecipeErrors()
         error.response.data.errorList.forEach(err => {
@@ -571,7 +595,7 @@ export const Create = () => {
         )
       case 3:
         return (
-          <FormControl fullWidth>
+          <FormControl fullWidth id='form'>
             <FormGroup>
               <Typography variant='body1' gutterBottom sx={{ fontWeight: 'bold' }}>
                 Recipe composition
@@ -611,6 +635,17 @@ export const Create = () => {
               <Typography variant='body1' sx={{ mt: 3, mb: 1 }}>Other</Typography>
               <Divider sx={{ mb: 2 }} />
               <FormControlLabel control={<Switch checked={recipeInputs.inputs.meat} onChange={handleSwitch} name='meat'/>} label="Meat"/>
+              <input
+                name='image'
+                type="file"
+                accept='image/*'
+                onChange={e => {
+                  setRecipeInputs({
+                    ...recipeInputs,
+                    [e.target.name]: e.target.files[0]
+                  })
+                }}
+              />
             </FormGroup>
           </FormControl>  
         )
