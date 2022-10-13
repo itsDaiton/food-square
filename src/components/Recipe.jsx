@@ -48,6 +48,7 @@ import {
   AccessAlarm,
   ReceiptLongOutlined,
   Equalizer,
+  Restaurant,
  } from '@mui/icons-material'
 import React, { useEffect } from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -64,7 +65,7 @@ const CardText = styled(Typography)({
   marginRight: 10
 })
 
-const ExpandMore = styled((props) => {
+export const ExpandMore = styled((props) => {
   const { expand, ...other } = props
   return <IconButton {...other} />
 })(({ theme, expand }) => ({
@@ -541,6 +542,15 @@ export const Recipe = ({ recipe }) => {
             </Box>
             <Typography paragraph sx={{ mb: 4, ml: 2, mt: 2 }} variant='body2'>
               {recipe.instructions}
+            </Typography>
+            <Box display='flex'>
+              <Typography paragraph mr={1}>
+                Type
+              </Typography>
+              <Restaurant/>
+            </Box>
+            <Typography paragraph sx={{ mb: 4, ml: 2, mt: 2 }} variant='body2'>
+              {editStringFormat(recipe.meal)}
             </Typography>
             <Box display='flex'>
               <Typography paragraph mr={1}>

@@ -19,7 +19,7 @@ import {
 from '@mui/icons-material'
 import React, { useEffect, useState } from 'react'
 import { getCurrentUser } from '../services/Authentication'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { Link as RouterLink } from 'react-router-dom';
 
 export const Leftbar = () => {
