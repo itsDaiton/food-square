@@ -10,12 +10,14 @@ import {
   IconButton, 
   Button,
   CircularProgress,
+  Link,
 } from '@mui/material'
 import axios from 'axios'
 import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { getCurrentUser } from '../services/Authentication'
 import AvatarService from '../services/AvatarService'
+import { Link as RouterLink } from 'react-router-dom';
 
 export const UserAvatar = styled(Avatar)({
   width: 45, 
@@ -29,7 +31,9 @@ export const UserText = styled(Typography)({
 })
 
 const FriendsListItem = ({ firstname, lastname, username, picture }) => {
+
   return (
+    <Box display='flex' alignItems='center'>
     <ListItem>
         <ListItemAvatar>
           <IconButton>
@@ -74,13 +78,15 @@ const FriendsListItem = ({ firstname, lastname, username, picture }) => {
       />
       }
     </ListItem>
+    </Box>
   )  
 }
 
-export const Rightbar = () => {
+export const Rightbar = ({ page }) => {
 
   const [follows, setFollows] = useState([])
-  const [user, setUser] = useState()
+  const [suggestions, setSuggestions] = useState([])
+  const [user, setUser] = useState(localStorage.getItem('user') ? getCurrentUser : null)
   const [loading, setLoading] = useState(true)
  
   useEffect(() => {
@@ -92,16 +98,41 @@ export const Rightbar = () => {
   }, [])
   
   const getFollows = () => {
-    axios.get('http://localhost:8080/api/v1/follows/followers/' + user.id).then((response) => {
-      setFollows(response.data)
-      setLoading(false)
+    if (user) {
+      axios.get('http://localhost:8080/api/v1/follows/following/' + user.id).then((response) => {
+        setFollows(response.data)
+        setLoading(false)
+      })
+    }
+  }
+
+  const getSuggestions = () => {
+    axios.get('http://localhost:8080/api/v1/users/get5Random').then((response) => {
+      let result = []
+      let users = []
+      if (user) {
+        result = response.data.filter(appUser => {
+          return appUser.id !== user.id
+        })      
+      }
+      else {
+        result = response.data
+      }
+
+      for (let i = 0; i < 3; i++) {
+        users.push(result.at(i))
+      }
+
+      setSuggestions(users)
+      if (page === 'discover' && !user) {
+        setLoading(false)
+      }
     })
+
   }
   
   useEffect(() => {
-    if (user) {
-      getFollows()
-    }
+    getFollows()
 
     const interval = setInterval(() => {
       getFollows()
@@ -110,6 +141,11 @@ export const Rightbar = () => {
     return () => clearInterval(interval)
     // eslint-disable-next-line
   }, [user])
+
+  useEffect(() => {
+    getSuggestions()
+    // eslint-disable-next-line
+  }, [])
 
   if (loading) {
     return (
@@ -134,22 +170,66 @@ export const Rightbar = () => {
       flex={2}
       sx={{ display: { xs: "none", md: "block" } }}
     >
+      {user ?
       <Box position='fixed' sx={{ p: 3 }}>
-        <Typography component={'span'} variant='h4' sx={{
+        {follows.length > 0 ?
+        <React.Fragment>
+          <Typography component={'span'} variant='h5' sx={{
+            fontWeight: 'bold',
+          }}
+          >
+            Follows
+          </Typography>
+          <List sx={{ width: '100%', maxWidth: 360,  }}>
+            {follows.slice(0, 5).map(f => (
+              <FriendsListItem key={f.id} firstname={f.followed.firstName} lastname={f.followed.lastName} username={f.followed.userName}/>
+            ))}
+          </List>
+          {follows.length >= 5 &&
+            <Box display='flex' justifyContent='center'>
+              <Button sx={{ width: '80%', m: 1 }} variant='contained'>Show more</Button>
+            </Box> 
+          }
+        </React.Fragment>
+        :
+        <React.Fragment>
+          <Typography component={'span'} variant='h5' sx={{
+            fontWeight: 'bold',
+          }}
+          >
+            You might like
+          </Typography>
+          <List sx={{ width: '100%', maxWidth: 360,  }}>
+            {suggestions.map(s => (
+              <FriendsListItem key={s.id} firstname={s.firstName} lastname={s.lastName} username={s.userName}/>
+            ))}
+          </List>
+          <Box display='flex' justifyContent='center'>
+            <Button sx={{ width: '80%', m: 1 }} variant='contained'>Show more</Button>
+          </Box>              
+        </React.Fragment>
+        }
+      </Box>
+      :
+      <Box position='fixed' sx={{ p: 3 }}>
+        <Typography component={'span'} variant='h5' sx={{
           fontWeight: 'bold',
         }}
         >
-          Follows
+          You might like
         </Typography>
-        {follows.length > 0 ?
+        {suggestions.length > 0 ?
         <List sx={{ width: '100%', maxWidth: 360,  }}>
-          {follows.slice(0, 5).map(f => (
-            <FriendsListItem key={f.id} firstname={f.followed.firstName} lastname={f.followed.lastName} username={f.followed.userName} />
+          {suggestions.map(s => (
+            <FriendsListItem key={s.id} firstname={s.firstName} lastname={s.lastName} username={s.userName} />
           ))}
         </List>
         :
         <Box sx={{ mt: 2, mb: 2 }}>
-          <Typography>You are currently not following anyone.</Typography>
+          <Typography sx={{ mt: 1, mb: 1 }}>There are no registered users yet.</Typography>
+          <Typography sx={{ mt: 1, mb: 1 }}>
+            Be among the first ones that&nbsp;<Link component={RouterLink} to="/register">register</Link>.
+          </Typography>       
         </Box>
         }
         {follows.length >= 5 &&
@@ -158,6 +238,7 @@ export const Rightbar = () => {
         </Box> 
         }
       </Box>
+      }
     </Box>
   )
 }

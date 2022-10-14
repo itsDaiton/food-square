@@ -53,7 +53,7 @@ export const Navbar = ({ mode, setMode }) => {
     setAnchorElUser(null)
   }
 
-  const [user, setUser] = useState()
+  const [user, setUser] = useState(localStorage.getItem('user') ? getCurrentUser : null)
 
   const [openDrawer, setOpenDrawer] = useState(false)
 

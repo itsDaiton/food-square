@@ -28,9 +28,9 @@ export const Home = ({ mode, setMode }) => {
     <Box className="App" bgcolor={'background.default'} color={'text.primary'} display='flex' flexDirection='column' minHeight='100vh'>
       <Navbar setMode={setMode} mode={mode}></Navbar>
       <Stack direction="row" justifyContent="center" divider={<Divider orientation="vertical" flexItem sx={{ borderRightWidth: 2 }}/>} flexGrow={1}>
-        <Leftbar></Leftbar>
-        <Feed></Feed>
-        <Rightbar></Rightbar> 
+        <Leftbar/>
+        <Feed page='home'/>
+        <Rightbar page='home'/>
       </Stack>
       <Create/>
       <BackToTop/>

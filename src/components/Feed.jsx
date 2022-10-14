@@ -26,7 +26,7 @@ import axios from 'axios'
 import { AccessAlarm, Clear, FilterList, FormatListBulleted, Restaurant } from '@mui/icons-material';
 import { useTheme } from '@emotion/react';
 
-export const Feed = () => {
+export const Feed = ({ page }) => {
 
   const [recipes, setRecipes] = useState([])
   const [filteredRecipes, setFilteredRecipes] = useState(null)
@@ -79,10 +79,18 @@ export const Feed = () => {
   const [filterInputs, setFilterInputs] = useState(noFilters)
 
   const getRecipes = () => {
-    axios.get('http://localhost:8080/api/v1/recipes/getAll').then((response) => {
-      setRecipes(response.data)
-      setLoading(false)
-    })
+    if (page === 'discover') {
+      axios.get('http://localhost:8080/api/v1/recipes/getAll').then((response) => {
+        setRecipes(response.data)
+        setLoading(false)
+      })
+    }
+    else {
+      axios.get('http://localhost:8080/api/v1/recipes/getMyFeed/', { withCredentials: true }).then((response) => {
+        setRecipes(response.data)
+        setLoading(false)
+      })
+    }
   }
 
   useEffect(() => {
@@ -94,6 +102,7 @@ export const Feed = () => {
 
     return () => clearInterval(interval)
 
+    // eslint-disable-next-line
   }, [])
 
   useEffect(() => {
@@ -228,10 +237,10 @@ export const Feed = () => {
 
   if (recipes.length > 0 ) {
     return (
-      <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}}>
+      <Box sx={{ flex: 4, padding: { xs: 2, md: 4 }, width: '100%', boxSizing: 'border-box'}}>
         <Box display='flex' justifyContent='space-between'>
           <Paper 
-            elevation={4} 
+            elevation={4}        
             sx={{ width: 60, height: 60, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', ml: 6, mb: 2 }}
           >
             <Tooltip title='Filter your feed'>

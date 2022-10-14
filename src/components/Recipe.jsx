@@ -50,6 +50,7 @@ import {
   ReceiptLongOutlined,
   Equalizer,
   Restaurant,
+  ErrorOutline,
  } from '@mui/icons-material'
 import React, { useEffect } from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -59,6 +60,7 @@ import axios from 'axios';
 import { CustomTextField } from './Create';
 import { getCurrentUser } from '../services/Authentication';
 import AvatarService from '../services/AvatarService'
+import { useNavigate } from 'react-router';
 
 const CardText = styled(Typography)({
   fontFamily: 'Poppins',
@@ -105,13 +107,24 @@ export const Recipe = ({ recipe }) => {
   const [commentCount, setCommentCount] = useState()
   const [averageRating, setAverageRating] = useState()
 
+  let navigate = useNavigate()
+
+  const navigateLogin = () => {
+    navigate('/login')
+  }
+
+  const navigateRegister = () => {
+    navigate('/register')
+  }
+
   const [recipeIngredients, setRecipeIngredients] = useState([])
 
-  const [user, setUser] = useState()
+  const [user, setUser] = useState(localStorage.getItem('user') ? getCurrentUser : null)
 
   const [openReviewDialog, setOpenReviewDialog] = useState(false)
   const [openCommentDialog, setOpenCommentDialog] = useState(false)
   const [openIngredientDialog, setOpenIngredientDialog] = useState(false)
+  const [openErrorDialog, setOpenErrorDialog] = useState(false)
 
   const [reviewInputs, setReviewInputs] = useState(defaultReview)
   const [commentInputs, setCommentInputs] = useState(defaultComment)
@@ -170,21 +183,27 @@ export const Recipe = ({ recipe }) => {
   }
 
   const getFollowCheck = () => {
-    axios.get('http://localhost:8080/api/v1/follows/follows/' + recipe.appUser.id , { withCredentials: true }).then((response) => {
-      setCheckFollow(response.data)
-    })
+    if (user) {
+      axios.get('http://localhost:8080/api/v1/follows/follows/' + recipe.appUser.id , { withCredentials: true }).then((response) => {
+        setCheckFollow(response.data)
+      })
+    }
   }
 
   const getFavoriteCheck = () => {
-    axios.get('http://localhost:8080/api/v1/users/checkFavorite/' + recipe.id, { withCredentials: true }).then((response) => {
-      setCheckFavorite(response.data)
-    })
+    if (user) {
+      axios.get('http://localhost:8080/api/v1/users/checkFavorite/' + recipe.id, { withCredentials: true }).then((response) => {
+        setCheckFavorite(response.data)
+      })
+    }
   }
 
   const getReviewCheck = () => {
-    axios.get('http://localhost:8080/api/v1/reviews/containsReview/' + recipe.id, { withCredentials: true }).then((response) => {
-      setCheckReview(response.data)
-    })
+    if (user) {
+      axios.get('http://localhost:8080/api/v1/reviews/containsReview/' + recipe.id, { withCredentials: true }).then((response) => {
+        setCheckReview(response.data)
+      })
+    }
   }
 
   const getRecipeIngredients = () => {
@@ -234,6 +253,16 @@ export const Recipe = ({ recipe }) => {
   }
   const clearCommentErrors = () => {
     setCommentTextError('')
+  }
+
+  const handleOpenErrorDialog = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setOpenErrorDialog(true)
+  }
+
+  const handleCloseErrorDialog = (e) => {
+    setOpenErrorDialog(false)
   }
 
   const handleOpenReviewDialog = (e) => {
@@ -712,9 +741,10 @@ export const Recipe = ({ recipe }) => {
          }
           action={
             loading ? null :
+            user &&
             <IconButton aria-label="settings" onClick={handleOpenMenuMore} onMouseDown={e => e.stopPropagation()}>
-            <MoreVert />
-          </IconButton>
+              <MoreVert />
+            </IconButton>
           }
           title={
             loading ? 
@@ -898,7 +928,11 @@ export const Recipe = ({ recipe }) => {
             :
             <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
               <Tooltip title='Add a review'>
-                <IconButton aria-label="reviews" onClick={handleReviewAdd} onMouseDown={e => e.stopPropagation()}>
+                <IconButton 
+                  aria-label="reviews" 
+                  onClick={user ? handleReviewAdd : handleOpenErrorDialog} 
+                  onMouseDown={e => e.stopPropagation()}
+                >
                   <RateReviewOutlined sx={{ width: 38, height: 38, color: 'text.primary' }} />
                 </IconButton>
               </Tooltip>
@@ -914,11 +948,9 @@ export const Recipe = ({ recipe }) => {
             :
             <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
               <Tooltip title='Add a comment'>
-                <IconButton 
+                <IconButton
                   aria-label="comments" 
-                  onClick={
-                    handleOpenCommentDialog
-                  } 
+                  onClick={user ? handleOpenCommentDialog : handleOpenErrorDialog} 
                   onMouseDown={e => e.stopPropagation()}
                 >
                   <ChatOutlined sx={{ width: 38, height: 38, color: 'text.primary' }}/>
@@ -1138,6 +1170,34 @@ export const Recipe = ({ recipe }) => {
             <Button variant='contained' sx={{ mt: 3, ml: 1, mr: 1 }} onClick={handleCommentSubmit}>Submit</Button>
           </Box>
         </Box>
+      </Dialog>
+      <Dialog
+        disableRestoreFocus
+        open={openErrorDialog}
+        onClose={handleCloseErrorDialog}
+        scroll='paper'
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{ style: {borderRadius: 25 } }}
+      >
+        <Box bgcolor={'background.default'} color={'text.primary'} p={3}>
+          <Typography textAlign='center' variant='h6' sx={{ fontWeight: 'bold', mb: 2 }}>Acess Denied</Typography>
+          <Box display='flex' justifyContent='center'>
+            <ErrorOutline sx={{ fontSize: 60 }} color='error'/>
+          </Box>
+          <Box
+            display='flex'
+            justifyContent='center'
+            alignItems='center'
+            flexDirection='column'
+          >
+            <Typography sx={{ m: 2 }}>Please either login or register.</Typography>
+            <Box display='flex' flexDirection='row'>     
+              <Button variant="contained" onClick={navigateRegister} sx={{ m: 1 }}>Register</Button>
+              <Button variant="contained" onClick={navigateLogin} sx={{ m: 1 }}>Login</Button>
+            </Box>
+          </Box>
+        </Box>   
       </Dialog>
       {selectedIngredient &&
       <Dialog

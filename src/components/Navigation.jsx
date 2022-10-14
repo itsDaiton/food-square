@@ -40,6 +40,7 @@ export const Navigation = () => {
   return (
     <List sx={{ p: 1 }}>
     <Box>
+      {user &&
       <ListItem
         disablePadding
         component={RouterLink}
@@ -59,6 +60,7 @@ export const Navigation = () => {
           /> 
         </ListItemButton>
       </ListItem>
+      }
       </Box>
       <ListItem 
         disablePadding
@@ -87,6 +89,7 @@ export const Navigation = () => {
           <ListItemText primary="Ingredients" primaryTypographyProps={{ fontSize: 20 }} />
         </ListItemButton>
       </ListItem>
+      {user &&
       <ListItem disablePadding>
         <ListItemButton component="a" href="#">
           <ListItemIcon>
@@ -95,6 +98,7 @@ export const Navigation = () => {
           <ListItemText primary="Favorites" primaryTypographyProps={{ fontSize: 20 }} />
         </ListItemButton>
       </ListItem>
+       }
       <ListItem disablePadding>
         <ListItemButton component="a" href="#">
           <ListItemIcon>
