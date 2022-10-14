@@ -4,7 +4,7 @@ import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import  Authentication from '../services/Authentication';
+import { getCurrentUser } from '../services/Authentication';
 
 export const Register = () => {
   
@@ -56,7 +56,7 @@ export const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    if (Authentication.getCurrentUser() !== null) {
+    if (getCurrentUser() !== null) {
       setOpen(true)
       setTimeout(() => {
         navigate('/')
@@ -69,9 +69,7 @@ export const Register = () => {
           localStorage.setItem('user', JSON.stringify(response.data))
           navigate('/')
         })
-        console.log(response)
     }).catch((error) => {
-      console.log(error.response.data.errorList)
       if(error.response.data.errorList) {
       clearErrors()
        error.response.data.errorList.forEach(err => {       

@@ -4,7 +4,7 @@ import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import  Authentication from '../services/Authentication';
+import { getCurrentUser } from '../services/Authentication';
 
 export const Login = () => {
 
@@ -51,25 +51,22 @@ export const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    if (Authentication.getCurrentUser() !== null) {
+    if (getCurrentUser() !== null) {
       setOpen(true)
       setTimeout(() => {
-        navigate('/')
+        navigate('/home')
       }, 3000)
     }
     else {    
     axios.post('http://localhost:8080/api/v1/auth/login', values, { withCredentials: true }).then((response) => {
       clearError()
-      console.log(response)   
       if (response.data.username) {
         localStorage.setItem('user', JSON.stringify(response.data))
-        navigate('/')
-        console.log(response.data)
+        navigate('/home')
       } 
     }).catch((error) => {
       if (error.response.data) {
         clearError()  
-        console.log(error.response.data)  
         setError(error.response.data.message) 
       }  
     }) 
@@ -87,8 +84,6 @@ export const Login = () => {
         sx={{
           backgroundImage: 'url(https://picsum.photos/800)',
           backgroundRepeat: 'no-repeat',
-          backgroundColor: (t) =>
-            t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
