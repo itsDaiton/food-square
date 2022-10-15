@@ -1,5 +1,28 @@
-import { Visibility, VisibilityOff, PersonAdd } from '@mui/icons-material'
-import { Avatar, Button, CssBaseline, Grid, Link, Paper, TextField, Typography, Box, InputAdornment, IconButton, Alert, Snackbar } from '@mui/material'
+import { 
+  Visibility, 
+  VisibilityOff, 
+  PersonAdd,
+  Navigation as NavigationIcon
+} 
+from '@mui/icons-material'
+import { 
+  Avatar, 
+  Button, 
+  CssBaseline, 
+  Grid, 
+  Link, 
+  Paper, 
+  TextField, 
+  Typography, 
+  Box, 
+  InputAdornment, 
+  IconButton, 
+  Alert, 
+  Snackbar, 
+  Tooltip,
+  Fab
+} 
+from '@mui/material'
 import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
@@ -51,6 +74,10 @@ export const Register = () => {
     setEmailError('')
     setPasswordError('')
     setUsernameError('')
+  }
+
+  const handleNavigate = () => {
+    navigate('/discover')
   }
 
   const handleSubmit = (e) => {
@@ -200,6 +227,16 @@ export const Register = () => {
                 <Link href="#" variant="body2" component={RouterLink} to="/login">
                   {"Already have an account? Sign In"}
                 </Link>
+              </Grid>
+              <Grid item mt={2}>
+                <Tooltip title='Back to discover'>
+                  <Fab color="primary" variant='extended' size='medium' onClick={handleNavigate}>
+                    <NavigationIcon sx={{ mr: 1 }} />
+                    <Box sx={{ mr: 1, ml: 1 }}>
+                      Discover
+                    </Box>
+                  </Fab>
+                </Tooltip>
               </Grid>
             </Grid>
           </Box>

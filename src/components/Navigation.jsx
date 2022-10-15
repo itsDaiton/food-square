@@ -4,7 +4,8 @@ import {
 	ListItem, 
 	ListItemButton, 
 	ListItemText, 
-	ListItemIcon, 
+	ListItemIcon,
+  useTheme, 
 } 
 from '@mui/material'
 import { 
@@ -15,15 +16,26 @@ import {
 	Person, 
 	Settings, 
 	LunchDining, 
-	Favorite 
+	Favorite,
 }
 from '@mui/icons-material'
 import React, { useEffect, useState } from 'react'
 import { getCurrentUser } from '../services/Authentication'
 import { useLocation } from 'react-router-dom'
 import { Link as RouterLink } from 'react-router-dom';
+import { styled, alpha } from '@mui/material/styles';
+
+const CustomListItemButton = styled(ListItemButton)({
+  borderRadius: 50
+})
+
+const CustomListItem = styled(ListItem)({
+  borderRadius: 50
+})
 
 export const Navigation = () => {
+
+  const theme = useTheme()
 
 	const [user, setUser] = useState()
 
@@ -36,18 +48,18 @@ export const Navigation = () => {
 
   const route = useLocation()
 
-
   return (
     <List sx={{ p: 1 }}>
     <Box>
       {user &&
-      <ListItem
+      <CustomListItem
+        sx={{ background: route.pathname === '/home' ? alpha(theme.palette.primary.main, 0.2)  : '' }}
         disablePadding
         component={RouterLink}
         to='/home'
         style={{ color: 'inherit' }}     
       >
-        <ListItemButton>
+        <CustomListItemButton>
           <ListItemIcon>
             <Home sx={{ fontSize: 30, color: route.pathname === '/home' ? 'text.primary' : ''  }} />
           </ListItemIcon>
@@ -55,20 +67,20 @@ export const Navigation = () => {
             primary='Home' 
             primaryTypographyProps={{
               fontSize: 20, 
-              fontWeight: route.pathname === '/home' ? 'bold' : '' 
-              }} 
+              fontWeight: route.pathname === '/home' ? 'bold' : '' }} 
           /> 
-        </ListItemButton>
-      </ListItem>
+        </CustomListItemButton>
+      </CustomListItem>
       }
       </Box>
-      <ListItem 
+      <CustomListItem
+        sx={{ background: route.pathname === '/discover' ? alpha(theme.palette.primary.main, 0.2)  : ''}}
         disablePadding
         component={RouterLink}
         to='/discover'
         style={{ color: 'inherit' }} 
       >
-        <ListItemButton>
+        <CustomListItemButton>
           <ListItemIcon>
             <Tag sx={{ fontSize: 30, color: route.pathname === '/discover' ? 'text.primary' : ''  }} />
           </ListItemIcon>
@@ -76,62 +88,72 @@ export const Navigation = () => {
             primary='Discover' 
             primaryTypographyProps={{
               fontSize: 20, 
-              fontWeight: route.pathname === '/discover' ? 'bold' : '' 
-              }} 
+              fontWeight: route.pathname === '/discover' ? 'bold' : '' }} 
           /> 
-        </ListItemButton>
-      </ListItem>
-      <ListItem disablePadding>
-        <ListItemButton component="a" href="#">
+        </CustomListItemButton>
+      </CustomListItem>
+      <CustomListItem
+        sx={{ background: route.pathname === '/ingredients' ? alpha(theme.palette.primary.main, 0.2)  : ''}}
+        disablePadding
+        component={RouterLink}
+        to='/ingredients'
+        style={{ color: 'inherit' }}
+      >
+        <CustomListItemButton>
           <ListItemIcon>
             <LunchDining sx={{ fontSize: 30, color: route.pathname === '/ingredients' ? 'text.primary' : ''  }} />    
           </ListItemIcon>
-          <ListItemText primary="Ingredients" primaryTypographyProps={{ fontSize: 20 }} />
-        </ListItemButton>
-      </ListItem>
+          <ListItemText
+            primary="Ingredients" 
+            primaryTypographyProps={{
+              fontSize: 20, 
+              fontWeight: route.pathname === '/ingredients' ? 'bold' : '' }} 
+          />
+        </CustomListItemButton>
+      </CustomListItem>
       {user &&
       <ListItem disablePadding>
-        <ListItemButton component="a" href="#">
+        <CustomListItemButton>
           <ListItemIcon>
             <Favorite sx={{ fontSize: 30, color: route.pathname === '/favorites' ? 'text.primary' : ''  }} />
           </ListItemIcon>
           <ListItemText primary="Favorites" primaryTypographyProps={{ fontSize: 20 }} />
-        </ListItemButton>
+        </CustomListItemButton>
       </ListItem>
        }
       <ListItem disablePadding>
-        <ListItemButton component="a" href="#">
+        <CustomListItemButton>
           <ListItemIcon>
             <Description sx={{ fontSize: 30, color: route.pathname === '/reviews' ? 'text.primary' : ''  }} />
           </ListItemIcon>
           <ListItemText primary="Reviews" primaryTypographyProps={{ fontSize: 20 }} />
-        </ListItemButton>
+        </CustomListItemButton>
       </ListItem>
       <ListItem disablePadding>
-        <ListItemButton component="a" href="#">
+        <CustomListItemButton>
           <ListItemIcon>
             <Restaurant sx={{ fontSize: 30, color: route.pathname === '/mealplan' ? 'text.primary' : ''  }} />
           </ListItemIcon>
           <ListItemText primary="Meal planning" primaryTypographyProps={{ fontSize: 20 }} />
-        </ListItemButton>
+        </CustomListItemButton>
       </ListItem>
       {user &&
       <>
       <ListItem disablePadding>
-        <ListItemButton component="a" href="#">
+        <CustomListItemButton>
           <ListItemIcon>
             <Person sx={{ fontSize: 30, color: route.pathname === '/profile' ? 'text.primary' : ''  }} />
           </ListItemIcon>
           <ListItemText primary="Profile" primaryTypographyProps={{ fontSize: 20 }} />
-        </ListItemButton>
+        </CustomListItemButton>
       </ListItem>
       <ListItem disablePadding>
-        <ListItemButton component="a" href="#">
+        <CustomListItemButton>
           <ListItemIcon>
             <Settings sx={{ fontSize: 30, color: route.pathname === '/settings' ? 'text.primary' : ''  }} />
           </ListItemIcon>
           <ListItemText primary="Settings" primaryTypographyProps={{ fontSize: 20 }} />
-        </ListItemButton>
+        </CustomListItemButton>
       </ListItem>
       </>
       }

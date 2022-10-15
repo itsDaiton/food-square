@@ -4,6 +4,8 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import { Discover } from "./pages/Discover";
 import { Error } from "./pages/Error";
 import { Home } from "./pages/Home";
+import { Ingredient } from "./pages/Ingredient";
+import { Ingredients } from "./pages/Ingredients";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { getCurrentUser } from "./services/Authentication";
@@ -50,7 +52,7 @@ function App() {
       values: {
         xs: 0,
         sm: 600,
-        md: 1000,
+        md: 1050,
         lg: 1200,
         xl: 1536
       }
@@ -64,6 +66,8 @@ function App() {
         <Route path="/register" element={<Register/>}/>
         <Route path='/home' element={<Home mode={mode} setMode={setMode}/>}/>
         <Route path='/discover' element={<Discover mode={mode} setMode={setMode}/>}/>
+        <Route path="/ingredients" element={<Ingredients mode={mode} setMode={setMode}/>}/>
+        <Route path='/ingredient/:id' element={<Ingredient mode={mode} setMode={setMode}/>}/>
         <Route path="/" element={user ? <Navigate to="/home" replace/> : <Navigate to="/discover" replace/>}/>
         <Route path="*" element={<Error/>}/>
       </Routes>
