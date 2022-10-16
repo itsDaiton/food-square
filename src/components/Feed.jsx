@@ -31,7 +31,7 @@ export const Feed = ({ page }) => {
   const [recipes, setRecipes] = useState([])
   const [filteredRecipes, setFilteredRecipes] = useState(null)
 
-  const [user, setUser] = useState()
+  const [user, setUser] = useState(localStorage.getItem('user') ? getCurrentUser : null)
   const [loading, setLoading] = useState(true)
 
   const [openFilterDialog, setOpenFilterDialog] = useState(false)
@@ -78,11 +78,25 @@ export const Feed = ({ page }) => {
 
   const [filterInputs, setFilterInputs] = useState(noFilters)
 
+  useEffect(() => {
+    const currentUser = getCurrentUser()
+    if (currentUser) {
+      setUser(currentUser)
+    }
+  }, [])
+
   const getRecipes = () => {
     if (page === 'discover') {
       axios.get('http://localhost:8080/api/v1/recipes/getAll').then((response) => {
         setRecipes(response.data)
         setLoading(false)
+      })
+    }
+    else if (page === 'favorites') {
+      axios.get('http://localhost:8080/api/v1/users/getFavoriteRecipes/' + user.id,  {withCredentials: true }).then((response) => {
+        setRecipes(response.data)
+        setLoading(false)
+        console.log(response.data)
       })
     }
     else {
@@ -105,20 +119,12 @@ export const Feed = ({ page }) => {
     // eslint-disable-next-line
   }, [])
 
-  useEffect(() => {
-    const currentUser = getCurrentUser()
-    if (currentUser) {
-      setUser(currentUser)
-    }
-  }, [])
-
   const handleOpenDialog = (e) => {
     setOpenFilterDialog(true)
   }
 
   const handleCloseDialog = (e) => {
     setOpenFilterDialog(false)
-    console.log(filteredRecipes)
   }
 
   const handleInputsChange = (e) => {
@@ -238,6 +244,7 @@ export const Feed = ({ page }) => {
   if (recipes.length > 0 ) {
     return (
       <Box sx={{ flex: 4, padding: { xs: 2, md: 4 }, width: '100%', boxSizing: 'border-box'}}>
+        {(page === 'discover' || page === 'home') ?
         <Box display='flex' justifyContent='space-between'>
           <Paper 
             elevation={4}        
@@ -370,6 +377,11 @@ export const Feed = ({ page }) => {
           </Box>
           </Dialog> 
         </Box>
+        :
+        <Typography variant='h4' align='center' sx={{ m: 4, mb: 5, fontSize: { xs: 22, sm: 28, md: 26, lg: 26, xl: 32 }, fontWeight: 'bold' }}>
+          Favorite recipes
+        </Typography>
+        }
         {
           filteredRecipes ? (filteredRecipes.length > 0 ? filteredRecipes.map(r => (<Recipe key={r.id} recipe={r} loading={loading}/>)) 
           : 
@@ -386,19 +398,46 @@ export const Feed = ({ page }) => {
     )
   }
   else { 
-    return (
-      <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}}>
-        <Typography variant='h5' align='center' sx={{ mb: 2, fontWeight: 'bold' }}>Welcome to Food Square!</Typography>
+    if (page === 'discover') {
+      return (
+        <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}}>
+          <Typography variant='h5' align='center' sx={{ mb: 2, fontWeight: 'bold' }}>Welcome to Food Square!</Typography>
+          <Typography component='p' variant='body1' align='center' sx={{ mb: 1 }}>
+            Unfortunately, at this momement, we couldn't find any recipes.
+          </Typography>
+          {user ?
+          <Typography component='p' variant='body2' align='center'>You can click the add button to create a new recipe.</Typography>
+          :
+          <Typography component='p' variant='body2' align='center'>You can create your very own recipe today by registering&nbsp;
+            <Link component={RouterLink} to="/register">here.</Link>
+          </Typography>}
+        </Box>
+      )
+    }
+    else if (page === 'home') {
+      return (
+        <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}}>
+          <Typography variant='h5' align='center' sx={{ mb: 2, fontWeight: 'bold' }}>Welcome to Food Square!</Typography>
+          <Typography component='p' variant='body1' align='center' sx={{ mb: 1 }}>
+            Unfortunately, at this momement, your feed is empty.
+          </Typography>
+          <Typography component='p' variant='body2' align='center'>
+            Content in your home feed consits of your recipes and recipes of people you follow.
+          </Typography>
+          <Typography component='p' variant='body2' align='center'>You can click the add button to create a new recipe.</Typography>
+        </Box>
+      )
+    }
+    else {
+      return (
+        <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}}>
+        <Typography variant='h5' align='center' sx={{ mb: 2, fontWeight: 'bold' }}>Your favorite recipes</Typography>
         <Typography component='p' variant='body1' align='center' sx={{ mb: 1 }}>
-          Unfortunately, at this momement, we couldn't find any recipes.
+          Your list of favorite recipes is empty at this moment.
         </Typography>
-        {user ?
-        <Typography component='p' variant='body2' align='center'>You can click the add button to create a new recipe.</Typography>
-        :
-        <Typography component='p' variant='body2' align='center'>You can create your very own recipe today by registering&nbsp;
-          <Link component={RouterLink} to="/register">here.</Link>
-        </Typography>}
-      </Box>
-    )
+        <Typography component='p' variant='body2' align='center'>You can add any recipe you like to favorite to display it here.</Typography>
+      </Box>      
+      )
+    }  
   }
 }

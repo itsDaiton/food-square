@@ -203,10 +203,7 @@ export const Rightbar = ({ page }) => {
             {suggestions.map(s => (
               <FriendsListItem key={s.id} firstname={s.firstName} lastname={s.lastName} username={s.userName}/>
             ))}
-          </List>
-          <Box display='flex' justifyContent='center'>
-            <Button sx={{ width: '80%', m: 1 }} variant='contained'>Show more</Button>
-          </Box>              
+          </List>             
         </React.Fragment>
         }
       </Box>

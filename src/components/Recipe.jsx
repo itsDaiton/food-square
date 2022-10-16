@@ -62,7 +62,7 @@ import { getCurrentUser } from '../services/Authentication';
 import AvatarService from '../services/AvatarService'
 import { useNavigate } from 'react-router';
 
-const CardText = styled(Typography)({
+export const CardText = styled(Typography)({
   fontFamily: 'Poppins',
   display: 'inline',
   marginRight: 10
@@ -79,15 +79,53 @@ export const ExpandMore = styled((props) => {
   }),
 }));
 
-export const Recipe = ({ recipe }) => {
+export const values = {
+  minute: 60,
+  hour: (60 * 60),
+  day: (60 * 60 * 24),
+  month: (60 * 60 * 24 * (365/12)),
+  year: (60 * 60 * 24 * 365)
+}
 
-  const values = {
-    minute: 60,
-    hour: (60 * 60),
-    day: (60 * 60 * 24),
-    month: (60 * 60 * 24 * (365/12)),
-    year: (60 * 60 * 24 * 365)
+export const convertToTimestamp = (date) => {
+  let ret
+
+  if (date !== undefined) {
+    ret = Math.floor(new Date(date).getTime() / 1000)
   }
+  else {
+    ret = Math.floor(new Date().getTime() / 1000)
+  }
+  return ret
+}
+
+export const calculateDifference = (date1, date2) => {
+  let recipeDate = new Date(date2 * 1000)
+  let diff = date1 - date2
+  let ret = ''
+
+  if (diff < values.minute) {
+    ret = diff + ' s'
+  }
+  else if (diff < values.hour) {
+    ret = (Math.floor(diff / values.minute)) + ' m'
+  }
+  else if (diff < values.day) {
+    ret = (Math.floor(diff / values.hour)) + ' h'
+  }
+  else if (diff < values.month) {
+    ret = (Math.floor(diff/ values.day)) + ' d'
+  }
+  else if (diff < values.year) {
+    ret = recipeDate.getUTCDate() + '. ' + (recipeDate.getMonth() + 1) + '. '
+  }
+  else if (diff > values.year){
+    ret = recipeDate.getUTCDate() + '. ' + (recipeDate.getMonth() + 1) + '. ' + recipeDate.getFullYear()
+  }
+  return ret
+}
+
+export const Recipe = ({ recipe }) => {
 
   const defaultReview = {
     text: '',
@@ -677,44 +715,6 @@ export const Recipe = ({ recipe }) => {
     return words.join(' ')
   }
 
-  const convertToTimestamp = (date) => {
-    let ret
-
-    if (date !== undefined) {
-      ret = Math.floor(new Date(date).getTime() / 1000)
-    }
-    else {
-      ret = Math.floor(new Date().getTime() / 1000)
-    }
-    return ret
-  }
-
-  const calculateDifference = (date1, date2) => {
-    let recipeDate = new Date(date2 * 1000)
-    let diff = date1 - date2
-    let ret = ''
-
-    if (diff < values.minute) {
-      ret = diff + ' s'
-    }
-    else if (diff < values.hour) {
-      ret = (Math.floor(diff / values.minute)) + ' m'
-    }
-    else if (diff < values.day) {
-      ret = (Math.floor(diff / values.hour)) + ' h'
-    }
-    else if (diff < values.month) {
-      ret = (Math.floor(diff/ values.day)) + ' d'
-    }
-    else if (diff < values.year) {
-      ret = recipeDate.getUTCDate() + '. ' + (recipeDate.getMonth() + 1) + '. '
-    }
-    else if (diff > values.year){
-      ret = recipeDate.getUTCDate() + '. ' + (recipeDate.getMonth() + 1) + '. ' + recipeDate.getFullYear()
-    }
-    return ret
-  }
-
   return (
     <React.Fragment>
       <Card sx={{margin: {md: 5, xs: 2}, borderRadius: 5}} elevation={10}>
@@ -902,8 +902,7 @@ export const Recipe = ({ recipe }) => {
             <Box display='flex' alignItems='center'>
               <Typography variant='body1' sx={{ mr: 1 }}>No reviews yet.</Typography>
               <StarBorderOutlined sx={{ width: 35, height: 35 }} />
-            </Box>
-             
+            </Box>     
             }       
           </Box>
           <Divider sx={{ mt: 2, mb: 2 }}/>

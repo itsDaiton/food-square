@@ -44,7 +44,7 @@ export const IngredientList = () => {
   return (
     <Box sx={{ flex: 4, padding: { xs: 2, md: 4 }, width: '100%', height: '100%', boxSizing: 'border-box'}}>
       <Box bgcolor={'background.default'} color={'text.primary'} p={3}>
-          <Typography variant='h4' align='center' sx={{ m: 3, fontSize: { xs: 22, sm: 28, md: 26, lg: 26, xl: 32 } }}>
+          <Typography variant='h4' align='center' sx={{ m: 4, mb: 5, fontSize: { xs: 22, sm: 28, md: 26, lg: 26, xl: 32 }, fontWeight: 'bold' }}>
             {ingredient.name}
           </Typography>
           <Typography sx={{ m: 2 }}>Content per <b>100g</b> edible portion.</Typography>

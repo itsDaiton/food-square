@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { Discover } from "./pages/Discover";
 import { Error } from "./pages/Error";
+import { Favorites } from "./pages/Favorites";
 import { Home } from "./pages/Home";
 import { Ingredient } from "./pages/Ingredient";
 import { Ingredients } from "./pages/Ingredients";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
+import { Reviews } from "./pages/Reviews";
 import { getCurrentUser } from "./services/Authentication";
 
 function App() {
@@ -68,6 +70,8 @@ function App() {
         <Route path='/discover' element={<Discover mode={mode} setMode={setMode}/>}/>
         <Route path="/ingredients" element={<Ingredients mode={mode} setMode={setMode}/>}/>
         <Route path='/ingredient/:id' element={<Ingredient mode={mode} setMode={setMode}/>}/>
+        <Route path='/favorites' element={<Favorites mode={mode} setMode={setMode}/>}/>
+        <Route path='/reviews' element={<Reviews mode={mode} setMode={setMode}/>}/>
         <Route path="/" element={user ? <Navigate to="/home" replace/> : <Navigate to="/discover" replace/>}/>
         <Route path="*" element={<Error/>}/>
       </Routes>

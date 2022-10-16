@@ -92,6 +92,27 @@ export const Navigation = () => {
           /> 
         </CustomListItemButton>
       </CustomListItem>
+      {user &&
+      <CustomListItem
+        sx={{ background: route.pathname === '/favorites' ? alpha(theme.palette.primary.main, 0.2)  : ''}}
+        disablePadding
+        component={RouterLink}
+        to='/favorites'
+        style={{ color: 'inherit' }}
+      >
+        <CustomListItemButton>
+          <ListItemIcon>
+            <Favorite sx={{ fontSize: 30, color: route.pathname === '/favorites' ? 'text.primary' : ''  }} />
+          </ListItemIcon>
+          <ListItemText 
+            primary="Favorites" 
+            primaryTypographyProps={{ 
+              fontSize: 20,
+              fontWeight: route.pathname === '/favorites' ? 'bold' : '' }} 
+          />
+        </CustomListItemButton>
+      </CustomListItem>
+       }
       <CustomListItem
         sx={{ background: route.pathname === '/ingredients' ? alpha(theme.palette.primary.main, 0.2)  : ''}}
         disablePadding
@@ -111,24 +132,25 @@ export const Navigation = () => {
           />
         </CustomListItemButton>
       </CustomListItem>
-      {user &&
-      <ListItem disablePadding>
-        <CustomListItemButton>
-          <ListItemIcon>
-            <Favorite sx={{ fontSize: 30, color: route.pathname === '/favorites' ? 'text.primary' : ''  }} />
-          </ListItemIcon>
-          <ListItemText primary="Favorites" primaryTypographyProps={{ fontSize: 20 }} />
-        </CustomListItemButton>
-      </ListItem>
-       }
-      <ListItem disablePadding>
+      <CustomListItem 
+        sx={{ background: route.pathname === '/reviews' ? alpha(theme.palette.primary.main, 0.2)  : ''}}
+        disablePadding
+        component={RouterLink}
+        to='/reviews'
+        style={{ color: 'inherit' }}
+      >
         <CustomListItemButton>
           <ListItemIcon>
             <Description sx={{ fontSize: 30, color: route.pathname === '/reviews' ? 'text.primary' : ''  }} />
           </ListItemIcon>
-          <ListItemText primary="Reviews" primaryTypographyProps={{ fontSize: 20 }} />
+          <ListItemText 
+            primary="Reviews" 
+            primaryTypographyProps={{
+              fontSize: 20, 
+              fontWeight: route.pathname === '/reviews' ? 'bold' : '' }} 
+          />
         </CustomListItemButton>
-      </ListItem>
+      </CustomListItem>
       <ListItem disablePadding>
         <CustomListItemButton>
           <ListItemIcon>

@@ -36,7 +36,14 @@ export const IngredientsTable = () => {
       headerName: 'Name (100g edible portion)',
       width: 350,
       renderCell: (params) => {
-        return <Link component={RouterLink} to={'/ingredient/' + params.row.id} style={{ textDecoration: 'none' }}>{params.row.name}</Link>
+        return <Link 
+        component={RouterLink} 
+        to={'/ingredient/' + params.row.id} 
+        style={{ textDecoration: 'none', color: 'inherit' }}
+        >
+          {params.row.name}
+          0,
+        </Link>
       }
     },
     {
@@ -152,11 +159,11 @@ export const IngredientsTable = () => {
   return (
     <Box sx={{ flex: 4, padding: { xs: 2, md: 4 }, width: '100%', height: '100%', boxSizing: 'border-box'}}>
       <Box>
-        <Typography variant='h4' align='center' sx={{ m: 3, fontSize: { xs: 22, sm: 28, md: 26, lg: 26, xl: 32 } }}>
-          List of all available ingredients
+        <Typography variant='h4' align='center' sx={{ m: 4, mb: 5, fontSize: { xs: 22, sm: 28, md: 26, lg: 26, xl: 32 }, fontWeight: 'bold' }}>
+          Available ingredients
         </Typography>
         <DataGrid
-          sx={{ 
+          sx={{
             p: 1, 
             height: 800,
             '& .MuiDataGrid-columnHeaderTitle': {
