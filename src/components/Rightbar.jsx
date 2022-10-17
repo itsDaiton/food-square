@@ -110,26 +110,37 @@ export const Rightbar = ({ page }) => {
     axios.get('http://localhost:8080/api/v1/users/get5Random').then((response) => {
       let result = []
       let users = []
-      if (user) {
-        result = response.data.filter(appUser => {
-          return appUser.id !== user.id
-        })      
+
+      if (response.data.length > 0) {
+        if (user) {
+          result = response.data.filter(appUser => {
+            return appUser.id !== user.id
+          })      
+        }
+        else {
+          result = response.data
+        }
+  
+        for (let i = 0; i < result.length; i++) {
+          users.push(result.at(i))
+        }
+  
+        setSuggestions(users)
       }
       else {
-        result = response.data
+        setSuggestions(response.data)
       }
-
-      for (let i = 0; i < 3; i++) {
-        users.push(result.at(i))
-      }
-
-      setSuggestions(users)
+      
       if (page === 'discover' && !user) {
         setLoading(false)
       }
     })
-
   }
+  
+  useEffect(() => {
+    getSuggestions()
+    // eslint-disable-next-line
+  }, [])
   
   useEffect(() => {
     getFollows()
@@ -141,11 +152,6 @@ export const Rightbar = ({ page }) => {
     return () => clearInterval(interval)
     // eslint-disable-next-line
   }, [user])
-
-  useEffect(() => {
-    getSuggestions()
-    // eslint-disable-next-line
-  }, [])
 
   if (loading) {
     return (
@@ -200,10 +206,15 @@ export const Rightbar = ({ page }) => {
             You might like
           </Typography>
           <List sx={{ width: '100%', maxWidth: 360,  }}>
-            {suggestions.map(s => (
+            {suggestions.slice(0, 3).map(s => (
               <FriendsListItem key={s.id} firstname={s.firstName} lastname={s.lastName} username={s.userName}/>
             ))}
-          </List>             
+          </List>
+          {suggestions.length >= 3 &&
+          <Box display='flex' justifyContent='center'>
+            <Button sx={{ width: '80%', m: 1 }} variant='contained'>Show more</Button>
+          </Box> 
+          }             
         </React.Fragment>
         }
       </Box>
@@ -217,9 +228,9 @@ export const Rightbar = ({ page }) => {
         </Typography>
         {suggestions.length > 0 ?
         <List sx={{ width: '100%', maxWidth: 360,  }}>
-          {suggestions.map(s => (
+          {suggestions.slice(0, 3).map(s => (
             <FriendsListItem key={s.id} firstname={s.firstName} lastname={s.lastName} username={s.userName} />
-          ))}
+          ))}  
         </List>
         :
         <Box sx={{ mt: 2, mb: 2 }}>
@@ -228,6 +239,11 @@ export const Rightbar = ({ page }) => {
             Be among the first ones that&nbsp;<Link component={RouterLink} to="/register">register</Link>.
           </Typography>       
         </Box>
+        }
+        {suggestions.length >= 3 &&
+        <Box display='flex' justifyContent='center'>
+          <Button sx={{ width: '80%', m: 1 }} variant='contained'>Show more</Button>
+        </Box> 
         }
         {follows.length >= 5 &&
         <Box display='flex' justifyContent='center'>

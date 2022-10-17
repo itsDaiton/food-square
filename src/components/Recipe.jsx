@@ -604,15 +604,6 @@ export const Recipe = ({ recipe }) => {
           <Box>
             <Box display='flex'>
               <Typography paragraph mr={1}>
-                Instructions
-              </Typography>
-              <ReceiptLongOutlined/>
-            </Box>
-            <Typography paragraph sx={{ mb: 4, ml: 2, mt: 2 }} variant='body2'>
-              {recipe.instructions}
-            </Typography>
-            <Box display='flex'>
-              <Typography paragraph mr={1}>
                 Type
               </Typography>
               <Restaurant/>
@@ -637,6 +628,15 @@ export const Recipe = ({ recipe }) => {
             </Box>
             <Typography paragraph sx={{ ml: 2, mt: 2 }} variant='body2'>
               {recipe.timeToCook} minutes 
+            </Typography>
+            <Box display='flex'>
+              <Typography paragraph mr={1}>
+                Instructions
+              </Typography>
+              <ReceiptLongOutlined/>
+            </Box>
+            <Typography paragraph sx={{ ml: 2, mt: 2 }} variant='body2'>
+              {recipe.instructions}
             </Typography>
           </Box>
         )

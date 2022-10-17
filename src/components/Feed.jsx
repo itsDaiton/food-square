@@ -16,14 +16,19 @@ import {
   Select,
   InputLabel,
   MenuItem,
-  Chip
+  Chip,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  useMediaQuery
  } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Recipe } from './Recipe'
 import { Link as RouterLink } from 'react-router-dom';
 import { getCurrentUser } from '../services/Authentication';
 import axios from 'axios'
-import { AccessAlarm, Clear, FilterList, FormatListBulleted, Restaurant } from '@mui/icons-material';
+import { AccessAlarm, Clear, FilterAlt, FilterList, FormatListBulleted, Restaurant } from '@mui/icons-material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTheme } from '@emotion/react';
 
 export const Feed = ({ page }) => {
@@ -75,6 +80,8 @@ export const Feed = ({ page }) => {
   }
 
   const theme = useTheme()
+
+  const tiny = useMediaQuery(theme.breakpoints.down(500))
 
   const [filterInputs, setFilterInputs] = useState(noFilters)
 
@@ -248,7 +255,7 @@ export const Feed = ({ page }) => {
         <Box display='flex' justifyContent='space-between'>
           <Paper 
             elevation={4}        
-            sx={{ width: 60, height: 60, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', ml: 6, mb: 2 }}
+            sx={{ width: 60, height: 60, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', ml: tiny ? 0 : 6, mb: 2 }}
           >
             <Tooltip title='Filter your feed'>
               <IconButton onClick={handleOpenDialog}>
@@ -257,9 +264,73 @@ export const Feed = ({ page }) => {
             </Tooltip>
           </Paper>
           {filteredRecipes &&
+          <Accordion 
+            elevation={10}      
+            sx={{
+              maxWidth: 180,
+              ml: 2,
+              mr: 2,
+              borderRadius: 5,
+              '&:before': {
+                  display: 'none',
+              }
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <Typography variant='body1' align='center' sx={{ fontWeight: 'bold' }}>Active filters</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box>
+                {filterInputs.meal.length > 0 &&
+                <Box display='flex' flexDirection='row' alignItems='center'>
+                  <Restaurant/>
+                  <Typography sx={{ m: 1 }}>Meal type</Typography>
+                </Box>
+                }
+                {filterInputs.meal.length > 0 && filterInputs.meal.map(m => (
+                  <Chip sx={{ m: 1 }} key={m} label={m} />
+                ))}
+                {filterInputs.categories.length > 0 &&
+                <Box display='flex' flexDirection='row' alignItems='center'>
+                  <FormatListBulleted/>
+                  <Typography sx={{ m: 1 }}>Categories</Typography>
+                </Box>
+                }
+                {filterInputs.categories.length > 0 &&  filterInputs.categories.map(c => (
+                  <Chip sx={{ m: 1 }} key={c} label={editStringFormat(c)} />
+                ))}
+                {filterInputs.prepTime !== '' && 
+                <Box display='flex' flexDirection='row' alignItems='center'>
+                  <AccessAlarm/>
+                  <Typography sx={{ m: 1 }}>Prep time</Typography>
+                </Box>
+                }
+                {filterInputs.prepTime !== '' &&
+                  <Box display='flex' justifyContent='center'>
+                    <Chip sx={{ m: 1, fontWeight: 'bold' }} label={filterInputs.prepTime}/>
+                  </Box>
+                }
+                {filterInputs.cookTime !== '' && 
+                <Box display='flex' flexDirection='row' alignItems='center'>
+                  <AccessAlarm/>
+                  <Typography sx={{ m: 1 }}>Cook time</Typography>
+                </Box>
+                }
+                {filterInputs.cookTime !== '' && 
+                <Box display='flex' justifyContent='center'>
+                  <Chip sx={{ m: 1, fontWeight: 'bold' }} label={filterInputs.cookTime}/>
+                </Box>
+                }
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+          }    
+          {filteredRecipes &&
           <Paper 
             elevation={4} 
-            sx={{ width: 60, height: 60, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', mr: 6, mb: 2, background: theme.palette.error.main }}
+            sx={{ width: 60, height: 60, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', mr: tiny ? 0 : 6, mb: 2, background: theme.palette.error.main }}
           >
             <Tooltip title='Clear all filters'>
               <IconButton onClick={clearFilters}>
@@ -267,7 +338,7 @@ export const Feed = ({ page }) => {
               </IconButton>
             </Tooltip>
           </Paper>
-          }          
+          }      
           <Dialog
           disableRestoreFocus
           open={openFilterDialog}
@@ -275,7 +346,7 @@ export const Feed = ({ page }) => {
           scroll='paper'
           fullWidth
           maxWidth="md"  
-        >
+          >
           <Box bgcolor={'background.default'} color={'text.primary'} p={3}>
             <Typography textAlign='center' variant='h6' sx={{ fontWeight: 'bold', mb: 5 }}>Filter your feed</Typography>
             <Box display='flex' flexDirection='row' alignItems='center'>
@@ -375,7 +446,7 @@ export const Feed = ({ page }) => {
               <Button variant='contained' sx={{ mt: 3, ml: 1, mr: 1 }} onClick={handleCloseDialog}>Close</Button>
             </Box>
           </Box>
-          </Dialog> 
+          </Dialog>
         </Box>
         :
         <Typography variant='h4' align='center' sx={{ m: 4, mb: 5, fontSize: { xs: 22, sm: 28, md: 26, lg: 26, xl: 32 }, fontWeight: 'bold' }}>

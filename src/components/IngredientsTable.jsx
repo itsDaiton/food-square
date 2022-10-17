@@ -42,7 +42,6 @@ export const IngredientsTable = () => {
         style={{ textDecoration: 'none', color: 'inherit' }}
         >
           {params.row.name}
-          0,
         </Link>
       }
     },

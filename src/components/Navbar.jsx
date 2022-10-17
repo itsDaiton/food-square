@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Badge, 
   Divider, 
@@ -58,6 +58,7 @@ export const Navbar = ({ mode, setMode }) => {
   const [openDrawer, setOpenDrawer] = useState(false)
 
   let navigate = useNavigate()
+  const route = useLocation()
 
   useEffect(() => {
     const currentUser = getCurrentUser()
@@ -65,6 +66,12 @@ export const Navbar = ({ mode, setMode }) => {
       setUser(currentUser)
     }
   }, [])
+
+  const handleBackToDiscover = () => {
+    if (route.pathname !== '/discover') {
+      navigate('/discover')
+    }
+  }
 
   const handleLogout = () => {
     localStorage.removeItem('user')
@@ -86,7 +93,9 @@ export const Navbar = ({ mode, setMode }) => {
       <Container maxWidth="xxl">
         <Toolbar disableGutters>
           <Box display='flex' alignItems='center'>
-            <FastfoodIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 2 }} />
+            <IconButton sx={{ p: 0, color: 'inherit' }} onClick={handleBackToDiscover}>
+            <FastfoodIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+            </IconButton>
             <Typography
               component="a"
               sx={{
