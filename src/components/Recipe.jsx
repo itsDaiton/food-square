@@ -190,6 +190,8 @@ export const Recipe = ({ recipe }) => {
   const [tab, setTab] = useState(1)
 
   const [loading, setLoading] = useState(true)
+  
+  const [recipeImage, setRecipeImage] = useState()
 
   const [selectedIngredient, setSelectedIngredient] = useState(null)
 
@@ -251,11 +253,22 @@ export const Recipe = ({ recipe }) => {
     })
   }
 
+  
+  const getRecipeImage = () => {
+    if (recipe.pathToImage !== null && recipe.pathToImage !== '') {   
+      axios.get('http://localhost:8080/' + recipe.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+        var imageUrl = URL.createObjectURL(new Blob([response.data]))
+        setRecipeImage(imageUrl)
+        console.log(imageUrl)
+        setLoading(false)
+      })
+    }
+  }
+
   useEffect(() => {
     getFollowCheck()
     getFavoriteCheck()
     getReviewCheck()
-    getRecipeIngredients()
     // eslint-disable-next-line
   }, [])
   
@@ -264,11 +277,13 @@ export const Recipe = ({ recipe }) => {
     getCommentCount()
     getAverageRating()
     getRecipeIngredients()
+    getRecipeImage()
 
     const interval = setInterval(() => {
       getReviewCount()
       getCommentCount()
       getAverageRating()
+      getRecipeImage()
     }, 10000)
 
     return () => clearInterval(interval)
@@ -642,6 +657,7 @@ export const Recipe = ({ recipe }) => {
         )
       case 2:
         return (
+          recipe.categories.length > 0 ?
           <TableContainer>
             <Table>
               <TableBody>
@@ -653,6 +669,10 @@ export const Recipe = ({ recipe }) => {
             </TableBody>            
           </Table>
         </TableContainer>
+        :
+        <Box display='flex' justifyContent='center'>
+          <Typography>This recipe has no categories.</Typography>
+        </Box>     
         )
       case 3:
         if (!recipeIngredients.length > 0 ) {
@@ -864,8 +884,14 @@ export const Recipe = ({ recipe }) => {
           component="img"
           height={'20%'}
           width='auto'
-          image="https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-          alt="Paella dish"
+          //image={getRecipeImage()}
+          //image={'public/resources/recipe-default.jpeg'}
+          //image={'/resources/recipe-default.jpeg'}
+          image={recipeImage ? recipeImage : '/resources/recipe-default.jpeg'}
+          //image={`data:image/*;base64,${recipeImage}`}
+         //src={`data:image/*;base64,${recipeImage}`}
+          //image={getRecipeImage()}
+          alt="Recipe image"
         />
         }
         {/*}*/}

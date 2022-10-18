@@ -27,7 +27,7 @@ import { Recipe } from './Recipe'
 import { Link as RouterLink } from 'react-router-dom';
 import { getCurrentUser } from '../services/Authentication';
 import axios from 'axios'
-import { AccessAlarm, Clear, FilterAlt, FilterList, FormatListBulleted, Restaurant } from '@mui/icons-material';
+import { AccessAlarm, Clear, FilterList, FormatListBulleted, Restaurant } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTheme } from '@emotion/react';
 
