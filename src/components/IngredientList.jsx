@@ -11,7 +11,7 @@ import {
 import { Box } from '@mui/system'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 
 export const IngredientList = () => {
 
@@ -19,10 +19,14 @@ export const IngredientList = () => {
   const [ingredient, setIngredient] = useState({})
   const [loading, setLoading] = useState(true)
 
+  let navigate = useNavigate()
+
   const getIngredient = () => {
     axios.get('http://localhost:8080/api/v1/ingredients/get/' + id).then((response) => {
       setIngredient(response.data)
       setLoading(false)
+    }).catch(error => {
+      navigate('/error')
     })
   }
 

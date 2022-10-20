@@ -1,16 +1,14 @@
-import { Box, CardHeader, Rating, Avatar, Card, IconButton, styled, TextField, CardActions, Checkbox, Tooltip, Typography, Snackbar, Alert, Skeleton } from '@mui/material'
+import { Favorite, FavoriteBorder } from '@mui/icons-material'
+import { Alert, Avatar, Card, CardActions, CardHeader, Checkbox, IconButton, Skeleton, Snackbar, Tooltip, Typography } from '@mui/material'
+import { Box } from '@mui/system'
+import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import { getCurrentUser } from '../services/Authentication'
 import AvatarService from '../services/AvatarService'
+import { CustomTextField } from './Create'
 import { calculateDifference, CardText, convertToTimestamp } from './Recipe'
-import { getCurrentUser } from '../services/Authentication';
-import { Favorite, FavoriteBorder } from '@mui/icons-material';
-import axios from 'axios';
 
-export const CustomTextField = styled(TextField)({
-  margin: 8,
-})
-
-export const Review = ({ review }) => {
+export const Comment = ({ comment }) => {
 
   const [user, setUser] = useState(localStorage.getItem('user') ? getCurrentUser : null)
   const [likeCount, setLikeCount] = useState()
@@ -30,14 +28,14 @@ export const Review = ({ review }) => {
 
   const getLikeBoolean = () => {
     if (user) {
-      axios.get('http://localhost:8080/api/v1/reviews/isLikedByUser/' + review.id, { withCredentials: true }).then((response) => {
+      axios.get('http://localhost:8080/api/v1/comments/isLikedByUser/' + comment.id, { withCredentials: true }).then((response) => {
         setLiked(response.data)
       })
     }
   }
 
   const getLikeCount = () => {
-    axios.get('http://localhost:8080/api/v1/reviews/getLikes/' + review.id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/comments/getLikes/' + comment.id).then((response) => {
       setLikeCount(response.data)
       setLoading(false)
     })
@@ -62,7 +60,7 @@ export const Review = ({ review }) => {
   const handleCheck = (e) => {
     if (e.target.checked === true) {   
       axios.put('http://localhost:8080/api/v1/users/like', 
-      {appUser: user.id, content: review.id, type: 'review' }, 
+      {appUser: user.id, content: comment.id, type: 'comment' }, 
       { withCredentials: true }).then((response) => {
         getLikeCount()
         getLikeBoolean()
@@ -77,7 +75,7 @@ export const Review = ({ review }) => {
     }
     else {
       axios.put('http://localhost:8080/api/v1/users/deleteLike', 
-      {appUser: user.id, content: review.id, type: 'review' }, 
+      {appUser: user.id, content: comment.id, type: 'comment' }, 
       { withCredentials: true }).then((response) => {
         getLikeCount()
         getLikeBoolean()
@@ -115,7 +113,7 @@ export const Review = ({ review }) => {
           }}
           onMouseDown={e => e.stopPropagation()}
         >
-          <Avatar {...AvatarService.stringAvatar(review.appUser.userName)} />
+          <Avatar {...AvatarService.stringAvatar(comment.appUser.userName)} />
         </IconButton>
         }
         title={
@@ -134,15 +132,15 @@ export const Review = ({ review }) => {
                 fontSize: 20
               }}
             >
-              {(review.appUser.firstName && review.appUser.lastName) ? review.appUser.firstName + ' ' + review.appUser.lastName : review.appUser.userName}
+              {(comment.appUser.firstName && comment.appUser.lastName) ? comment.appUser.firstName + ' ' + comment.appUser.lastName : comment.appUser.userName}
             </CardText>
-            {(review.appUser.firstName && review.appUser.lastName) &&
+            {(comment.appUser.firstName && comment.appUser.lastName) &&
             <CardText
               sx={{
                 color: 'text.secondary'
                 }}
               >
-                @{review.appUser.userName}
+                @{comment.appUser.userName}
             </CardText> 
             }
             <CardText
@@ -155,7 +153,7 @@ export const Review = ({ review }) => {
               sx={{
                 color: 'text.secondary'
               }}
-            >{calculateDifference(convertToTimestamp(), convertToTimestamp(review.updatedAt))}</CardText>     
+            >{calculateDifference(convertToTimestamp(), convertToTimestamp(comment.commentedAt))}</CardText>     
           </React.Fragment>
         }
       />
@@ -171,28 +169,13 @@ export const Review = ({ review }) => {
           <CustomTextField
             disabled
             sx={{ m: 2, mt: 0 }}
-            value={review.text}
-            id="review-text" 
+            value={comment.text}
+            id="comment-text" 
             variant="outlined"
             multiline
             rows={4}
           />
            }
-           {loading ? 
-              ( <Skeleton
-                  animation="wave"
-                  height={50}
-                  width="25%"
-                />
-              ) 
-              :
-          <Rating
-            size='large'
-            value={review.rating}
-            sx={{m: 2, mt: 0}}
-            readOnly
-          />
-          }
         </Box>
         {user && 
         <CardActions sx={{ ml: 1, display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>

@@ -454,7 +454,7 @@ export const Feed = ({ page }) => {
         </Typography>
         }
         {
-          filteredRecipes ? (filteredRecipes.length > 0 ? filteredRecipes.map(r => (<Recipe key={r.id} recipe={r} loading={loading}/>)) 
+          filteredRecipes ? (filteredRecipes.length > 0 ? filteredRecipes.map(r => (<Recipe key={r.id} recipe={r} type='feed'/>)) 
           : 
           <Box sx={{ padding: 4 }}>
             <Typography variant='h5' align='center' sx={{ mb: 2, fontWeight: 'bold' }}>No recipes found.</Typography>
@@ -463,7 +463,7 @@ export const Feed = ({ page }) => {
             </Typography>
           </Box>
         ) 
-          : recipes.map(r => (<Recipe key={r.id} recipe={r} loading={loading}/>))
+          : recipes.map(r => (<Recipe key={r.id} recipe={r} type='feed'/>))
         }
       </Box>     
     )

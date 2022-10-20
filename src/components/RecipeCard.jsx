@@ -7,12 +7,10 @@ import {
   CardHeader, 
   IconButton, 
   Typography, 
-  Link, 
   CardActionArea, 
   Rating, 
   Divider, 
   Skeleton, 
-  CardActions, 
   Tooltip, 
   Collapse
 } 
@@ -23,6 +21,7 @@ import AvatarService from '../services/AvatarService'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { CardText, ExpandMore } from './Recipe'
 import { Review } from './Review'
+import { Link as RouterLink } from 'react-router-dom';
 
 export const RecipeCard = ({ recipe }) => {
 
@@ -69,9 +68,8 @@ export const RecipeCard = ({ recipe }) => {
     <Box key={recipe.id}>
     <Card elevation={5} sx={{ m: 2, mt: 5, mb: 5, borderRadius: 5 }}>
       <CardActionArea 
-        component={Link}
-        href='https://mui.com/'
-        target='_blank'
+        component={RouterLink}
+        to={'/recipe/' + recipe.id}
       >
       <CardHeader
         avatar={

@@ -8,6 +8,7 @@ import { Home } from "./pages/Home";
 import { Ingredient } from "./pages/Ingredient";
 import { Ingredients } from "./pages/Ingredients";
 import { Login } from "./pages/Login";
+import { RecipePage } from "./pages/RecipePage";
 import { Register } from "./pages/Register";
 import { Reviews } from "./pages/Reviews";
 import { getCurrentUser } from "./services/Authentication";
@@ -68,6 +69,7 @@ function App() {
         <Route path="/register" element={<Register/>}/>
         <Route path='/home' element={<Home mode={mode} setMode={setMode}/>}/>
         <Route path='/discover' element={<Discover mode={mode} setMode={setMode}/>}/>
+        <Route path='/recipe/:id' element={<RecipePage mode={mode} setMode={setMode}/>}/>
         <Route path="/ingredients" element={<Ingredients mode={mode} setMode={setMode}/>}/>
         <Route path='/ingredient/:id' element={<Ingredient mode={mode} setMode={setMode}/>}/>
         <Route path='/favorites' element={<Favorites mode={mode} setMode={setMode}/>}/>

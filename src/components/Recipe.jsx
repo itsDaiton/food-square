@@ -22,7 +22,6 @@ import {
   Menu,
   ListItemIcon,
   CardActionArea,
-  Link,
   Collapse,
   Tab,
   Tabs,
@@ -61,6 +60,7 @@ import { CustomTextField } from './Create';
 import { getCurrentUser } from '../services/Authentication';
 import AvatarService from '../services/AvatarService'
 import { useNavigate } from 'react-router';
+import { Link as RouterLink } from 'react-router-dom';
 
 export const CardText = styled(Typography)({
   fontFamily: 'Poppins',
@@ -125,7 +125,7 @@ export const calculateDifference = (date1, date2) => {
   return ret
 }
 
-export const Recipe = ({ recipe }) => {
+export const Recipe = ({ recipe, type }) => {
 
   const defaultReview = {
     text: '',
@@ -736,11 +736,11 @@ export const Recipe = ({ recipe }) => {
 
   return (
     <React.Fragment>
+      {type === 'feed' ?
       <Card sx={{margin: {md: 5, xs: 2}, borderRadius: 5}} elevation={10}>
-        <CardActionArea 
-          component={Link}
-          href='https://mui.com/'
-          target='_blank'
+        <CardActionArea
+          component={RouterLink}
+          to={'/recipe/' + recipe.id}
         >
         <CardHeader
          avatar={
@@ -871,7 +871,6 @@ export const Recipe = ({ recipe }) => {
                 </MenuItem>
               }
             </Menu>
-        {/*{p.appUser.pathToImage &&*/}
         {loading ? 
         (
         <Skeleton variant="rectangular" width="100%">
@@ -883,17 +882,10 @@ export const Recipe = ({ recipe }) => {
           component="img"
           height={'20%'}
           width='auto'
-          //image={getRecipeImage()}
-          //image={'public/resources/recipe-default.jpeg'}
-          //image={'/resources/recipe-default.jpeg'}
           image={recipeImage ? recipeImage : '/resources/recipe-default.jpeg'}
-          //image={`data:image/*;base64,${recipeImage}`}
-         //src={`data:image/*;base64,${recipeImage}`}
-          //image={getRecipeImage()}
           alt="Recipe image"
         />
         }
-        {/*}*/}
         <CardContent>
           <Box display='flex' flexDirection='row' justifyContent='space-between'>
             {loading ?
@@ -1021,8 +1013,283 @@ export const Recipe = ({ recipe }) => {
           <CardContent>
             {loadTabsContent(tab)}
           </CardContent>
-      </Collapse>
+        </Collapse>
       </Card>
+      :
+      <Card sx={{margin: {md: 5, xs: 2}, borderRadius: 5}} elevation={10}>
+      <CardHeader
+       avatar={
+        loading ? 
+        ( <Skeleton animation="wave" variant="circular" width={40} height={40} /> )
+        :
+        <IconButton 
+          sx={{ p: 0 }} 
+          onClick={e => {
+            e.stopPropagation()
+            e.preventDefault()
+          }}
+          onMouseDown={e => e.stopPropagation()}
+        >
+          <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)} />
+        </IconButton>
+       }
+        action={
+          loading ? null :
+          user &&
+          <IconButton aria-label="settings" onClick={handleOpenMenuMore} onMouseDown={e => e.stopPropagation()}>
+            <MoreVert />
+          </IconButton>
+        }
+        title={
+          loading ? 
+          ( <Skeleton
+              animation="wave"
+              height={34}
+              width="20%"
+            />
+          ) 
+          :
+          <React.Fragment>
+              <CardText
+              sx={{
+                fontWeight: 'bold',
+                fontSize: 20
+              }}
+            >
+              {(recipe.appUser.firstName && recipe.appUser.lastName) ? recipe.appUser.firstName + ' ' + recipe.appUser.lastName : recipe.appUser.userName}
+            </CardText>
+            {(recipe.appUser.firstName && recipe.appUser.lastName) &&
+            <CardText
+              sx={{
+                color: 'text.secondary'
+                }}
+              >
+                @{recipe.appUser.userName}
+            </CardText> 
+            }
+            <CardText
+              sx={{
+                color: 'text.secondary',
+                fontSize: 20
+              }}
+            >·</CardText>  
+            <CardText
+              sx={{
+                color: 'text.secondary'
+              }}
+            >{calculateDifference(convertToTimestamp(), convertToTimestamp(recipe.updatedAt))}</CardText>     
+          </React.Fragment>
+        }
+      />
+      <Menu
+            sx={{ mt: '45px' }}
+            id="menu-appbar"
+            anchorEl={menuItem}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            open={Boolean(menuItem)}
+            onClose={handleCloseMenuMore}
+            onClick={e => e.stopPropagation()}
+            onMouseDown={e => e.stopPropagation()}
+          >
+            {checkFollow === false ?
+            <MenuItem onClick={handleFollow} disabled={checkFollow === null ? true : false}>
+              <ListItemIcon>
+                <PersonAdd fontSize="small"/>
+              </ListItemIcon>
+              Follow user @{recipe.appUser.userName}
+            </MenuItem>
+            :
+            <MenuItem onClick={handleUnfollow} disabled={checkFollow === null ? true : false}>
+              <ListItemIcon>
+                <PersonRemove fontSize="small"/>
+              </ListItemIcon>
+              Unfollow user @{recipe.appUser.userName}
+            </MenuItem>
+            }
+            {checkFavorite === false ?
+            <MenuItem onClick={handleFavorite} disabled={checkFavorite === null ? true : false}>
+              <ListItemIcon>
+                <BookmarkAdd fontSize="small" />
+              </ListItemIcon>
+              Favorite this recipe
+            </MenuItem>
+            :
+            <MenuItem onClick={handleUnfavorite} disabled={checkFavorite === null ? true : false}>
+              <ListItemIcon>
+                <BookmarkRemove fontSize="small" />
+              </ListItemIcon>
+              Unfavorite this recipe
+            </MenuItem>
+            }
+            {checkReview === true &&
+              <MenuItem onClick={handleReviewEdit}>
+                <ListItemIcon>
+                  <Edit fontSize="small" />
+                </ListItemIcon>
+                Edit your review
+              </MenuItem>
+            }     
+            {checkReview === true &&
+              <MenuItem onClick={handleReviewDelete}>
+                <ListItemIcon>
+                  <Delete fontSize="small" />
+                </ListItemIcon>
+                Delete your review
+              </MenuItem>
+            }
+          </Menu>
+      {loading ? 
+      (
+      <Skeleton variant="rectangular" width="100%">
+        <div style={{ paddingTop: '57%' }} />
+      </Skeleton>     
+      ) 
+      :
+      <CardMedia
+        component="img"
+        height={'20%'}
+        width='auto'
+        image={recipeImage ? recipeImage : '/resources/recipe-default.jpeg'}
+        alt="Recipe image"
+      />
+      }
+      <CardContent>
+        <Box display='flex' flexDirection='row' justifyContent='space-between'>
+          {loading ?
+          (
+            <Skeleton
+              animation="wave"
+              height={34}
+              width="50%"
+            />
+          )     
+          :
+          <Typography variant='h6'>
+            {recipe.name}
+          </Typography>
+          }
+          {loading ? 
+          (
+            <Skeleton
+              animation="wave"
+              height={34}
+              width="20%"
+            />
+          )
+          :
+          averageRating >= 1.0 ?
+          <Box display='flex' alignItems='center'>     
+            <Typography variant='h6' sx={{ mr: 1, fontWeight: 'bold' }}>{averageRating}</Typography>
+            <Rating readOnly value={averageRating} precision={0.5} size='large' />
+          </Box>
+          :
+          <Box display='flex' alignItems='center'>
+            <Typography variant='body1' sx={{ mr: 1 }}>No reviews yet.</Typography>
+            <StarBorderOutlined sx={{ width: 35, height: 35 }} />
+          </Box>     
+          }       
+        </Box>
+        <Divider sx={{ mt: 2, mb: 2 }}/>
+        {loading ? 
+        (
+          <Skeleton
+              animation="wave"
+              height={34}
+              width="100%"
+            />
+        )
+        :
+        <Typography variant="body1">
+          {recipe.description}
+        </Typography> 
+        }  
+      </CardContent>
+      <CardActions sx={{ ml: 1, display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>
+        <Box display='flex' flexDirection='row'>
+          {loading ? 
+          (<Skeleton animation="wave" variant="circular" width={45} height={45} sx={{ m: 2 }} />)
+          :
+          <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
+            <Tooltip title='Add a review'>
+              <IconButton 
+                aria-label="reviews" 
+                onClick={user ? handleReviewAdd : handleOpenErrorDialog} 
+                onMouseDown={e => e.stopPropagation()}
+              >
+                <RateReviewOutlined sx={{ width: 38, height: 38, color: 'text.primary' }} />
+              </IconButton>
+            </Tooltip>
+            {reviewCount > 0 ? 
+            <Typography sx={{ mr: 3, ml: 1 }}>{reviewCount}</Typography>
+            :
+            <Typography sx={{ mr: 4, ml: 1 }}></Typography>       
+          } 
+          </Box>
+          }
+          {loading ? 
+          (<Skeleton animation="wave" variant="circular" width={45} height={45} sx={{ m: 2 }} />)
+          :
+          <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
+            <Tooltip title='Add a comment'>
+              <IconButton
+                aria-label="comments" 
+                onClick={user ? handleOpenCommentDialog : handleOpenErrorDialog} 
+                onMouseDown={e => e.stopPropagation()}
+              >
+                <ChatOutlined sx={{ width: 38, height: 38, color: 'text.primary' }}/>
+              </IconButton>
+            </Tooltip>
+            {commentCount > 0 ?
+            <Typography sx={{ mr: 3, ml: 1 }}>{commentCount}</Typography>
+            :
+            <Typography sx={{ mr: 4, ml: 1 }}></Typography>
+            }
+          </Box>
+          }
+        </Box>
+        {loading ? (<Skeleton animation="wave" variant="circular" width={45} height={45} sx={{ m: 2 }} />)
+        : 
+        <ExpandMore
+          aria-label="show more"
+          expand={expanded}
+          onClick={handleExpandClick}
+          aria-expanded={expanded}
+          onMouseDown={e => e.stopPropagation()}
+        >
+          <Tooltip title={expanded ? 'Hide details' : 'Show details'}>
+            <ExpandMoreIcon sx={{ width: 38, height: 38, color: 'text.primary' }}/>
+          </Tooltip>
+        </ExpandMore>
+        }  
+      </CardActions>
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <Divider/>
+        <Tabs
+          value={tab}
+          onChange={handleTabChange}
+          textColor="primary"
+          indicatorColor="primary"
+          variant='fullWidth'
+          orientation={tiny ? 'vertical' : 'horizontal'}
+        >
+          <Tab value={1} label="Details" sx={{ typography: 'body1' }}/>
+          <Tab value={2} label="Categories" sx={{ typography: 'body1' }}/>
+          <Tab value={3} label="Ingredients" sx={{ typography: 'body1' }}/>
+        </Tabs>
+        <CardContent>
+          {loadTabsContent(tab)}
+        </CardContent>
+      </Collapse>
+    </Card>
+      }
       <Dialog
         disableRestoreFocus
         open={openReviewDialog}
