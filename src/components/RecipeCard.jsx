@@ -27,7 +27,6 @@ import { Review } from './Review'
 export const RecipeCard = ({ recipe }) => {
 
   const [reviewCount, setReviewCount] = useState()
-  const [averageRating, setAverageRating] = useState()
   const [loading, setLoading] = useState(true)
 
   const [reviews, setReviews] = useState([])
@@ -40,12 +39,6 @@ export const RecipeCard = ({ recipe }) => {
     })
   }
 
-  const getAverageRating = () => {
-    axios.get('http://localhost:8080/api/v1/reviews/getAvgRating/' + recipe.id).then((response) => {
-      setAverageRating(response.data)
-    })
-  }
-
   const getReviewsInRecipe = () => {
     axios.get('http://localhost:8080/api/v1/reviews/getAllByRecipe/' + recipe.id).then((response) => {
       setReviews(response.data)
@@ -55,12 +48,10 @@ export const RecipeCard = ({ recipe }) => {
 
   useEffect(() => {
     getReviewCount()
-    getAverageRating()
     getReviewsInRecipe()
 
     const interval = setInterval(() => {
       getReviewCount()
-      getAverageRating()
       getReviewsInRecipe()
     }, 10000)
 
@@ -150,10 +141,10 @@ export const RecipeCard = ({ recipe }) => {
       :
       <CardContent>
         <Box display='flex' flexDirection='row'>
-        {averageRating >= 1.0 ?
+        {recipe.avgRating >= 1.0 ?
           <Box display='flex' alignItems='center'>     
-            <Typography variant='h6' sx={{ mr: 1, fontWeight: 'bold' }}>{averageRating}</Typography>
-            <Rating readOnly value={averageRating} precision={0.5} size='large' />
+            <Typography variant='h6' sx={{ mr: 1, fontWeight: 'bold' }}>{recipe.avgRating}</Typography>
+            <Rating readOnly value={recipe.avgRating} precision={0.5} size='large' />
             <Typography display='flex' alignItems='center' variant='body1' sx={{ ml: 2, height: 34.8 }}>
               {reviewCount > 1 ? reviewCount + ' reviews' : reviewCount + ' review'}
               </Typography>

@@ -259,7 +259,6 @@ export const Recipe = ({ recipe }) => {
       axios.get('http://localhost:8080/' + recipe.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
         var imageUrl = URL.createObjectURL(new Blob([response.data]))
         setRecipeImage(imageUrl)
-        console.log(imageUrl)
         setLoading(false)
       })
     }

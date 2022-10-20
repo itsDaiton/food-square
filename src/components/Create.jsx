@@ -293,70 +293,61 @@ export const Create = () => {
     const formData = new FormData()
     formData.append('image', fileRef.current.files[0])
 
-    if((fileRef.current.files[0].size / 1024) < 2048) {
-      axios.post('http://localhost:8080/api/v1/recipes/add', recipeInputs, { withCredentials: true }).then((response) => {
-      if (response.data) {
-        const JSONbody = addedIngredients.map(item =>(
-          {
-            recipe: response.data.id,
-            ingredient: item.id,
-            amount: item.amount      
-          }     
-        ))
-        const recipeIngredients = {
-          recipeIngredients: JSONbody
+    axios.post('http://localhost:8080/api/v1/recipes/add', recipeInputs, { withCredentials: true }).then((response) => {
+    if (response.data) {
+      const JSONbody = addedIngredients.map(item =>(
+        {
+          recipe: response.data.id,
+          ingredient: item.id,
+          amount: item.amount      
+        }     
+      ))
+      const recipeIngredients = {
+        recipeIngredients: JSONbody
+      }
+      if (fileRef.current.files[0]) {
+        axios.put('http://localhost:8080/api/v1/recipes/addImage/' + response.data.id, formData, { withCredentials: true })
+      }
+      var msg = response.data.message
+      clearRecipeErrors()
+      axios.post('http://localhost:8080/api/v1/recipe-ingredients/addAll', recipeIngredients, { withCredentials: true}).then((response) => {
+          handleCloseDialog()
+          setSuccessResponse(msg)
+          setOpenAlertSuccess(true)
         }
-        axios.put('http://localhost:8080/api/v1/recipes/addImage/' + response.data.id, formData, { withCredentials: true }).then((response) => {
-          console.log(response)
-        }).catch(error => {
-          console.log(error)
-        })
-
-        var msg = response.data.message
-        clearRecipeErrors()
-        axios.post('http://localhost:8080/api/v1/recipe-ingredients/addAll', recipeIngredients, { withCredentials: true}).then((response) => {
-            handleCloseDialog()
-            setSuccessResponse(msg)
-            setOpenAlertSuccess(true)
-          }
-        )
-      }
-    }).catch((error) => {
-      if(error.response.data.errorList) {
-        clearRecipeErrors()
-        error.response.data.errorList.forEach(err => {
-          if (err.field === 'name') {
-            setNameError(err.message)
-          }
-          if (err.field === 'description') {
-            setDescriptionError(err.message)
-          }
-          if (err.field === 'meal') {
-            setMealError(err.message)
-          }
-          if (err.field === 'instructions') {
-            setInstructionsError(err.message)
-          }
-          if (err.field === 'timeToPrepare') {
-            setTimeToPrepError(err.message)
-          }
-          if (err.field === 'timeToCook') {
-            setTimeToCookError(err.message)
-          }
-        })
-        setErrorResponse('Something went wrong. Please check individual fields for error description.')
-        setOpenAlertError(true)
-      }
-      else {
-        setErrorResponse(error.response.data.message)
-        setOpenAlertError(true)
-      }
-    })
-    } 
-    else {
-      setErrorResponse('File is too big.')
+      )
+    }
+  }).catch((error) => {
+    if(error.response.data.errorList) {
+      clearRecipeErrors()
+      error.response.data.errorList.forEach(err => {
+        if (err.field === 'name') {
+          setNameError(err.message)
+        }
+        if (err.field === 'description') {
+          setDescriptionError(err.message)
+        }
+        if (err.field === 'meal') {
+          setMealError(err.message)
+        }
+        if (err.field === 'instructions') {
+          setInstructionsError(err.message)
+        }
+        if (err.field === 'timeToPrepare') {
+          setTimeToPrepError(err.message)
+        }
+        if (err.field === 'timeToCook') {
+          setTimeToCookError(err.message)
+        }
+      })
+      setErrorResponse('Something went wrong. Please check individual fields for error description.')
       setOpenAlertError(true)
     }
+    else {
+      setErrorResponse(error.response.data.message)
+      setOpenAlertError(true)
+    }
+  })
   }
 
   const handleOpenDialog = () => {
@@ -640,7 +631,7 @@ export const Create = () => {
                 Supported formats are JPEG, GIF and PNG.
               </Typography>
               <Typography variant='body2' sx={{ mb: 1 }} color={theme.palette.warning.main}>
-                Failure to meet above stated above conditions will result in image not uploading.
+                Failure to meet above stated conditions will result in image not uploading.
               </Typography>
             <input
               name='image'
