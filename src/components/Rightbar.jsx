@@ -17,7 +17,7 @@ import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { getCurrentUser } from '../services/Authentication'
 import AvatarService from '../services/AvatarService'
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 export const UserAvatar = styled(Avatar)({
   width: 45, 
@@ -30,7 +30,7 @@ export const UserText = styled(Typography)({
   display: 'inline'
 })
 
-const FriendsListItem = ({ firstname, lastname, username, picture }) => {
+export const FriendsListItem = ({ firstname, lastname, username, picture }) => {
 
   return (
     <Box display='flex' alignItems='center'>
@@ -88,6 +88,12 @@ export const Rightbar = ({ page }) => {
   const [suggestions, setSuggestions] = useState([])
   const [user, setUser] = useState(localStorage.getItem('user') ? getCurrentUser : null)
   const [loading, setLoading] = useState(true)
+
+  let navgiate = useNavigate()
+
+  const handleNavigate = () => {
+    navgiate('/following/' + user.id)
+  }
  
   useEffect(() => {
     const currentUser = getCurrentUser()
@@ -193,7 +199,7 @@ export const Rightbar = ({ page }) => {
           </List>
           {follows.length >= 5 &&
             <Box display='flex' justifyContent='center'>
-              <Button sx={{ width: '80%', m: 1 }} variant='contained'>Show more</Button>
+              <Button sx={{ width: '80%', m: 1 }} variant='contained' onClick={handleNavigate}>Show more</Button>
             </Box> 
           }
         </React.Fragment>
@@ -209,12 +215,7 @@ export const Rightbar = ({ page }) => {
             {suggestions.slice(0, 3).map(s => (
               <FriendsListItem key={s.id} firstname={s.firstName} lastname={s.lastName} username={s.userName}/>
             ))}
-          </List>
-          {suggestions.length >= 3 &&
-          <Box display='flex' justifyContent='center'>
-            <Button sx={{ width: '80%', m: 1 }} variant='contained'>Show more</Button>
-          </Box> 
-          }             
+          </List>           
         </React.Fragment>
         }
       </Box>
@@ -240,14 +241,9 @@ export const Rightbar = ({ page }) => {
           </Typography>       
         </Box>
         }
-        {suggestions.length >= 3 &&
-        <Box display='flex' justifyContent='center'>
-          <Button sx={{ width: '80%', m: 1 }} variant='contained'>Show more</Button>
-        </Box> 
-        }
         {follows.length >= 5 &&
         <Box display='flex' justifyContent='center'>
-          <Button sx={{ width: '80%', m: 1 }} variant='contained'>Show more</Button>
+          <Button sx={{ width: '80%', m: 1 }} variant='contained' onClick={handleNavigate}>Show more</Button>
         </Box> 
         }
       </Box>

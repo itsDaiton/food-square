@@ -4,6 +4,8 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import { Discover } from "./pages/Discover";
 import { Error } from "./pages/Error";
 import { Favorites } from "./pages/Favorites";
+import { Followers } from "./pages/Followers";
+import { Following } from "./pages/Following";
 import { Home } from "./pages/Home";
 import { Ingredient } from "./pages/Ingredient";
 import { Ingredients } from "./pages/Ingredients";
@@ -74,6 +76,8 @@ function App() {
         <Route path='/ingredient/:id' element={<Ingredient mode={mode} setMode={setMode}/>}/>
         <Route path='/favorites' element={<Favorites mode={mode} setMode={setMode}/>}/>
         <Route path='/reviews' element={<Reviews mode={mode} setMode={setMode}/>}/>
+        <Route path='/followers/:id' element={<Followers mode={mode} setMode={setMode}/>}/>
+        <Route path='/following/:id' element={<Following mode={mode} setMode={setMode}/>}/>
         <Route path="/" element={user ? <Navigate to="/home" replace/> : <Navigate to="/discover" replace/>}/>
         <Route path="*" element={<Error/>}/>
       </Routes>

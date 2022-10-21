@@ -126,7 +126,7 @@ export const Register = () => {
       sm={5}
       md={7}
       sx={{
-        backgroundImage: 'url(https://picsum.photos/800)',
+        backgroundImage: 'url(https://source.unsplash.com/random/800×800/?food,recipe)',
         backgroundRepeat: 'no-repeat',
         backgroundColor: (t) =>
           t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
