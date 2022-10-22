@@ -1,16 +1,17 @@
-import { Box, CardHeader, Rating, Avatar, Card, IconButton, styled, TextField, CardActions, Checkbox, Tooltip, Typography, Snackbar, Alert, Skeleton } from '@mui/material'
+import { Box, CardHeader, Rating, Avatar, Card, IconButton, styled, TextField, CardActions, Checkbox, Tooltip, Typography, Snackbar, Alert, Skeleton, Paper, CardActionArea } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import AvatarService from '../services/AvatarService'
 import { calculateDifference, CardText, convertToTimestamp } from './Recipe'
 import { getCurrentUser } from '../services/Authentication';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import axios from 'axios';
+import { Link as RouterLink } from 'react-router-dom';
 
 export const CustomTextField = styled(TextField)({
   margin: 8,
 })
 
-export const Review = ({ review }) => {
+export const Review = ({ review, page }) => {
 
   const [user, setUser] = useState(localStorage.getItem('user') ? getCurrentUser : null)
   const [likeCount, setLikeCount] = useState()
@@ -102,6 +103,77 @@ export const Review = ({ review }) => {
   return (
     <Box>
     <Card sx={{margin: {md: 5, xs: 2}, borderRadius: 5}} elevation={10}>
+    {page === 'profile' &&
+      <Box>
+        <Paper elevation={4} sx={{ borderRadius: 15, ml: 10, mr: 10, mt: 2, mb: 2 }}>
+          <Tooltip title='Author and name of reviewed recipe'>
+          <CardActionArea 
+            sx={{ borderRadius: 15 }}
+            component={RouterLink}
+            to={'/recipe/' + review.recipe.id}
+          >
+          <CardHeader
+              avatar={
+              loading ? 
+              ( <Skeleton animation="wave" variant="circular" width={40} height={40} /> )
+              :
+              <IconButton 
+                sx={{ p: 0 }} 
+                onClick={e => {
+                  e.stopPropagation()
+                  e.preventDefault()
+                }}
+                onMouseDown={e => e.stopPropagation()}
+              >
+                <Avatar {...AvatarService.stringAvatar(review.recipe.appUser.userName)} />
+              </IconButton>
+              }
+              title={
+                loading ? 
+                  ( <Skeleton
+                      animation="wave"
+                      height={34}
+                        width="20%"
+                      />
+                    ) 
+                    :
+                  <React.Fragment>
+                      <CardText
+                      sx={{
+                        fontWeight: 'bold',
+                        fontSize: 20
+                      }}
+                    >
+                      {(review.recipe.appUser.firstName && review.recipe.appUser.lastName) ? review.recipe.appUser.firstName + ' ' + review.recipe.appUser.lastName : review.recipe.appUser.userName}
+                    </CardText>
+                    {(review.recipe.appUser.firstName && review.recipe.appUser.lastName) &&
+                    <CardText
+                      sx={{
+                        color: 'text.secondary'
+                        }}
+                      >
+                        @{review.recipe.appUser.userName}
+                    </CardText> 
+                    }
+                    <CardText
+                      sx={{
+                        color: 'text.secondary',
+                        fontSize: 20
+                      }}
+                    >·</CardText>  
+                    <CardText
+                      sx={{
+                        color: 'text.secondary'
+                      }}
+                    >{review.recipe.name}</CardText>     
+                  </React.Fragment>
+                }
+              />
+              </CardActionArea>
+              </Tooltip>
+        </Paper>
+      </Box>
+      }
       <CardHeader
         avatar={
         loading ? 

@@ -176,7 +176,7 @@ export const RecipeCard = ({ recipe }) => {
             <Box>
               <Typography variant='h6' align='center' sx={{ mb: 4, mt: 4, fontWeight: 'bold' }}>Reviews</Typography>
               {reviews.map(r => (
-                <Review key={r.id} review={r}/>   
+                <Review key={r.id} review={r} page='recipe'/>   
               ))}
             </Box>
           </CardContent>

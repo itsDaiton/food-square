@@ -20,9 +20,13 @@ export const UserPanel = ({ appUser }) => {
     if (user) {
       axios.get('http://localhost:8080/api/v1/follows/follows/' + appUser.id , { withCredentials: true }).then((response) => {
         setCheckFollow(response.data)
-				setLoading(false)
+        setLoading(false)
       })
     }
+    else {
+      setLoading(false)
+    }
+
   }
 	
 	useEffect(() => {
@@ -90,6 +94,7 @@ export const UserPanel = ({ appUser }) => {
 				{loading ?
 				<Skeleton variant="rectangular" width={100} height={40} sx={{ borderRadius: 5}}/>
 				:
+        user &&
 				<Fab variant="extended" color='primary' onClick={checkFollow === false ? handleFollow : handleUnfollow}>
 					{checkFollow === false ? <PersonAdd sx={{ mr: 1 }}/> : <PersonRemove sx={{ mr: 1 }}/>}
 					{checkFollow === false ? 'Follow' : 'Unfollow'}

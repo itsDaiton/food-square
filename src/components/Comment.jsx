@@ -1,5 +1,5 @@
 import { Favorite, FavoriteBorder } from '@mui/icons-material'
-import { Alert, Avatar, Card, CardActions, CardHeader, Checkbox, IconButton, Skeleton, Snackbar, Tooltip, Typography } from '@mui/material'
+import { Alert, Avatar, Card, CardActionArea, CardActions, CardHeader, Checkbox, IconButton, Paper, Skeleton, Snackbar, Tooltip, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
@@ -7,8 +7,9 @@ import { getCurrentUser } from '../services/Authentication'
 import AvatarService from '../services/AvatarService'
 import { CustomTextField } from './Create'
 import { calculateDifference, CardText, convertToTimestamp } from './Recipe'
+import { Link as RouterLink } from 'react-router-dom';
 
-export const Comment = ({ comment }) => {
+export const Comment = ({ comment, page }) => {
 
   const [user, setUser] = useState(localStorage.getItem('user') ? getCurrentUser : null)
   const [likeCount, setLikeCount] = useState()
@@ -100,6 +101,77 @@ export const Comment = ({ comment }) => {
   return (
     <Box>
     <Card sx={{margin: {md: 5, xs: 2}, borderRadius: 5}} elevation={10}>
+    {page === 'profile' &&
+      <Box>
+        <Paper elevation={4} sx={{ borderRadius: 15, ml: 10, mr: 10, mt: 2, mb: 2 }}>
+          <Tooltip title='Author and name of commented recipe'>
+          <CardActionArea 
+            sx={{ borderRadius: 15 }}
+            component={RouterLink}
+            to={'/recipe/' + comment.recipe.id}
+          >
+          <CardHeader
+              avatar={
+              loading ? 
+              ( <Skeleton animation="wave" variant="circular" width={40} height={40} /> )
+              :
+              <IconButton 
+                sx={{ p: 0 }} 
+                onClick={e => {
+                  e.stopPropagation()
+                  e.preventDefault()
+                }}
+                onMouseDown={e => e.stopPropagation()}
+              >
+                <Avatar {...AvatarService.stringAvatar(comment.recipe.appUser.userName)} />
+              </IconButton>
+              }
+              title={
+                loading ? 
+                  ( <Skeleton
+                      animation="wave"
+                      height={34}
+                        width="20%"
+                      />
+                    ) 
+                    :
+                  <React.Fragment>
+                      <CardText
+                      sx={{
+                        fontWeight: 'bold',
+                        fontSize: 20
+                      }}
+                    >
+                      {(comment.recipe.appUser.firstName && comment.recipe.appUser.lastName) ? comment.recipe.appUser.firstName + ' ' + comment.recipe.appUser.lastName : comment.recipe.appUser.userName}
+                    </CardText>
+                    {(comment.recipe.appUser.firstName && comment.recipe.appUser.lastName) &&
+                    <CardText
+                      sx={{
+                        color: 'text.secondary'
+                        }}
+                      >
+                        @{comment.recipe.appUser.userName}
+                    </CardText> 
+                    }
+                    <CardText
+                      sx={{
+                        color: 'text.secondary',
+                        fontSize: 20
+                      }}
+                    >·</CardText>  
+                    <CardText
+                      sx={{
+                        color: 'text.secondary'
+                      }}
+                    >{comment.recipe.name}</CardText>     
+                  </React.Fragment>
+                }
+              />
+              </CardActionArea>
+              </Tooltip>
+        </Paper>
+      </Box>
+      }
       <CardHeader
         avatar={
         loading ? 

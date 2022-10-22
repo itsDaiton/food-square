@@ -10,6 +10,7 @@ import { Home } from "./pages/Home";
 import { Ingredient } from "./pages/Ingredient";
 import { Ingredients } from "./pages/Ingredients";
 import { Login } from "./pages/Login";
+import { Profile } from "./pages/Profile";
 import { RecipePage } from "./pages/RecipePage";
 import { Register } from "./pages/Register";
 import { Reviews } from "./pages/Reviews";
@@ -78,6 +79,7 @@ function App() {
         <Route path='/reviews' element={<Reviews mode={mode} setMode={setMode}/>}/>
         <Route path='/followers/:id' element={<Followers mode={mode} setMode={setMode}/>}/>
         <Route path='/following/:id' element={<Following mode={mode} setMode={setMode}/>}/>
+        <Route path='/user/:id' element={<Profile mode={mode} setMode={setMode}/>}/>
         <Route path="/" element={user ? <Navigate to="/home" replace/> : <Navigate to="/discover" replace/>}/>
         <Route path="*" element={<Error/>}/>
       </Routes>

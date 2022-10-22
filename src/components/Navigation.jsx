@@ -161,14 +161,25 @@ export const Navigation = () => {
       </ListItem>
       {user &&
       <>
-      <ListItem disablePadding>
+      <CustomListItem 
+        sx={{ background: route.pathname === '/user/' + user.id ? alpha(theme.palette.primary.main, 0.2)  : ''}}
+        disablePadding
+        component={RouterLink}
+        to={'/user/' + user.id}
+        style={{ color: 'inherit' }}
+      >
         <CustomListItemButton>
           <ListItemIcon>
-            <Person sx={{ fontSize: 30, color: route.pathname === '/profile' ? 'text.primary' : ''  }} />
+            <Person sx={{ fontSize: 30, color: route.pathname === '/user/' + user.id ? 'text.primary' : ''  }} />
           </ListItemIcon>
-          <ListItemText primary="Profile" primaryTypographyProps={{ fontSize: 20 }} />
+          <ListItemText 
+            primary="Profile" 
+            primaryTypographyProps={{
+              fontSize: 20, 
+              fontWeight: route.pathname === '/user/' + user.id ? 'bold' : '' }} 
+          />
         </CustomListItemButton>
-      </ListItem>
+      </CustomListItem>
       <ListItem disablePadding>
         <CustomListItemButton>
           <ListItemIcon>

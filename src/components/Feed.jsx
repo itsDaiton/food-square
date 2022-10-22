@@ -24,7 +24,7 @@ import {
  } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Recipe } from './Recipe'
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useParams } from 'react-router-dom';
 import { getCurrentUser } from '../services/Authentication';
 import axios from 'axios'
 import { AccessAlarm, Clear, FilterList, FormatListBulleted, Restaurant } from '@mui/icons-material';
@@ -38,6 +38,8 @@ export const Feed = ({ page }) => {
 
   const [user, setUser] = useState(localStorage.getItem('user') ? getCurrentUser : null)
   const [loading, setLoading] = useState(true)
+
+  const { id } = useParams()
 
   const [openFilterDialog, setOpenFilterDialog] = useState(false)
 
@@ -103,7 +105,12 @@ export const Feed = ({ page }) => {
       axios.get('http://localhost:8080/api/v1/users/getFavoriteRecipes/' + user.id,  {withCredentials: true }).then((response) => {
         setRecipes(response.data)
         setLoading(false)
-        console.log(response.data)
+      })
+    }
+    else if (page === 'profile') {
+      axios.get('http://localhost:8080/api/v1/recipes/getAllByUser/' + id).then((response) => {
+        setRecipes(response.data)
+        setLoading(false)
       })
     }
     else {
@@ -124,7 +131,7 @@ export const Feed = ({ page }) => {
     return () => clearInterval(interval)
 
     // eslint-disable-next-line
-  }, [])
+  }, [id])
 
   const handleOpenDialog = (e) => {
     setOpenFilterDialog(true)
@@ -251,7 +258,7 @@ export const Feed = ({ page }) => {
   if (recipes.length > 0 ) {
     return (
       <Box sx={{ flex: 4, padding: { xs: 2, md: 4 }, width: '100%', boxSizing: 'border-box'}}>
-        {(page === 'discover' || page === 'home') ?
+        {(page === 'discover' || page === 'home' || page === 'profile') ?
         <Box display='flex' justifyContent='space-between'>
           <Paper 
             elevation={4}        
@@ -498,6 +505,18 @@ export const Feed = ({ page }) => {
           <Typography component='p' variant='body2' align='center'>You can click the add button to create a new recipe.</Typography>
         </Box>
       )
+    }
+    else if (page === 'profile') {
+      return (
+        <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}}>
+          <Typography component='p' variant='body1' align='center' sx={{ mb: 1 }}>          
+            Unfortunately, at this momement, the feed is empty.
+          </Typography>
+          <Typography component='p' variant='body1' align='center'>
+            This user has not created any recipes yet.         
+          </Typography>
+        </Box>
+      )    
     }
     else {
       return (
