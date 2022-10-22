@@ -5,7 +5,7 @@ import { calculateDifference, CardText, convertToTimestamp } from './Recipe'
 import { getCurrentUser } from '../services/Authentication';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import axios from 'axios';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 export const CustomTextField = styled(TextField)({
   margin: 8,
@@ -21,6 +21,8 @@ export const Review = ({ review, page }) => {
   const [openAlert, setOpenAlert] = useState(false)
   const [alertType, setAlertType] = useState(null)
   const [alertMessage, setAlertMessage] = useState('')
+
+  let navigate = useNavigate()
 
   useEffect(() => {
     const currentUser = getCurrentUser()
@@ -122,6 +124,7 @@ export const Review = ({ review, page }) => {
                 onClick={e => {
                   e.stopPropagation()
                   e.preventDefault()
+                  navigate('/user/' + review.recipe.appUser.id)
                 }}
                 onMouseDown={e => e.stopPropagation()}
               >
@@ -184,6 +187,7 @@ export const Review = ({ review, page }) => {
           onClick={e => {
             e.stopPropagation()
             e.preventDefault()
+            navigate('/user/' + review.appUser.id)
           }}
           onMouseDown={e => e.stopPropagation()}
         >

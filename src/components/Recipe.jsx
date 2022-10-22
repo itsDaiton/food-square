@@ -752,6 +752,7 @@ export const Recipe = ({ recipe, type }) => {
             onClick={e => {
               e.stopPropagation()
               e.preventDefault()
+              navigate('/user/' + recipe.appUser.id)
             }}
             onMouseDown={e => e.stopPropagation()}
           >
@@ -1027,6 +1028,7 @@ export const Recipe = ({ recipe, type }) => {
           onClick={e => {
             e.stopPropagation()
             e.preventDefault()
+            navigate('/user/' + recipe.appUser.id)
           }}
           onMouseDown={e => e.stopPropagation()}
         >

@@ -180,14 +180,25 @@ export const Navigation = () => {
           />
         </CustomListItemButton>
       </CustomListItem>
-      <ListItem disablePadding>
+      <CustomListItem
+        sx={{ background: route.pathname === '/settings' ? alpha(theme.palette.primary.main, 0.2)  : '' }}
+        disablePadding
+        component={RouterLink}
+        to='/settings'
+        style={{ color: 'inherit' }}       
+      >
         <CustomListItemButton>
           <ListItemIcon>
             <Settings sx={{ fontSize: 30, color: route.pathname === '/settings' ? 'text.primary' : ''  }} />
           </ListItemIcon>
-          <ListItemText primary="Settings" primaryTypographyProps={{ fontSize: 20 }} />
+          <ListItemText 
+            primary="Settings" 
+            primaryTypographyProps={{
+              fontSize: 20, 
+              fontWeight: route.pathname === '/settings' ? 'bold' : '' }}  
+          />
         </CustomListItemButton>
-      </ListItem>
+      </CustomListItem>
       </>
       }
     </List>

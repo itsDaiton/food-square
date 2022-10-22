@@ -7,7 +7,7 @@ import { getCurrentUser } from '../services/Authentication'
 import AvatarService from '../services/AvatarService'
 import { CustomTextField } from './Create'
 import { calculateDifference, CardText, convertToTimestamp } from './Recipe'
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 export const Comment = ({ comment, page }) => {
 
@@ -19,6 +19,8 @@ export const Comment = ({ comment, page }) => {
   const [openAlert, setOpenAlert] = useState(false)
   const [alertType, setAlertType] = useState(null)
   const [alertMessage, setAlertMessage] = useState('')
+
+  let navigate = useNavigate()
 
   useEffect(() => {
     const currentUser = getCurrentUser()
@@ -120,6 +122,7 @@ export const Comment = ({ comment, page }) => {
                 onClick={e => {
                   e.stopPropagation()
                   e.preventDefault()
+                  navigate('/user/' + comment.recipe.appUser.id)
                 }}
                 onMouseDown={e => e.stopPropagation()}
               >
@@ -182,6 +185,7 @@ export const Comment = ({ comment, page }) => {
           onClick={e => {
             e.stopPropagation()
             e.preventDefault()
+            navigate('/user/' + comment.appUser.id)
           }}
           onMouseDown={e => e.stopPropagation()}
         >

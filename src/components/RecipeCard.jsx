@@ -21,7 +21,7 @@ import AvatarService from '../services/AvatarService'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { CardText, ExpandMore } from './Recipe'
 import { Review } from './Review'
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 export const RecipeCard = ({ recipe }) => {
 
@@ -31,6 +31,8 @@ export const RecipeCard = ({ recipe }) => {
   const [reviews, setReviews] = useState([])
 
   const [expanded, setExpanded] = useState(false)
+
+  let navigate = useNavigate()
 
   const getReviewCount = () => {
     axios.get('http://localhost:8080/api/v1/reviews/getCountByRecipe/' + recipe.id).then((response) => {
@@ -81,6 +83,7 @@ export const RecipeCard = ({ recipe }) => {
           onClick={e => {
             e.stopPropagation()
             e.preventDefault()
+            navigate('/user/' + recipe.appUser.id)
           }}
           onMouseDown={e => e.stopPropagation()}
         >

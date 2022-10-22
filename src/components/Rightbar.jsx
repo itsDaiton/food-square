@@ -30,13 +30,15 @@ export const UserText = styled(Typography)({
   display: 'inline'
 })
 
-export const FriendsListItem = ({ firstname, lastname, username, picture }) => {
+export const FriendsListItem = ({ firstname, lastname, username, picture, id }) => {
+
+  let _navigate = useNavigate()
 
   return (
     <Box display='flex' alignItems='center'>
     <ListItem>
         <ListItemAvatar>
-          <IconButton>
+          <IconButton onClick={() => { _navigate('/user/' + id) }}>
             <UserAvatar src={picture} {...AvatarService.stringAvatar(username)}/>
           </IconButton>
         </ListItemAvatar>
@@ -194,7 +196,7 @@ export const Rightbar = ({ page }) => {
           </Typography>
           <List sx={{ width: '100%', maxWidth: 360,  }}>
             {follows.slice(0, 5).map(f => (
-              <FriendsListItem key={f.id} firstname={f.followed.firstName} lastname={f.followed.lastName} username={f.followed.userName}/>
+              <FriendsListItem key={f.id} firstname={f.followed.firstName} lastname={f.followed.lastName} username={f.followed.userName} id={f.followed.id}/>
             ))}
           </List>
           {follows.length >= 5 &&

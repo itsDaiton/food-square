@@ -14,6 +14,7 @@ import { Profile } from "./pages/Profile";
 import { RecipePage } from "./pages/RecipePage";
 import { Register } from "./pages/Register";
 import { Reviews } from "./pages/Reviews";
+import { Settings } from "./pages/Settings";
 import { getCurrentUser } from "./services/Authentication";
 
 function App() {
@@ -80,6 +81,7 @@ function App() {
         <Route path='/followers/:id' element={<Followers mode={mode} setMode={setMode}/>}/>
         <Route path='/following/:id' element={<Following mode={mode} setMode={setMode}/>}/>
         <Route path='/user/:id' element={<Profile mode={mode} setMode={setMode}/>}/>
+        <Route path='/settings/' element={<Settings mode={mode} setMode={setMode}/>}/>
         <Route path="/" element={user ? <Navigate to="/home" replace/> : <Navigate to="/discover" replace/>}/>
         <Route path="*" element={<Error/>}/>
       </Routes>
