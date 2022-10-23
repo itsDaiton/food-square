@@ -66,8 +66,27 @@ export const SettingsContent = ({ userId }) => {
 
   const handlePersonalInfoSubmit = (e) => {
     e.preventDefault()
+
+    const data = {
+      firstName: null,
+      lastName: null
+    }
+
+    if (personalInfo.firstName === '') {
+      setPersonalInfo({...personalInfo, firstName: null})
+    }
+    else {
+      data.firstName = personalInfo.firstName
+    }
+
+    if (personalInfo.lastName === '') {
+      setPersonalInfo({...personalInfo, lastName: null})
+    }
+    else {
+      data.lastName = personalInfo.lastName
+    }
     
-    axios.put('http://localhost:8080/api/v1/users/updateInfo/' + userId, personalInfo, { withCredentials: true }).then((response) => {
+    axios.put('http://localhost:8080/api/v1/users/updateInfo/' + userId, data, { withCredentials: true }).then((response) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)
@@ -77,6 +96,7 @@ export const SettingsContent = ({ userId }) => {
       setAlertType('error')
       setOpenAlert(true) 
     })
+    
   }
 
   const handleImageSubmit = (e) => {
@@ -89,12 +109,10 @@ export const SettingsContent = ({ userId }) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)
-      console.log(response)  
     }).catch(error => {
       setAlertMessage(error.response.data.message)
       setAlertType('error')
       setOpenAlert(true)
-      console.log(error.response) 
     })
   }
 

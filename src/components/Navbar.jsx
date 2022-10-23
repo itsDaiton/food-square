@@ -110,6 +110,14 @@ export const Navbar = ({ mode, setMode }) => {
     })
   }
 
+  const navigateProfile = () => {
+    navigate('/user/' + user.id)
+  }
+
+  const navigateSettings = () => {
+    navigate('/settings')
+  }
+
   return (
     <AppBar position="sticky">
       <Drawer
@@ -230,13 +238,13 @@ export const Navbar = ({ mode, setMode }) => {
                 {user.username}
               </MenuItem>
               <Divider/>
-              <MenuItem>
+              <MenuItem onClick={navigateProfile}>
                 <ListItemIcon>
                   <Person fontSize="small" />
                 </ListItemIcon>
                 Profile
               </MenuItem>
-              <MenuItem>
+              <MenuItem onClick={navigateSettings}>
                 <ListItemIcon>
                   <Settings fontSize="small" />
                 </ListItemIcon>
