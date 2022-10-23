@@ -3,7 +3,7 @@ import { Alert, Box, Fab, Skeleton, Snackbar } from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { getCurrentUser } from '../services/Authentication'
-import { FriendsListItem } from './Rightbar'
+import { FriendsListItem } from './FriendsListItem'
 
 export const UserPanel = ({ appUser }) => {
 
@@ -88,7 +88,7 @@ export const UserPanel = ({ appUser }) => {
 				<Skeleton variant="rectangular" width={100} height={20} />
 			</Box>
 			:
-			<FriendsListItem firstname={appUser.firstName} lastname={appUser.lastName} username={appUser.userName}/>
+			<FriendsListItem user={appUser}/>
 			}
 			<Box display='flex' alignItems='center' sx={{ mr: 4 }}>
 				{loading ?

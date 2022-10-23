@@ -1,13 +1,9 @@
 import { 
   Box,
   Typography,
-  List, 
-  ListItem, 
-  ListItemText, 
-  ListItemAvatar, 
+  List,  
   Avatar, 
   styled, 
-  IconButton, 
   Button,
   CircularProgress,
   Link,
@@ -16,8 +12,8 @@ import axios from 'axios'
 import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { getCurrentUser } from '../services/Authentication'
-import AvatarService from '../services/AvatarService'
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { FriendsListItem } from './FriendsListItem'
 
 export const UserAvatar = styled(Avatar)({
   width: 45, 
@@ -29,60 +25,6 @@ export const UserText = styled(Typography)({
   fontFamily: 'Poppins',
   display: 'inline'
 })
-
-export const FriendsListItem = ({ firstname, lastname, username, picture, id }) => {
-
-  let _navigate = useNavigate()
-
-  return (
-    <Box display='flex' alignItems='center'>
-    <ListItem>
-        <ListItemAvatar>
-          <IconButton onClick={() => { _navigate('/user/' + id) }}>
-            <UserAvatar src={picture} {...AvatarService.stringAvatar(username)}/>
-          </IconButton>
-        </ListItemAvatar>
-        {(firstname === null && lastname === null) ?
-          <ListItemText primary={
-            <UserText component={'span'}
-              sx={{
-                fontWeight: 'bold',
-                fontSize: 20,
-                ml: 1
-              }}
-            >
-              {username}
-            </UserText>         
-          }
-        />
-        :
-        <ListItemText primary={
-          <UserText component={'span'}
-            sx={{
-              fontWeight: 'bold',
-              fontSize: 20,
-              ml: 1
-            }}
-          >
-            {firstname} {lastname}
-          </UserText>         
-        }
-        secondary={
-          <UserText component={'span'}
-            sx={{
-              color: 'gray',
-              ml: 1
-              }}
-            >
-              @{username}
-          </UserText>
-        }
-      />
-      }
-    </ListItem>
-    </Box>
-  )  
-}
 
 export const Rightbar = ({ page }) => {
 
@@ -196,7 +138,7 @@ export const Rightbar = ({ page }) => {
           </Typography>
           <List sx={{ width: '100%', maxWidth: 360,  }}>
             {follows.slice(0, 5).map(f => (
-              <FriendsListItem key={f.id} firstname={f.followed.firstName} lastname={f.followed.lastName} username={f.followed.userName} id={f.followed.id}/>
+              <FriendsListItem key={f.id} user={f.followed}/>
             ))}
           </List>
           {follows.length >= 5 &&
@@ -215,7 +157,7 @@ export const Rightbar = ({ page }) => {
           </Typography>
           <List sx={{ width: '100%', maxWidth: 360,  }}>
             {suggestions.slice(0, 3).map(s => (
-              <FriendsListItem key={s.id} firstname={s.firstName} lastname={s.lastName} username={s.userName}/>
+              <FriendsListItem key={s.id} user={s}/>
             ))}
           </List>           
         </React.Fragment>
@@ -232,7 +174,7 @@ export const Rightbar = ({ page }) => {
         {suggestions.length > 0 ?
         <List sx={{ width: '100%', maxWidth: 360,  }}>
           {suggestions.slice(0, 3).map(s => (
-            <FriendsListItem key={s.id} firstname={s.firstName} lastname={s.lastName} username={s.userName} />
+            <FriendsListItem key={s.id} user={s} />
           ))}  
         </List>
         :

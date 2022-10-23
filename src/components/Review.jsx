@@ -1,4 +1,23 @@
-import { Box, CardHeader, Rating, Avatar, Card, IconButton, styled, TextField, CardActions, Checkbox, Tooltip, Typography, Snackbar, Alert, Skeleton, Paper, CardActionArea } from '@mui/material'
+import { 
+  Box,
+  CardHeader, 
+  Rating, 
+  Avatar, 
+  Card, 
+  IconButton, 
+  styled, 
+  TextField, 
+  CardActions, 
+  Checkbox, 
+  Tooltip, 
+  Typography, 
+  Snackbar, 
+  Alert, 
+  Skeleton, 
+  Paper, 
+  CardActionArea 
+}
+from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import AvatarService from '../services/AvatarService'
 import { calculateDifference, CardText, convertToTimestamp } from './Recipe'
@@ -17,6 +36,9 @@ export const Review = ({ review, page }) => {
   const [likeCount, setLikeCount] = useState()
   const [liked, setLiked] = useState(false)
   const [loading, setLoading] = useState(true)
+
+  const [userImage, setUserImage] = useState()
+  const [reviewerImage, setReviewerImage] = useState()
 
   const [openAlert, setOpenAlert] = useState(false)
   const [alertType, setAlertType] = useState(null)
@@ -46,15 +68,37 @@ export const Review = ({ review, page }) => {
     })
   }
 
+  const getUserImage = () => {
+    if (review.recipe.appUser.pathToImage !== null && review.recipe.appUser.pathToImage !== '') {
+      axios.get('http://localhost:8080/' + review.recipe.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+        var imageUrl = URL.createObjectURL(new Blob([response.data]))
+        setUserImage(imageUrl)
+      })
+    }
+  }
+
+  const getReviewerImage = () => {
+    if (review.appUser.pathToImage !== null && review.appUser.pathToImage !== '') {
+      axios.get('http://localhost:8080/' + review.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+        var imageUrl = URL.createObjectURL(new Blob([response.data]))
+        setReviewerImage(imageUrl)
+      })
+    }
+  }
+
   useEffect(() => {
     getLikeBoolean()
     // eslint-disable-next-line
   }, [])
 
   useEffect(() => {
+    getReviewerImage()
+    getUserImage()
     getLikeCount()
 
     const interval = setInterval(() => {
+      getReviewerImage()
+      getUserImage()
       getLikeCount()
     }, 10000)
 
@@ -128,7 +172,12 @@ export const Review = ({ review, page }) => {
                 }}
                 onMouseDown={e => e.stopPropagation()}
               >
-                <Avatar {...AvatarService.stringAvatar(review.recipe.appUser.userName)} />
+              {
+              userImage ?
+              <Avatar src={userImage}/>     
+              :
+              <Avatar {...AvatarService.stringAvatar(review.recipe.appUser.userName)}/>
+              }
               </IconButton>
               }
               title={
@@ -191,7 +240,12 @@ export const Review = ({ review, page }) => {
           }}
           onMouseDown={e => e.stopPropagation()}
         >
-          <Avatar {...AvatarService.stringAvatar(review.appUser.userName)} />
+          {
+          reviewerImage ?
+          <Avatar src={reviewerImage}/>     
+          :
+          <Avatar {...AvatarService.stringAvatar(review.appUser.userName)}/>
+          }
         </IconButton>
         }
         title={

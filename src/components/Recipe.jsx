@@ -192,6 +192,7 @@ export const Recipe = ({ recipe, type }) => {
   const [loading, setLoading] = useState(true)
   
   const [recipeImage, setRecipeImage] = useState()
+  const [userImage, setUserImage] = useState()
 
   const [selectedIngredient, setSelectedIngredient] = useState(null)
 
@@ -259,6 +260,15 @@ export const Recipe = ({ recipe, type }) => {
       axios.get('http://localhost:8080/' + recipe.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
         var imageUrl = URL.createObjectURL(new Blob([response.data]))
         setRecipeImage(imageUrl)
+      })
+    }
+  }
+
+  const getUserImage = () => {
+    if (recipe.appUser.pathToImage !== null && recipe.appUser.pathToImage !== '') {
+      axios.get('http://localhost:8080/' + recipe.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+        var imageUrl = URL.createObjectURL(new Blob([response.data]))
+        setUserImage(imageUrl)
         setLoading(false)
       })
     }
@@ -277,12 +287,15 @@ export const Recipe = ({ recipe, type }) => {
     getAverageRating()
     getRecipeIngredients()
     getRecipeImage()
+    getUserImage()
 
     const interval = setInterval(() => {
       getReviewCount()
       getCommentCount()
       getAverageRating()
       getRecipeImage()
+      getRecipeImage()
+      getUserImage()
     }, 10000)
 
     return () => clearInterval(interval)
@@ -756,7 +769,12 @@ export const Recipe = ({ recipe, type }) => {
             }}
             onMouseDown={e => e.stopPropagation()}
           >
-            <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)} />
+            {
+            userImage ?
+            <Avatar src={userImage}/>     
+            :
+            <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)}/>
+            }
           </IconButton>
          }
           action={
@@ -1032,7 +1050,12 @@ export const Recipe = ({ recipe, type }) => {
           }}
           onMouseDown={e => e.stopPropagation()}
         >
-          <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)} />
+          {
+          userImage ?
+          <Avatar src={userImage}/>
+          :
+          <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)}/>
+          }
         </IconButton>
        }
         action={
@@ -1309,6 +1332,9 @@ export const Recipe = ({ recipe, type }) => {
             <CardHeader
               sx={{ p: 0 }}
               avatar={
+                userImage ?
+                <Avatar src={userImage}/>
+                :
                 <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)}/>
               }
               title={
@@ -1404,6 +1430,9 @@ export const Recipe = ({ recipe, type }) => {
             <CardHeader
                 sx={{ p: 0 }}
                 avatar={
+                  userImage ?
+                  <Avatar src={userImage}/>
+                  :
                   <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)}/>
                 }
                 title={

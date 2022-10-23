@@ -16,6 +16,9 @@ export const Comment = ({ comment, page }) => {
   const [liked, setLiked] = useState(false)
   const [loading, setLoading] = useState(true)
 
+  const [userImage, setUserImage] = useState()
+  const [commenterImage, setCommenterImage] = useState()
+
   const [openAlert, setOpenAlert] = useState(false)
   const [alertType, setAlertType] = useState(null)
   const [alertMessage, setAlertMessage] = useState('')
@@ -44,6 +47,26 @@ export const Comment = ({ comment, page }) => {
     })
   }
 
+  const getUserImage = () => {
+    console.log(comment.recipe.appUser.pathToImage)
+    if (comment.recipe.appUser.pathToImage !== null && comment.recipe.appUser.pathToImage !== '') {
+      axios.get('http://localhost:8080/' + comment.recipe.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+        var imageUrl = URL.createObjectURL(new Blob([response.data]))
+        setUserImage(imageUrl)
+      })
+    }
+  }
+
+  const getCommenterImage = () => {
+    console.log(comment.appUser.pathToImage)
+    if (comment.appUser.pathToImage !== null && comment.appUser.pathToImage !== '') {
+      axios.get('http://localhost:8080/' + comment.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+        var imageUrl = URL.createObjectURL(new Blob([response.data]))
+        setCommenterImage(imageUrl)
+      })
+    }
+  }
+
   useEffect(() => {
     getLikeBoolean()
     // eslint-disable-next-line
@@ -51,9 +74,14 @@ export const Comment = ({ comment, page }) => {
 
   useEffect(() => {
     getLikeCount()
+    getUserImage()
+    getCommenterImage()
+    console.log(loading)
 
     const interval = setInterval(() => {
       getLikeCount()
+      getUserImage()
+      getCommenterImage()
     }, 10000)
 
     return () => clearInterval(interval)
@@ -126,7 +154,12 @@ export const Comment = ({ comment, page }) => {
                 }}
                 onMouseDown={e => e.stopPropagation()}
               >
-                <Avatar {...AvatarService.stringAvatar(comment.recipe.appUser.userName)} />
+              {
+              userImage ?
+              <Avatar src={userImage}/>     
+              :
+              <Avatar {...AvatarService.stringAvatar(comment.recipe.appUser.userName)}/>
+              }
               </IconButton>
               }
               title={
@@ -189,7 +222,12 @@ export const Comment = ({ comment, page }) => {
           }}
           onMouseDown={e => e.stopPropagation()}
         >
-          <Avatar {...AvatarService.stringAvatar(comment.appUser.userName)} />
+        {
+        commenterImage ?
+        <Avatar src={commenterImage}/>     
+        :
+        <Avatar {...AvatarService.stringAvatar(comment.appUser.userName)} />
+        }
         </IconButton>
         }
         title={

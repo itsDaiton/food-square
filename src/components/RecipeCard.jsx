@@ -32,6 +32,8 @@ export const RecipeCard = ({ recipe }) => {
 
   const [expanded, setExpanded] = useState(false)
 
+  const[userImage, setUserImage] = useState()
+
   let navigate = useNavigate()
 
   const getReviewCount = () => {
@@ -47,11 +49,22 @@ export const RecipeCard = ({ recipe }) => {
     })
   }
 
+  const getUserImage = () => {
+    if (recipe.appUser.pathToImage !== null && recipe.appUser.pathToImage !== '') {
+      axios.get('http://localhost:8080/' + recipe.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+        var imageUrl = URL.createObjectURL(new Blob([response.data]))
+        setUserImage(imageUrl)
+      })
+    }
+  }
+
   useEffect(() => {
+    getUserImage()
     getReviewCount()
     getReviewsInRecipe()
 
     const interval = setInterval(() => {
+      getUserImage()
       getReviewCount()
       getReviewsInRecipe()
     }, 10000)
@@ -87,7 +100,12 @@ export const RecipeCard = ({ recipe }) => {
           }}
           onMouseDown={e => e.stopPropagation()}
         >
-          <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)} />
+        {
+        userImage ?
+        <Avatar src={userImage}/>     
+        :
+        <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)}/>
+        }
         </IconButton>
         }
         title={

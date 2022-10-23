@@ -88,11 +88,13 @@ export const SettingsContent = ({ userId }) => {
     axios.put('http://localhost:8080/api/v1/users/addImage/' + userId, formData, { withCredentials: true }).then((response) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
-      setOpenAlert(true)    
+      setOpenAlert(true)
+      console.log(response)  
     }).catch(error => {
       setAlertMessage(error.response.data.message)
       setAlertType('error')
-      setOpenAlert(true) 
+      setOpenAlert(true)
+      console.log(error.response) 
     })
   }
 

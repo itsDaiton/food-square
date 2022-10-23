@@ -2,7 +2,7 @@ import { Box, CircularProgress, Divider, Typography } from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
-import { FriendsListItem } from './Rightbar'
+import { FriendsListItem } from './FriendsListItem'
 import { UserPanel } from './UserPanel'
 
 export const UserList = ({ type }) => {
@@ -63,7 +63,7 @@ export const UserList = ({ type }) => {
             {type === 'followers' ? 'Followers' : 'Following'}
         </Typography>
       </Box>
-      <FriendsListItem firstname={user.firstName} lastname={user.lastName} username={user.userName}/>
+      <FriendsListItem user={user}/>
       <Divider sx={{ m: 2}}/>
       {users.length > 0 ?
         users.map(u => (
