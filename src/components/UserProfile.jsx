@@ -6,7 +6,7 @@ import { Feed } from './Feed'
 import { Review } from './Review'
 import { Comment } from './Comment';
 import { UserPanel } from './UserPanel'
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 
 export const UserProfile = ({ user, followingCount, followersCount }) => {
 
@@ -17,6 +17,8 @@ export const UserProfile = ({ user, followingCount, followersCount }) => {
 
   const [reviews, setReviews] = useState([])
   const [comments, setComments] = useState([])
+
+  let navigate = useNavigate()
 
   const getReviews = () => {
     axios.get('http://localhost:8080/api/v1/reviews/getAllByUser/' + id).then((response) => {
@@ -102,10 +104,14 @@ export const UserProfile = ({ user, followingCount, followersCount }) => {
         justifyContent='flex-start'
         sx={{ borderRadius: 5, p: 2, mb: 2, ml: 2 }}
       >
-        <Typography sx={{ fontWeight: 'bold', mr: 1 }}>{followingCount}</Typography>
-        <Typography color='text.secondary' sx={{ mr: 3 }}>following</Typography>
-        <Typography sx={{ fontWeight: 'bold', mr: 1 }}>{followersCount}</Typography>
-        <Typography color='text.secondary'>{followersCount > 1 ? 'followers' : 'follower'}</Typography>
+        <Box display='flex' flexDirection='row' sx={{ cursor: 'pointer'}} onClick={() => { navigate('/following/' + user.id) }}>
+          <Typography sx={{ fontWeight: 'bold', mr: 1 }}>{followingCount}</Typography>
+          <Typography color='text.secondary' sx={{ mr: 3 }}>following</Typography>
+        </Box>
+        <Box display='flex' flexDirection='row' sx={{ cursor: 'pointer'}} onClick={() => { navigate('/followers/' + user.id) }}>
+          <Typography sx={{ fontWeight: 'bold', mr: 1 }}>{followersCount}</Typography>
+          <Typography color='text.secondary'>{followersCount > 1 ? 'followers' : 'follower'}</Typography>
+        </Box>
       </Box>
       <Divider/>
       <Tabs
