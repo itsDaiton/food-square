@@ -1,5 +1,5 @@
-import { Favorite, FavoriteBorder } from '@mui/icons-material'
-import { Alert, Avatar, Card, CardActionArea, CardActions, CardHeader, Checkbox, IconButton, Paper, Skeleton, Snackbar, Tooltip, Typography } from '@mui/material'
+import { Delete, Favorite, FavoriteBorder, MoreVert } from '@mui/icons-material'
+import { Alert, Avatar, Card, CardActionArea, CardActions, CardHeader, Checkbox, IconButton, ListItemIcon, Menu, MenuItem, Paper, Skeleton, Snackbar, Tooltip, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
@@ -23,6 +23,9 @@ export const Comment = ({ comment, page }) => {
   const [alertType, setAlertType] = useState(null)
   const [alertMessage, setAlertMessage] = useState('')
 
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
+
   let navigate = useNavigate()
 
   useEffect(() => {
@@ -33,7 +36,7 @@ export const Comment = ({ comment, page }) => {
   }, [])
 
   const getLikeBoolean = () => {
-    if (user) {
+    if (user && comment) {
       axios.get('http://localhost:8080/api/v1/comments/isLikedByUser/' + comment.id, { withCredentials: true }).then((response) => {
         setLiked(response.data)
       })
@@ -41,14 +44,15 @@ export const Comment = ({ comment, page }) => {
   }
 
   const getLikeCount = () => {
-    axios.get('http://localhost:8080/api/v1/comments/getLikes/' + comment.id).then((response) => {
-      setLikeCount(response.data)
-      setLoading(false)
-    })
+    if (comment) {
+      axios.get('http://localhost:8080/api/v1/comments/getLikes/' + comment.id).then((response) => {
+        setLikeCount(response.data)
+        setLoading(false)
+      })
+    }
   }
 
   const getUserImage = () => {
-    console.log(comment.recipe.appUser.pathToImage)
     if (comment.recipe.appUser.pathToImage !== null && comment.recipe.appUser.pathToImage !== '') {
       axios.get('http://localhost:8080/' + comment.recipe.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
         var imageUrl = URL.createObjectURL(new Blob([response.data]))
@@ -58,13 +62,20 @@ export const Comment = ({ comment, page }) => {
   }
 
   const getCommenterImage = () => {
-    console.log(comment.appUser.pathToImage)
     if (comment.appUser.pathToImage !== null && comment.appUser.pathToImage !== '') {
       axios.get('http://localhost:8080/' + comment.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
         var imageUrl = URL.createObjectURL(new Blob([response.data]))
         setCommenterImage(imageUrl)
       })
     }
+  }
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
   }
 
   useEffect(() => {
@@ -76,15 +87,20 @@ export const Comment = ({ comment, page }) => {
     getLikeCount()
     getUserImage()
     getCommenterImage()
-    console.log(loading)
 
     const interval = setInterval(() => {
-      getLikeCount()
       getUserImage()
       getCommenterImage()
     }, 10000)
 
-    return () => clearInterval(interval)
+    const interval2 = setInterval(() => {
+      getLikeCount()
+    }, 15000)
+
+    return () => {
+      clearInterval(interval)
+      clearInterval(interval2)
+    }
     // eslint-disable-next-line
   }, [])
 
@@ -126,6 +142,20 @@ export const Comment = ({ comment, page }) => {
       return
     }
     setOpenAlert(false)
+  }
+
+  const handleDeleteComment = (e) => {
+    e.preventDefault()
+    
+    axios.delete('http://localhost:8080/api/v1/comments/delete/' + comment.id, { withCredentials: true}).then((response) => {
+      setAlertMessage(response.data.message)
+      setAlertType('success')
+      setOpenAlert(true)
+    }).catch((error) => {
+      setAlertMessage(error.response.data.message)
+      setAlertType('error')
+      setOpenAlert(true)
+    })
   }
 
   return (
@@ -267,10 +297,39 @@ export const Comment = ({ comment, page }) => {
               sx={{
                 color: 'text.secondary'
               }}
-            >{calculateDifference(convertToTimestamp(), convertToTimestamp(comment.commentedAt))}</CardText>     
+            >{calculateDifference(convertToTimestamp(), convertToTimestamp(comment.commentedAt))}</CardText>
           </React.Fragment>
         }
+        action={
+          (user && comment.appUser.id === user.id)  &&
+          <IconButton aria-label="settings" onClick={handleClick}>
+            <MoreVert/>
+          </IconButton>
+        }
       />
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <MenuItem onClick={handleDeleteComment}>
+          <ListItemIcon>
+            <Delete fontSize="small"/>
+          </ListItemIcon>
+          Delete
+        </MenuItem>
+      </Menu>     
       <Box display='flex' flexDirection='column'>
         {loading ? 
               ( <Skeleton

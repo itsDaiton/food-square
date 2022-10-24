@@ -15,14 +15,17 @@ import {
   Alert, 
   Skeleton, 
   Paper, 
-  CardActionArea 
+  CardActionArea, 
+  MenuItem,
+  ListItemIcon,
+  Menu
 }
 from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import AvatarService from '../services/AvatarService'
 import { calculateDifference, CardText, convertToTimestamp } from './Recipe'
 import { getCurrentUser } from '../services/Authentication';
-import { Favorite, FavoriteBorder } from '@mui/icons-material';
+import { Delete, Favorite, FavoriteBorder, MoreVert } from '@mui/icons-material';
 import axios from 'axios';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
@@ -44,6 +47,9 @@ export const Review = ({ review, page }) => {
   const [alertType, setAlertType] = useState(null)
   const [alertMessage, setAlertMessage] = useState('')
 
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
+
   let navigate = useNavigate()
 
   useEffect(() => {
@@ -54,7 +60,7 @@ export const Review = ({ review, page }) => {
   }, [])
 
   const getLikeBoolean = () => {
-    if (user) {
+    if (user && review) {
       axios.get('http://localhost:8080/api/v1/reviews/isLikedByUser/' + review.id, { withCredentials: true }).then((response) => {
         setLiked(response.data)
       })
@@ -62,10 +68,12 @@ export const Review = ({ review, page }) => {
   }
 
   const getLikeCount = () => {
-    axios.get('http://localhost:8080/api/v1/reviews/getLikes/' + review.id).then((response) => {
-      setLikeCount(response.data)
-      setLoading(false)
-    })
+    if (review) {
+      axios.get('http://localhost:8080/api/v1/reviews/getLikes/' + review.id).then((response) => {
+        setLikeCount(response.data)
+        setLoading(false)
+      })
+    }
   }
 
   const getUserImage = () => {
@@ -86,6 +94,14 @@ export const Review = ({ review, page }) => {
     }
   }
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
   useEffect(() => {
     getLikeBoolean()
     // eslint-disable-next-line
@@ -99,10 +115,16 @@ export const Review = ({ review, page }) => {
     const interval = setInterval(() => {
       getReviewerImage()
       getUserImage()
-      getLikeCount()
     }, 10000)
 
-    return () => clearInterval(interval)
+    const interval2 = setInterval(() => {
+      getLikeCount()
+    }, 15000)
+
+    return () => {
+      clearInterval(interval)
+      clearInterval(interval2)
+    }
     // eslint-disable-next-line
   }, [])
 
@@ -137,6 +159,20 @@ export const Review = ({ review, page }) => {
         setOpenAlert(true)
       })     
     }
+  }
+
+  const handleDeleteReview = (e) => {
+    e.preventDefault()
+    
+    axios.delete('http://localhost:8080/api/v1/reviews/delete/' + review.id, { withCredentials: true}).then((response) => {
+      setAlertMessage(response.data.message)
+      setAlertType('success')
+      setOpenAlert(true)
+    }).catch((error) => {
+      setAlertMessage(error.response.data.message)
+      setAlertType('error')
+      setOpenAlert(true)
+    })
   }
 
   const handleCloseAlert = (e, reason) => {
@@ -288,7 +324,36 @@ export const Review = ({ review, page }) => {
             >{calculateDifference(convertToTimestamp(), convertToTimestamp(review.updatedAt))}</CardText>     
           </React.Fragment>
         }
+        action={
+          (user && review.appUser.id === user.id)  &&
+          <IconButton aria-label="settings" onClick={handleClick}>
+            <MoreVert/>
+          </IconButton>
+        }
       />
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <MenuItem onClick={handleDeleteReview}>
+          <ListItemIcon>
+            <Delete fontSize="small"/>
+          </ListItemIcon>
+          Delete
+        </MenuItem>
+      </Menu> 
       <Box display='flex' flexDirection='column'>
         {loading ? 
               ( <Skeleton

@@ -607,6 +607,25 @@ export const Recipe = ({ recipe, type }) => {
     handleOpenReviewDialog()
   }
 
+  const handleRecipeDelete = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+
+    axios.delete('http://localhost:8080/api/v1/recipes/delete/' + recipe.id, { withCredentials: true }).then((response) => {
+      
+      setAlertMessage(response.data.message)
+      setAlertType('success')
+      setOpenAlert(true)
+      setTimeout(() => {
+        navigate('/')  
+      }, 3000)
+    }).catch((error) => {
+      setAlertMessage(error.response.data.message)
+      setAlertType('error')
+      setOpenAlert(true)      
+    })
+  }
+
   const handleExpandClick = (e) => {
     e.stopPropagation()
     e.preventDefault()
@@ -889,6 +908,15 @@ export const Recipe = ({ recipe, type }) => {
                   Delete your review
                 </MenuItem>
               }
+              <Divider/>
+              {(user && recipe.appUser.id === user.id) &&
+                <MenuItem onClick={handleRecipeDelete}>
+                <ListItemIcon>
+                  <Delete fontSize="small" />
+                </ListItemIcon>
+                Delete this recipe
+              </MenuItem>        
+              }
             </Menu>
         {loading ? 
         (
@@ -1170,6 +1198,15 @@ export const Recipe = ({ recipe, type }) => {
                 Delete your review
               </MenuItem>
             }
+            <Divider/>
+              {(user && recipe.appUser.id === user.id) &&
+                <MenuItem onClick={handleRecipeDelete}>
+                <ListItemIcon>
+                  <Delete fontSize="small" />
+                </ListItemIcon>
+                Delete this recipe
+              </MenuItem>        
+              }
           </Menu>
       {loading ? 
       (
