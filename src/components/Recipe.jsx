@@ -908,7 +908,6 @@ export const Recipe = ({ recipe, type }) => {
                   Delete your review
                 </MenuItem>
               }
-              <Divider/>
               {(user && recipe.appUser.id === user.id) &&
                 <MenuItem onClick={handleRecipeDelete}>
                 <ListItemIcon>

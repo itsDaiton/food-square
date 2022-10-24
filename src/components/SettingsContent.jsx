@@ -1,5 +1,5 @@
 import { CameraAlt, Delete, Edit, Person} from '@mui/icons-material'
-import { Alert, Box, Button, CircularProgress, Dialog, Divider, FormControl, Paper, Snackbar, Tab, Tabs, TextField, Typography } from '@mui/material'
+import { Alert, Box, Button, CircularProgress, Dialog, Divider, FormControl, Paper, Snackbar, Tab, Tabs, TextField, Typography, useMediaQuery, useTheme } from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
 
@@ -13,6 +13,9 @@ export const SettingsContent = ({ userId }) => {
   const [alertMessage, setAlertMessage] = useState('')
 
   const [openDialog, setOpenDialog] = useState(false)
+
+  const theme = useTheme()
+  const tiny = useMediaQuery(theme.breakpoints.down(600))
   
   const [personalInfo, setPersonalInfo] = useState({
     firstName: '',
@@ -145,7 +148,7 @@ export const SettingsContent = ({ userId }) => {
                 id="user-firstname" 
                 label='First name'
                 variant="outlined"
-                sx={{ mt: 4, ml: 4 }}
+                sx={{ mt: 4, ml: 4, mr: 4 }}
               />
               <TextField
                 value={personalInfo.lastName === null ? '' : personalInfo.lastName}
@@ -154,7 +157,7 @@ export const SettingsContent = ({ userId }) => {
                 id="user-lastname" 
                 label='Last name'
                 variant="outlined"
-                sx={{ mt: 4, ml: 4 }}
+                sx={{ mt: 4, ml: 4, mr: 4 }}
               />
             </FormControl>
             <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
@@ -173,7 +176,7 @@ export const SettingsContent = ({ userId }) => {
             <Typography textAlign='center' variant='h6' sx={{ fontWeight: 'bold', pt: 4, pb: 4 }}>Profile picture</Typography>
             <Divider/>
             <Box display='flex' flexDirection='row' alignItems='center' sx={{ mt: 2, ml: 4 }}>
-              <Typography textAlign='left' variant='body1' sx={{ fontWeight: 'bold', mr: 1 }}>Edit your profile picture</Typography>
+              <Typography textAlign='left' variant='body1' sx={{ fontWeight: 'bold', mr: 1 }}>Add or Edit</Typography>
               <Edit/>
             </Box>
             <FormControl>
@@ -195,7 +198,7 @@ export const SettingsContent = ({ userId }) => {
             </Box>
             <Divider/>
             <Box display='flex' flexDirection='row' alignItems='center' sx={{ mt: 2, ml: 4 }}>
-              <Typography textAlign='left' variant='body1' sx={{ fontWeight: 'bold', mr: 1 }}>Remove your profile picture</Typography>
+              <Typography textAlign='left' variant='body1' sx={{ fontWeight: 'bold', mr: 1 }}>Remove</Typography>
               <Delete/>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
@@ -253,36 +256,69 @@ export const SettingsContent = ({ userId }) => {
           Settings
         </Typography>
       </Box>
+      {tiny ?
       <Box
-        sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 250  }}
+        sx={{ bgcolor: 'background.paper', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+        >
+          <Tabs
+            value={tab}
+            onChange={handleTabChange}
+            textColor="primary"
+            indicatorColor="primary"
+            variant='fullWidth'
+            orientation='horizontal'
+            sx={{ mb: 5 }}
+          >
+            <Tab value={1} icon={<Person/>} label="Personal Info" iconPosition='start' sx={{ typography: 'body1' }}/>
+            <Tab value={2} icon={<CameraAlt/>} label="Profile Picture" iconPosition='start' sx={{ typography: 'body1' }}/>
+          </Tabs>
+          <Box sx={{ width: '100%', height: '80%'}}>
+            {loading ?
+            <Box display='flex' justifyContent='center' alignItems='center' flexDirection='column'>
+              <CircularProgress size={50} />
+            </Box>
+            :
+            loadTabsContent(tab)
+            }
+          </Box>
+        <Snackbar open={openAlert} autoHideDuration={5000} onClose={handleCloseAlert}>
+          <Alert onClose={handleCloseAlert} variant='filled' severity={alertType} sx={{ width: '100%' }}>
+            {alertMessage}        
+          </Alert>
+        </Snackbar>
+      </Box>    
+      :
+      <Box
+        sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 250 }}
       >
         <Tabs
-        value={tab}
-        onChange={handleTabChange}
-        textColor="primary"
-        indicatorColor="primary"
-        variant='fullWidth'
-        orientation='vertical'
-        sx={{ width: 300 }}
-      >
-        <Tab value={1} icon={<Person/>} label="Personal Info" iconPosition='start' sx={{ typography: 'body1' }}/>
-        <Tab value={2} icon={<CameraAlt/>} label="Profile Picture" iconPosition='start' sx={{ typography: 'body1' }}/>
-      </Tabs>
-      <Box sx={{ width: '80%', height: '80%', ml: 5, mr: 5}}>
-        {loading ?
-        <Box display='flex' justifyContent='center' alignItems='center' flexDirection='column'>
-          <CircularProgress size={50} />
+          value={tab}
+          onChange={handleTabChange}
+          textColor="primary"
+          indicatorColor="primary"
+          variant='fullWidth'
+          orientation='vertical'
+          sx={{ width: 300 }}
+        >
+          <Tab value={1} icon={<Person/>} label="Personal Info" iconPosition='start' sx={{ typography: 'body1' }}/>
+          <Tab value={2} icon={<CameraAlt/>} label="Profile Picture" iconPosition='start' sx={{ typography: 'body1' }}/>
+        </Tabs>
+        <Box sx={{ width: '80%', height: '80%', ml: 5, mr: 5}}>
+          {loading ?
+          <Box display='flex' justifyContent='center' alignItems='center' flexDirection='column'>
+            <CircularProgress size={50} />
+          </Box>
+          :
+          loadTabsContent(tab)
+          }
         </Box>
-        :
-        loadTabsContent(tab)
-        }
-      </Box>
       <Snackbar open={openAlert} autoHideDuration={5000} onClose={handleCloseAlert}>
         <Alert onClose={handleCloseAlert} variant='filled' severity={alertType} sx={{ width: '100%' }}>
           {alertMessage}        
         </Alert>
       </Snackbar>
-     </Box>      
+     </Box>
+    }      
     </Box>
   )
 }

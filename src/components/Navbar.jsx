@@ -19,6 +19,8 @@ import {
   Box,
   AppBar,
   Skeleton,
+  useMediaQuery,
+  useTheme,
 } 
 from '@mui/material';
 import { 
@@ -59,6 +61,9 @@ export const Navbar = ({ mode, setMode }) => {
   const [loading, setLoading] = useState(true)
 
   const [openDrawer, setOpenDrawer] = useState(false)
+
+  const theme = useTheme()
+  const tiny = useMediaQuery(theme.breakpoints.down(350))
 
   let navigate = useNavigate()
   const route = useLocation()
@@ -172,7 +177,7 @@ export const Navbar = ({ mode, setMode }) => {
               textDecoration: 'none',
             }}
           >
-            Food Square
+            {tiny ? '' : 'Food Sqaure'}
           </Typography>
           <Box 
           sx={{ 
