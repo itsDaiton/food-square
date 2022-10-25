@@ -1,4 +1,4 @@
-import { ArrowDownward, ArrowUpward, Clear, Sort } from '@mui/icons-material';
+import { ArrowDownward, ArrowUpward, Clear } from '@mui/icons-material';
 import { Typography, Box, CircularProgress, Paper, useMediaQuery, Tooltip, IconButton, useTheme, styled, alpha, InputBase } from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
@@ -13,10 +13,11 @@ const Search = styled('div')(({ theme }) => ({
     backgroundColor: alpha(theme.palette.primary.main, 0.25),
   },
   marginRight: theme.spacing(2),
-  marginLeft: 0,
+  marginLeft: theme.spacing(2),
   width: '100%',
   [theme.breakpoints.up('sm')]: {
     marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(3),
     width: 'auto',
   },
 }))
@@ -38,9 +39,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
     width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch',
+    [theme.breakpoints.down('sm')]: {
+      width: '10ch',
     },
+    [theme.breakpoints.down(500)]: {
+      width: '8ch'
+    }
   },
 }))
 
@@ -148,7 +152,7 @@ export const ReviewFeed = () => {
         <Box display='flex' justifyContent='space-between'>
           <Paper 
             elevation={4}        
-            sx={{ width: 60, height: 60, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', ml: tiny ? 0 : 6, mb: 2,}}
+            sx={{ width: { xs: 40, sm: 60 }, height: { xs: 40, sm: 60 }, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', ml: tiny ? 0 : 6, mb: 2,}}
           >
             <Tooltip title={(sort === null || sort === 'asc') ? 'Sort by top rated' : 'Sort by worst rated'}>
               <IconButton onClick={handleSort}>
@@ -163,7 +167,7 @@ export const ReviewFeed = () => {
               </SearchIconWrapper>
               <StyledInputBase
                 name='search'
-                placeholder="Search recipes"
+                placeholder="Search..."
                 inputProps={{ 'aria-label': 'search' }}
                 onChange={handleSearchChange}
                 value={query}
@@ -172,7 +176,7 @@ export const ReviewFeed = () => {
           </Box>
           <Paper 
             elevation={4} 
-            sx={{ width: 60, height: 60, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', mr: tiny ? 0 : 6, mb: 2, background: theme.palette.error.main }}
+            sx={{ width: { xs: 40, sm: 60 }, height: { xs: 40, sm: 60 }, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', mr: tiny ? 0 : 6, mb: 2, background: theme.palette.error.main }}
           >
             <Tooltip title='Reset searchbar'>
               <IconButton onClick={resetSearchBar}>

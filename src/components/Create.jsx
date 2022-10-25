@@ -478,6 +478,9 @@ export const Create = () => {
                 error={amountError ? true : false} 
                 helperText={amountError}
               />
+              <Typography variant='body2' sx={{ pl: 1 }} color={theme.palette.warning.main}>
+                * 1 x amount = 100g edible portion
+              </Typography>
               <Button variant='contained' sx={{ width: 175, ml: 1, mt: 2 }} onClick={addIngredient}>Add ingredient</Button>
             </FormGroup>
             <FormGroup sx={{ mt: 5 }}>

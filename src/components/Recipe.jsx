@@ -813,10 +813,11 @@ export const Recipe = ({ recipe, type }) => {
             ) 
             :
             <React.Fragment>
+              <Box display='flex' flexDirection={tiny ? 'column' : 'row'} alignItems='center'>
                 <CardText
                 sx={{
                   fontWeight: 'bold',
-                  fontSize: 20
+                  fontSize: { xs: 16, sm: 18, md: 20 },
                 }}
               >
                 {(recipe.appUser.firstName && recipe.appUser.lastName) ? recipe.appUser.firstName + ' ' + recipe.appUser.lastName : recipe.appUser.userName}
@@ -824,23 +825,28 @@ export const Recipe = ({ recipe, type }) => {
               {(recipe.appUser.firstName && recipe.appUser.lastName) &&
               <CardText
                 sx={{
-                  color: 'text.secondary'
+                  color: 'text.secondary',
+                  fontSize: { xs: 15, sm: 16, md: 18 }
                   }}
                 >
                   @{recipe.appUser.userName}
-              </CardText> 
+              </CardText>
+              }
+              {!tiny &&
+              <CardText
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: { xs: 16, sm: 18, md: 20 }
+                }}
+              >·</CardText>
               }
               <CardText
                 sx={{
                   color: 'text.secondary',
-                  fontSize: 20
+                  fontSize: { xs: 16, sm: 18, md: 20 }
                 }}
-              >·</CardText>  
-              <CardText
-                sx={{
-                  color: 'text.secondary'
-                }}
-              >{calculateDifference(convertToTimestamp(), convertToTimestamp(recipe.updatedAt))}</CardText>     
+              >{calculateDifference(convertToTimestamp(), convertToTimestamp(recipe.updatedAt))}</CardText>
+              </Box>
             </React.Fragment>
           }
         />
@@ -933,7 +939,7 @@ export const Recipe = ({ recipe, type }) => {
         />
         }
         <CardContent>
-          <Box display='flex' flexDirection='row' justifyContent='space-between'>
+          <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
             {loading ?
             (
               <Skeleton
@@ -943,7 +949,9 @@ export const Recipe = ({ recipe, type }) => {
               />
             )     
             :
-            <Typography variant='h6'>
+            <Typography 
+              variant='h6'
+              sx={{ fontSize: { xs: 18, sm: 22, md: 20, lg: 22, xl: 24 } }}>
               {recipe.name}
             </Typography>
             }
@@ -958,12 +966,17 @@ export const Recipe = ({ recipe, type }) => {
             :
             averageRating >= 1.0 ?
             <Box display='flex' alignItems='center'>     
-              <Typography variant='h6' sx={{ mr: 1, fontWeight: 'bold' }}>{averageRating}</Typography>
-              <Rating readOnly value={averageRating} precision={0.5} size='large' />
+              <Typography variant='h6' sx={{ mr: 1, fontWeight: 'bold', fontSize: { xs: 16, md: 24 } }}>{averageRating}</Typography>
+              <Rating readOnly value={averageRating} precision={0.5} size={tiny ? 'small' : 'large'} />
             </Box>
             :
             <Box display='flex' alignItems='center'>
-              <Typography variant='body1' sx={{ mr: 1 }}>No reviews yet.</Typography>
+              <Typography 
+                variant='body1' 
+                sx={{ fontSize: { xs: 18, sm: 22, md: 20, lg: 22, xl: 24 }, mr: 1 }}
+              >
+                {tiny ? '0' : 'No reviews yet.'}
+              </Typography>
               <StarBorderOutlined sx={{ width: 35, height: 35 }} />
             </Box>     
             }       
@@ -978,7 +991,10 @@ export const Recipe = ({ recipe, type }) => {
               />
           )
           :
-          <Typography variant="body1">
+          <Typography 
+            variant="body1"
+            sx={{ fontSize: { xs: 16, sm: 20, md: 18, lg: 20, xl: 22 }, mr: 1 }}
+          >
             {recipe.description}
           </Typography> 
           }  
@@ -1102,35 +1118,41 @@ export const Recipe = ({ recipe, type }) => {
           ) 
           :
           <React.Fragment>
-              <CardText
-              sx={{
-                fontWeight: 'bold',
-                fontSize: 20
-              }}
-            >
-              {(recipe.appUser.firstName && recipe.appUser.lastName) ? recipe.appUser.firstName + ' ' + recipe.appUser.lastName : recipe.appUser.userName}
-            </CardText>
-            {(recipe.appUser.firstName && recipe.appUser.lastName) &&
-            <CardText
-              sx={{
-                color: 'text.secondary'
+              <Box display='flex' flexDirection={tiny ? 'column' : 'row'} alignItems='center'>
+                <CardText
+                sx={{
+                  fontWeight: 'bold',
+                  fontSize: { xs: 16, sm: 18, md: 20 },
                 }}
               >
-                @{recipe.appUser.userName}
-            </CardText> 
-            }
-            <CardText
-              sx={{
-                color: 'text.secondary',
-                fontSize: 20
-              }}
-            >·</CardText>  
-            <CardText
-              sx={{
-                color: 'text.secondary'
-              }}
-            >{calculateDifference(convertToTimestamp(), convertToTimestamp(recipe.updatedAt))}</CardText>     
-          </React.Fragment>
+                {(recipe.appUser.firstName && recipe.appUser.lastName) ? recipe.appUser.firstName + ' ' + recipe.appUser.lastName : recipe.appUser.userName}
+              </CardText>
+              {(recipe.appUser.firstName && recipe.appUser.lastName) &&
+              <CardText
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: { xs: 15, sm: 16, md: 18 }
+                  }}
+                >
+                  @{recipe.appUser.userName}
+              </CardText>
+              }
+              {!tiny &&
+              <CardText
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: { xs: 16, sm: 18, md: 20 }
+                }}
+              >·</CardText>
+              }
+              <CardText
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: { xs: 16, sm: 18, md: 20 }
+                }}
+              >{calculateDifference(convertToTimestamp(), convertToTimestamp(recipe.updatedAt))}</CardText>
+              </Box>
+            </React.Fragment>
         }
       />
       <Menu
@@ -1223,56 +1245,66 @@ export const Recipe = ({ recipe, type }) => {
       />
       }
       <CardContent>
-        <Box display='flex' flexDirection='row' justifyContent='space-between'>
-          {loading ?
-          (
-            <Skeleton
-              animation="wave"
-              height={34}
-              width="50%"
-            />
-          )     
-          :
-          <Typography variant='h6'>
-            {recipe.name}
-          </Typography>
-          }
+          <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
+            {loading ?
+            (
+              <Skeleton
+                animation="wave"
+                height={34}
+                width="50%"
+              />
+            )     
+            :
+            <Typography 
+              variant='h6'
+              sx={{ fontSize: { xs: 18, sm: 22, md: 20, lg: 22, xl: 24 } }}>
+              {recipe.name}
+            </Typography>
+            }
+            {loading ? 
+            (
+              <Skeleton
+                animation="wave"
+                height={34}
+                width="20%"
+              />
+            )
+            :
+            averageRating >= 1.0 ?
+            <Box display='flex' alignItems='center'>     
+              <Typography variant='h6' sx={{ mr: 1, fontWeight: 'bold', fontSize: { xs: 16, md: 24 } }}>{averageRating}</Typography>
+              <Rating readOnly value={averageRating} precision={0.5} size={tiny ? 'small' : 'large'} />
+            </Box>
+            :
+            <Box display='flex' alignItems='center'>
+              <Typography 
+                variant='body1' 
+                sx={{ fontSize: { xs: 18, sm: 22, md: 20, lg: 22, xl: 24 }, mr: 1 }}
+              >
+                {tiny ? '0' : 'No reviews yet.'}
+              </Typography>
+              <StarBorderOutlined sx={{ width: 35, height: 35 }} />
+            </Box>     
+            }       
+          </Box>
+          <Divider sx={{ mt: 2, mb: 2 }}/>
           {loading ? 
           (
             <Skeleton
-              animation="wave"
-              height={34}
-              width="20%"
-            />
+                animation="wave"
+                height={34}
+                width="100%"
+              />
           )
           :
-          averageRating >= 1.0 ?
-          <Box display='flex' alignItems='center'>     
-            <Typography variant='h6' sx={{ mr: 1, fontWeight: 'bold' }}>{averageRating}</Typography>
-            <Rating readOnly value={averageRating} precision={0.5} size='large' />
-          </Box>
-          :
-          <Box display='flex' alignItems='center'>
-            <Typography variant='body1' sx={{ mr: 1 }}>No reviews yet.</Typography>
-            <StarBorderOutlined sx={{ width: 35, height: 35 }} />
-          </Box>     
-          }       
-        </Box>
-        <Divider sx={{ mt: 2, mb: 2 }}/>
-        {loading ? 
-        (
-          <Skeleton
-              animation="wave"
-              height={34}
-              width="100%"
-            />
-        )
-        :
-        <Typography variant="body1">
-          {recipe.description}
-        </Typography> 
-        }  
-      </CardContent>
+          <Typography 
+            variant="body1"
+            sx={{ fontSize: { xs: 16, sm: 20, md: 18, lg: 20, xl: 22 }, mr: 1 }}
+          >
+            {recipe.description}
+          </Typography> 
+          }  
+        </CardContent>
       <CardActions sx={{ ml: 1, display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>
         <Box display='flex' flexDirection='row'>
           {loading ? 
@@ -1378,7 +1410,7 @@ export const Recipe = ({ recipe, type }) => {
                   <CardText
                     sx={{
                       fontWeight: 'bold',
-                      fontSize: 20
+                      fontSize: { xs: 16, sm: 18, md: 20 },
                     }}
                   >
                     {(recipe.appUser.firstName && recipe.appUser.lastName) ? recipe.appUser.firstName + ' ' + recipe.appUser.lastName : recipe.appUser.userName}
@@ -1386,7 +1418,8 @@ export const Recipe = ({ recipe, type }) => {
                   {(recipe.appUser.firstName && recipe.appUser.lastName) &&
                   <CardText
                     sx={{
-                      color: 'text.secondary'
+                      color: 'text.secondary',
+                      fontSize: { xs: 15, sm: 16, md: 18 }
                       }}
                     >
                       @{recipe.appUser.userName}
@@ -1400,13 +1433,14 @@ export const Recipe = ({ recipe, type }) => {
                   <CardText
                     sx={{
                       color: 'text.secondary',
-                      fontSize: 20
+                      fontSize: { xs: 16, sm: 18, md: 20 },
                     }}
                   >·</CardText>
                   }
                   <CardText
                     sx={{
-                      color: 'text.primary'
+                      color: 'text.primary',
+                      fontSize: { xs: 16, sm: 18, md: 20 },
                     }}
                   >{recipe.name}</CardText>               
             </Box>
@@ -1476,7 +1510,7 @@ export const Recipe = ({ recipe, type }) => {
                     <CardText
                       sx={{
                         fontWeight: 'bold',
-                        fontSize: 20
+                        fontSize: { xs: 16, sm: 18, md: 20 },
                       }}
                     >
                       {(recipe.appUser.firstName && recipe.appUser.lastName) ? recipe.appUser.firstName + ' ' + recipe.appUser.lastName : recipe.appUser.userName}
@@ -1484,7 +1518,8 @@ export const Recipe = ({ recipe, type }) => {
                     {(recipe.appUser.firstName && recipe.appUser.lastName) &&
                     <CardText
                       sx={{
-                        color: 'text.secondary'
+                        color: 'text.secondary',
+                        fontSize: { xs: 15, sm: 16, md: 18 }
                         }}
                       >
                         @{recipe.appUser.userName}
@@ -1498,13 +1533,14 @@ export const Recipe = ({ recipe, type }) => {
                     <CardText
                       sx={{
                         color: 'text.secondary',
-                        fontSize: 20
+                        fontSize: { xs: 16, sm: 18, md: 20 },
                       }}
                     >·</CardText>
                     }
                     <CardText
                       sx={{
-                        color: 'text.primary'
+                        color: 'text.primary',
+                        fontSize: { xs: 16, sm: 18, md: 20 },
                       }}
                     >{recipe.name}</CardText>               
               </Box>

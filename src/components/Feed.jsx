@@ -262,7 +262,7 @@ export const Feed = ({ page }) => {
         <Box display='flex' justifyContent='space-between'>
           <Paper 
             elevation={4}        
-            sx={{ width: 60, height: 60, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', ml: tiny ? 0 : 6, mb: 2 }}
+            sx={{ width: { xs: 40, sm: 60 }, height: { xs: 40, sm: 60 }, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', ml: tiny ? 0 : 6, mb: 2,}}
           >
             <Tooltip title='Filter your feed'>
               <IconButton onClick={handleOpenDialog}>
@@ -337,7 +337,7 @@ export const Feed = ({ page }) => {
           {filteredRecipes &&
           <Paper 
             elevation={4} 
-            sx={{ width: 60, height: 60, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', mr: tiny ? 0 : 6, mb: 2, background: theme.palette.error.main }}
+            sx={{ width: { xs: 40, sm: 60 }, height: { xs: 40, sm: 60 }, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', mr: tiny ? 0 : 6, mb: 2, background: theme.palette.error.main }}
           >
             <Tooltip title='Clear all filters'>
               <IconButton onClick={clearFilters}>
@@ -358,7 +358,7 @@ export const Feed = ({ page }) => {
             <Typography textAlign='center' variant='h6' sx={{ fontWeight: 'bold', mb: 5 }}>Filter your feed</Typography>
             <Box display='flex' flexDirection='row' alignItems='center'>
               <Restaurant/>
-              <Typography sx={{ m: 1 }}>Filter by meal type <b>(each can be included)</b></Typography>
+              <Typography sx={{ m: 1, fontSize: { xs: 16, md: 18 } }}>Filter by meal type</Typography>
             </Box>
             <FormControl sx={{ m: 2, mt: 3, mb: 3, width: '50%' }}>
               <InputLabel>Meal</InputLabel>
@@ -389,7 +389,7 @@ export const Feed = ({ page }) => {
             </FormControl>
             <Box display='flex' flexDirection='row' alignItems='center'>
               <FormatListBulleted/>
-              <Typography sx={{ m: 1 }}>Filter by categories <b>(each has to be included)</b></Typography>
+              <Typography sx={{ m: 1, fontSize: { xs: 16, md: 18 } }}>Filter by categories</Typography>
             </Box>
             <FormControl sx={{ m: 2, mt: 3, mb: 3, width: '50%' }}>
               <InputLabel>Categories</InputLabel>
@@ -420,7 +420,7 @@ export const Feed = ({ page }) => {
             </FormControl>
             <Box display='flex' flexDirection='row' alignItems='center'>
               <AccessAlarm/>
-              <Typography sx={{ m: 1 }}>Filter by prepartion time</Typography>
+              <Typography sx={{ m: 1, fontSize: { xs: 16, md: 18 } }}>Filter by prepartion time</Typography>
             </Box>
             <FormControl sx={{ m: 2 }}>
               <RadioGroup
@@ -428,14 +428,14 @@ export const Feed = ({ page }) => {
                 value={filterInputs.prepTime}
                 onChange={handleInputsChange}
               >
-                <FormControlLabel value="quick" control={<Radio />} label="Quick (< 10 minutes)" />
-                <FormControlLabel value="normal" control={<Radio />} label="Normal (10 to 20 minutes)" />
-                <FormControlLabel value="long" control={<Radio />} label="Long (> 20 minutes)" />
+                <FormControlLabel value="quick" control={<Radio />} label={<Typography sx={{ fontSize: { xs: 16, md: 18 } }}>{'Quick (< 10 mins)'}</Typography>} />
+                <FormControlLabel value="normal" control={<Radio />} label={<Typography sx={{ fontSize: { xs: 16, md: 18 } }}>{'Normal (10 to 20 mins)'}</Typography>} />
+                <FormControlLabel value="long" control={<Radio />} label={<Typography sx={{ fontSize: { xs: 16, md: 18 } }}>{'Long (> 20 mins)'}</Typography>} />
               </RadioGroup>
             </FormControl>
             <Box display='flex' flexDirection='row' alignItems='center'>
               <AccessAlarm/>
-              <Typography sx={{ m: 1, }}>Filter by cooking time</Typography>
+              <Typography sx={{ m: 1, fontSize: { xs: 16, md: 18 } }}>Filter by cooking time</Typography>
             </Box>
             <FormControl sx={{ m: 2 }}>
               <RadioGroup
@@ -443,9 +443,9 @@ export const Feed = ({ page }) => {
                 value={filterInputs.cookTime}
                 onChange={handleInputsChange}
               >
-                <FormControlLabel value="quick" control={<Radio />} label="Quick (< 10 minutes)" />
-                <FormControlLabel value="normal" control={<Radio />} label="Normal (10 to 30 minutes)" />
-                <FormControlLabel value="long" control={<Radio />} label="Long (> 30 minutes)" />
+                <FormControlLabel value="quick" control={<Radio />} label={<Typography sx={{ fontSize: { xs: 16, md: 18 } }}>{'Quick (< 10 mins)'}</Typography>} />
+                <FormControlLabel value="normal" control={<Radio />} label={<Typography sx={{ fontSize: { xs: 16, md: 18 } }}>{'Normal (10 to 30 mins)'}</Typography>} />
+                <FormControlLabel value="long" control={<Radio />} label={<Typography sx={{ fontSize: { xs: 16, md: 18 } }}>{'Long (> 30 mins)'}</Typography>} />
               </RadioGroup>
             </FormControl>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>

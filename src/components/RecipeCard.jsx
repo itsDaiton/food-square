@@ -12,7 +12,9 @@ import {
   Divider, 
   Skeleton, 
   Tooltip, 
-  Collapse
+  Collapse,
+  useTheme,
+  useMediaQuery
 } 
 from '@mui/material'
 import axios from 'axios'
@@ -33,6 +35,9 @@ export const RecipeCard = ({ recipe }) => {
   const [expanded, setExpanded] = useState(false)
 
   const[userImage, setUserImage] = useState()
+
+  const theme = useTheme()
+  const tiny = useMediaQuery(theme.breakpoints.down(500))
 
   let navigate = useNavigate()
 
@@ -118,10 +123,11 @@ export const RecipeCard = ({ recipe }) => {
             ) 
             :
           <React.Fragment>
+            <Box display='flex' flexDirection={tiny ? 'column' : 'row'} alignItems='center'>
               <CardText
               sx={{
                 fontWeight: 'bold',
-                fontSize: 20
+                fontSize: { xs: 16, sm: 18, md: 20 },
               }}
             >
               {(recipe.appUser.firstName && recipe.appUser.lastName) ? recipe.appUser.firstName + ' ' + recipe.appUser.lastName : recipe.appUser.userName}
@@ -129,23 +135,28 @@ export const RecipeCard = ({ recipe }) => {
             {(recipe.appUser.firstName && recipe.appUser.lastName) &&
             <CardText
               sx={{
-                color: 'text.secondary'
+                color: 'text.secondary',
+                fontSize: { xs: 15, sm: 16, md: 18 }
                 }}
               >
                 @{recipe.appUser.userName}
             </CardText> 
             }
+            {!tiny &&
             <CardText
               sx={{
                 color: 'text.secondary',
-                fontSize: 20
+                fontSize: { xs: 16, sm: 18, md: 20 }
               }}
-            >·</CardText>  
+            >·</CardText>
+            }  
             <CardText
               sx={{
-                color: 'text.primary'
+                color: 'text.primary',
+                fontSize: { xs: 16, sm: 18, md: 20 }
               }}
-            >{recipe.name}</CardText>     
+            >{recipe.name}</CardText>
+            </Box>     
           </React.Fragment>
         }
       />
@@ -162,9 +173,9 @@ export const RecipeCard = ({ recipe }) => {
         <Box display='flex' flexDirection='row'>
         {recipe.avgRating >= 1.0 ?
           <Box display='flex' alignItems='center'>     
-            <Typography variant='h6' sx={{ mr: 1, fontWeight: 'bold' }}>{recipe.avgRating}</Typography>
-            <Rating readOnly value={recipe.avgRating} precision={0.5} size='large' />
-            <Typography display='flex' alignItems='center' variant='body1' sx={{ ml: 2, height: 34.8 }}>
+            <Typography variant='h6' sx={{ mr: 1, fontWeight: 'bold', fontSize: { xs: 16, md: 24 } }}>{recipe.avgRating}</Typography>
+            <Rating readOnly value={recipe.avgRating} precision={0.5} size={tiny ? 'small' : 'large'} />
+            <Typography display='flex' alignItems='center' variant='body1' sx={{ ml: 2, height: 34.8, fontSize: { xs: 16, md: 20 }}}>
               {reviewCount > 1 ? reviewCount + ' reviews' : reviewCount + ' review'}
               </Typography>
           </Box>

@@ -18,7 +18,9 @@ import {
   CardActionArea, 
   MenuItem,
   ListItemIcon,
-  Menu
+  Menu,
+  useTheme,
+  useMediaQuery
 }
 from '@mui/material'
 import React, { useEffect, useState } from 'react'
@@ -49,6 +51,9 @@ export const Review = ({ review, page }) => {
 
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
+
+  const theme = useTheme()
+  const tiny = useMediaQuery(theme.breakpoints.down(500))
 
   let navigate = useNavigate()
 
@@ -187,7 +192,7 @@ export const Review = ({ review, page }) => {
     <Card sx={{margin: {md: 5, xs: 2}, borderRadius: 5}} elevation={10}>
     {page === 'profile' &&
       <Box>
-        <Paper elevation={4} sx={{ borderRadius: 15, ml: 10, mr: 10, mt: 2, mb: 2 }}>
+        <Paper elevation={4} sx={{ borderRadius: 15, ml: { xs: 2, md: 5 }, mr: { xs: 2, md: 5 }, mt: 2, mb: 2 }}>
           <Tooltip title='Author and name of reviewed recipe'>
           <CardActionArea 
             sx={{ borderRadius: 15 }}
@@ -226,10 +231,11 @@ export const Review = ({ review, page }) => {
                     ) 
                     :
                   <React.Fragment>
+                    <Box display='flex' flexDirection={tiny ? 'column' : 'row'} alignItems='center'>
                       <CardText
                       sx={{
                         fontWeight: 'bold',
-                        fontSize: 20
+                        fontSize: 16
                       }}
                     >
                       {(review.recipe.appUser.firstName && review.recipe.appUser.lastName) ? review.recipe.appUser.firstName + ' ' + review.recipe.appUser.lastName : review.recipe.appUser.userName}
@@ -237,23 +243,28 @@ export const Review = ({ review, page }) => {
                     {(review.recipe.appUser.firstName && review.recipe.appUser.lastName) &&
                     <CardText
                       sx={{
-                        color: 'text.secondary'
+                        color: 'text.secondary',
+                        fontSize: 16
                         }}
                       >
                         @{review.recipe.appUser.userName}
                     </CardText> 
                     }
+                    {!tiny &&
                     <CardText
                       sx={{
                         color: 'text.secondary',
-                        fontSize: 20
+                        fontSize: 16
                       }}
-                    >·</CardText>  
+                    >·</CardText>
+                    }  
                     <CardText
                       sx={{
-                        color: 'text.secondary'
+                        color: 'text.secondary',
+                        fontSize: 16
                       }}
-                    >{review.recipe.name}</CardText>     
+                    >{review.recipe.name}</CardText>    
+                    </Box> 
                   </React.Fragment>
                 }
               />
@@ -294,10 +305,11 @@ export const Review = ({ review, page }) => {
             ) 
             :
           <React.Fragment>
+            <Box display='flex' flexDirection={tiny ? 'column' : 'row'} alignItems='center'>
               <CardText
               sx={{
                 fontWeight: 'bold',
-                fontSize: 20
+                fontSize: { xs: 16, sm: 18, md: 20 },
               }}
             >
               {(review.appUser.firstName && review.appUser.lastName) ? review.appUser.firstName + ' ' + review.appUser.lastName : review.appUser.userName}
@@ -305,23 +317,28 @@ export const Review = ({ review, page }) => {
             {(review.appUser.firstName && review.appUser.lastName) &&
             <CardText
               sx={{
-                color: 'text.secondary'
+                color: 'text.secondary',
+                fontSize: { xs: 15, sm: 16, md: 18 }
                 }}
               >
                 @{review.appUser.userName}
             </CardText> 
             }
+            {!tiny &&
             <CardText
               sx={{
                 color: 'text.secondary',
-                fontSize: 20
+                fontSize: { xs: 16, sm: 18, md: 20 },
               }}
-            >·</CardText>  
+            >·</CardText>
+            } 
             <CardText
               sx={{
-                color: 'text.secondary'
+                color: 'text.secondary',
+                fontSize: { xs: 16, sm: 18, md: 20 },
               }}
-            >{calculateDifference(convertToTimestamp(), convertToTimestamp(review.updatedAt))}</CardText>     
+            >{calculateDifference(convertToTimestamp(), convertToTimestamp(review.updatedAt))}</CardText>
+            </Box>     
           </React.Fragment>
         }
         action={
@@ -382,10 +399,10 @@ export const Review = ({ review, page }) => {
               ) 
               :
           <Rating
-            size='large'
             value={review.rating}
             sx={{m: 2, mt: 0}}
             readOnly
+            size={tiny ? 'small' : 'large'}
           />
           }
         </Box>

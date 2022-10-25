@@ -1,5 +1,5 @@
 import { Delete, Favorite, FavoriteBorder, MoreVert } from '@mui/icons-material'
-import { Alert, Avatar, Card, CardActionArea, CardActions, CardHeader, Checkbox, IconButton, ListItemIcon, Menu, MenuItem, Paper, Skeleton, Snackbar, Tooltip, Typography } from '@mui/material'
+import { Alert, Avatar, Card, CardActionArea, CardActions, CardHeader, Checkbox, IconButton, ListItemIcon, Menu, MenuItem, Paper, Skeleton, Snackbar, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { Box } from '@mui/system'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
@@ -22,6 +22,9 @@ export const Comment = ({ comment, page }) => {
   const [openAlert, setOpenAlert] = useState(false)
   const [alertType, setAlertType] = useState(null)
   const [alertMessage, setAlertMessage] = useState('')
+
+  const theme = useTheme()
+  const tiny = useMediaQuery(theme.breakpoints.down(500))
 
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
@@ -163,7 +166,7 @@ export const Comment = ({ comment, page }) => {
     <Card sx={{margin: {md: 5, xs: 2}, borderRadius: 5}} elevation={10}>
     {page === 'profile' &&
       <Box>
-        <Paper elevation={4} sx={{ borderRadius: 15, ml: 10, mr: 10, mt: 2, mb: 2 }}>
+        <Paper elevation={4} sx={{ borderRadius: 15, ml: { xs: 2, md: 5 }, mr: { xs: 2, md: 5 }, mt: 2, mb: 2 }}>
           <Tooltip title='Author and name of commented recipe'>
           <CardActionArea 
             sx={{ borderRadius: 15 }}
@@ -202,10 +205,11 @@ export const Comment = ({ comment, page }) => {
                     ) 
                     :
                   <React.Fragment>
+                    <Box display='flex' flexDirection={tiny ? 'column' : 'row'} alignItems='center'>
                       <CardText
                       sx={{
                         fontWeight: 'bold',
-                        fontSize: 20
+                        fontSize: 16
                       }}
                     >
                       {(comment.recipe.appUser.firstName && comment.recipe.appUser.lastName) ? comment.recipe.appUser.firstName + ' ' + comment.recipe.appUser.lastName : comment.recipe.appUser.userName}
@@ -213,23 +217,28 @@ export const Comment = ({ comment, page }) => {
                     {(comment.recipe.appUser.firstName && comment.recipe.appUser.lastName) &&
                     <CardText
                       sx={{
-                        color: 'text.secondary'
+                        color: 'text.secondary',
+                        fontSize: 16
                         }}
                       >
                         @{comment.recipe.appUser.userName}
                     </CardText> 
                     }
+                    {!tiny &&
                     <CardText
                       sx={{
                         color: 'text.secondary',
-                        fontSize: 20
+                        fontSize: 16
                       }}
-                    >·</CardText>  
+                    >·</CardText>
+                    }
                     <CardText
                       sx={{
-                        color: 'text.secondary'
+                        color: 'text.secondary',
+                        fontSize: 16
                       }}
-                    >{comment.recipe.name}</CardText>     
+                    >{comment.recipe.name}</CardText>  
+                    </Box>  
                   </React.Fragment>
                 }
               />
@@ -270,10 +279,11 @@ export const Comment = ({ comment, page }) => {
             ) 
             :
           <React.Fragment>
+            <Box display='flex' flexDirection={tiny ? 'column' : 'row'} alignItems='center'>
               <CardText
               sx={{
                 fontWeight: 'bold',
-                fontSize: 20
+                fontSize: { xs: 16, sm: 18, md: 20 },
               }}
             >
               {(comment.appUser.firstName && comment.appUser.lastName) ? comment.appUser.firstName + ' ' + comment.appUser.lastName : comment.appUser.userName}
@@ -281,23 +291,28 @@ export const Comment = ({ comment, page }) => {
             {(comment.appUser.firstName && comment.appUser.lastName) &&
             <CardText
               sx={{
-                color: 'text.secondary'
+                color: 'text.secondary',
+                fontSize: { xs: 15, sm: 16, md: 18 }
                 }}
               >
                 @{comment.appUser.userName}
             </CardText> 
             }
+            {!tiny &&
             <CardText
               sx={{
                 color: 'text.secondary',
-                fontSize: 20
+                fontSize: { xs: 16, sm: 18, md: 20 },
               }}
-            >·</CardText>  
+            >·</CardText>
+            }
             <CardText
               sx={{
-                color: 'text.secondary'
+                color: 'text.secondary',
+                fontSize: { xs: 16, sm: 18, md: 20 },
               }}
             >{calculateDifference(convertToTimestamp(), convertToTimestamp(comment.commentedAt))}</CardText>
+            </Box>
           </React.Fragment>
         }
         action={

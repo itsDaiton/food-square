@@ -60,12 +60,13 @@ export const FriendsListItem = ({ user }) => {
         />
           :    
         (user.firstName === null && user.lastName === null) ?
-          <ListItemText primary={
+          <ListItemText
+          sx={{ ml: 1 }}
+          primary={
             <UserText component={'span'}
               sx={{
                 fontWeight: 'bold',
-                fontSize: 20,
-                ml: 1
+                fontSize: { xs: 15, sm: 16, md: 18 }
               }}
             >
               {user.userName}
@@ -73,12 +74,13 @@ export const FriendsListItem = ({ user }) => {
           }
         />
         :
-        <ListItemText primary={
+        <ListItemText 
+        sx={{ ml: 1 }}
+        primary={
           <UserText component={'span'}
             sx={{
               fontWeight: 'bold',
-              fontSize: 20,
-              ml: 1
+              fontSize: { xs: 16, sm: 18, md: 20 },
             }}
           >
             {user.firstName} {user.lastName}
@@ -88,7 +90,6 @@ export const FriendsListItem = ({ user }) => {
           <UserText component={'span'}
             sx={{
               color: 'gray',
-              ml: 1
               }}
             >
               @{user.userName}

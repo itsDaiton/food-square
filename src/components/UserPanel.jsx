@@ -1,5 +1,6 @@
+import { useTheme } from '@emotion/react'
 import { PersonAdd, PersonRemove } from '@mui/icons-material'
-import { Alert, Box, Fab, Skeleton, Snackbar } from '@mui/material'
+import { Alert, Box, Fab, Skeleton, Snackbar, useMediaQuery } from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { getCurrentUser } from '../services/Authentication'
@@ -13,6 +14,9 @@ export const UserPanel = ({ appUser }) => {
 	const [openAlert, setOpenAlert] = useState(false)
   const [alertType, setAlertType] = useState(null)
   const [alertMessage, setAlertMessage] = useState('')
+
+  const theme = useTheme()
+  const tiny = useMediaQuery(theme.breakpoints.down(500))
 
 	const [loading, setLoading] = useState(true)
 
@@ -95,9 +99,9 @@ export const UserPanel = ({ appUser }) => {
 				<Skeleton variant="rectangular" width={100} height={40} sx={{ borderRadius: 5}}/>
 				:
         user &&
-				<Fab variant="extended" color='primary' onClick={checkFollow === false ? handleFollow : handleUnfollow}>
+				<Fab variant="extended" color='primary' onClick={checkFollow === false ? handleFollow : handleUnfollow} size={tiny ? 'small' : 'large'}>
 					{checkFollow === false ? <PersonAdd sx={{ mr: 1 }}/> : <PersonRemove sx={{ mr: 1 }}/>}
-					{checkFollow === false ? 'Follow' : 'Unfollow'}
+					{!tiny && (checkFollow === false ? 'Follow' : 'Unfollow')}
 				</Fab>
 				}
 				<Snackbar open={openAlert} autoHideDuration={5000} onClose={handleCloseAlert}>
