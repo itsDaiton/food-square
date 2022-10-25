@@ -27,7 +27,6 @@ import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { getCurrentUser } from '../services/Authentication';
 
 export const Login = () => {
 
@@ -77,14 +76,7 @@ export const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-
-    if (getCurrentUser() !== null) {
-      setOpen(true)
-      setTimeout(() => {
-        navigate('/home')
-      }, 3000)
-    }
-    else {    
+  
     axios.post('http://localhost:8080/api/v1/auth/login', values, { withCredentials: true }).then((response) => {
       clearError()
       if (response.data.username) {
@@ -96,8 +88,7 @@ export const Login = () => {
         clearError()  
         setError(error.response.data.message) 
       }  
-    }) 
-    }  
+    })  
   }
 
   return (

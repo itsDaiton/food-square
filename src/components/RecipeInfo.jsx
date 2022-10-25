@@ -1,5 +1,21 @@
-import { ArrowForwardIosSharp, Functions } from '@mui/icons-material'
-import { Box, CircularProgress, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import { 
+  ArrowForwardIosSharp, 
+  Functions 
+} 
+from '@mui/icons-material'
+import { 
+  Box, 
+  CircularProgress, 
+  styled, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableContainer, 
+  TableHead, 
+  TableRow, 
+  Typography 
+} 
+from '@mui/material'
 import MuiAccordion from '@mui/material/Accordion';
 import MuiAccordionSummary from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';

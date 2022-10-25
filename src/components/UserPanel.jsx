@@ -1,6 +1,18 @@
 import { useTheme } from '@emotion/react'
-import { PersonAdd, PersonRemove } from '@mui/icons-material'
-import { Alert, Box, Fab, Skeleton, Snackbar, useMediaQuery } from '@mui/material'
+import { 
+  PersonAdd, 
+  PersonRemove
+} 
+from '@mui/icons-material'
+import { 
+  Alert, 
+  Box, 
+  Fab, 
+  Skeleton, 
+  Snackbar, 
+  useMediaQuery 
+} 
+from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { getCurrentUser } from '../services/Authentication'

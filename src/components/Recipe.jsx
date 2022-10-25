@@ -1,5 +1,6 @@
 import { 
-  Avatar, 
+  Avatar,
+  Box, 
   Card, 
   CardHeader, 
   CardMedia, 
@@ -51,10 +52,8 @@ import {
   Restaurant,
   ErrorOutline,
  } from '@mui/icons-material'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useState } from 'react';
-import { Box } from '@mui/system';
 import axios from 'axios';
 import { CustomTextField } from './Create';
 import { getCurrentUser } from '../services/Authentication';

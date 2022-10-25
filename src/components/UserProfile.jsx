@@ -1,5 +1,14 @@
 import { useTheme } from '@emotion/react'
-import { Box, Divider, Paper, Tab, Tabs, Typography, useMediaQuery } from '@mui/material'
+import { 
+  Box, 
+  Divider, 
+  Paper, 
+  Tab, 
+  Tabs, 
+  Typography, 
+  useMediaQuery 
+} 
+from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Feed } from './Feed'

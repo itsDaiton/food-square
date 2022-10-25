@@ -1,5 +1,23 @@
-import { ArrowDownward, ArrowUpward, Clear } from '@mui/icons-material';
-import { Typography, Box, CircularProgress, Paper, useMediaQuery, Tooltip, IconButton, useTheme, styled, alpha, InputBase } from '@mui/material'
+import { 
+  ArrowDownward, 
+  ArrowUpward, 
+  Clear 
+} 
+from '@mui/icons-material';
+import { 
+  Typography, 
+  Box, 
+  CircularProgress, 
+  Paper, 
+  useMediaQuery, 
+  Tooltip, 
+  IconButton, 
+  useTheme, 
+  styled, 
+  alpha, 
+  InputBase
+} 
+from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { RecipeCard } from './RecipeCard';
