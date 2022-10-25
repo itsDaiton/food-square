@@ -1,5 +1,6 @@
 import { 
-  Avatar, 
+  Avatar,
+  Box, 
   Card, 
   CardHeader, 
   CardMedia, 
@@ -22,7 +23,6 @@ import {
   Menu,
   ListItemIcon,
   CardActionArea,
-  Link,
   Collapse,
   Tab,
   Tabs,
@@ -52,17 +52,16 @@ import {
   Restaurant,
   ErrorOutline,
  } from '@mui/icons-material'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useState } from 'react';
-import { Box } from '@mui/system';
 import axios from 'axios';
 import { CustomTextField } from './Create';
 import { getCurrentUser } from '../services/Authentication';
 import AvatarService from '../services/AvatarService'
 import { useNavigate } from 'react-router';
+import { Link as RouterLink } from 'react-router-dom';
 
-const CardText = styled(Typography)({
+export const CardText = styled(Typography)({
   fontFamily: 'Poppins',
   display: 'inline',
   marginRight: 10
@@ -79,15 +78,53 @@ export const ExpandMore = styled((props) => {
   }),
 }));
 
-export const Recipe = ({ recipe }) => {
+export const values = {
+  minute: 60,
+  hour: (60 * 60),
+  day: (60 * 60 * 24),
+  month: (60 * 60 * 24 * (365/12)),
+  year: (60 * 60 * 24 * 365)
+}
 
-  const values = {
-    minute: 60,
-    hour: (60 * 60),
-    day: (60 * 60 * 24),
-    month: (60 * 60 * 24 * (365/12)),
-    year: (60 * 60 * 24 * 365)
+export const convertToTimestamp = (date) => {
+  let ret
+
+  if (date !== undefined) {
+    ret = Math.floor(new Date(date).getTime() / 1000)
   }
+  else {
+    ret = Math.floor(new Date().getTime() / 1000)
+  }
+  return ret
+}
+
+export const calculateDifference = (date1, date2) => {
+  let recipeDate = new Date(date2 * 1000)
+  let diff = date1 - date2
+  let ret = ''
+
+  if (diff < values.minute) {
+    ret = diff + ' s'
+  }
+  else if (diff < values.hour) {
+    ret = (Math.floor(diff / values.minute)) + ' m'
+  }
+  else if (diff < values.day) {
+    ret = (Math.floor(diff / values.hour)) + ' h'
+  }
+  else if (diff < values.month) {
+    ret = (Math.floor(diff/ values.day)) + ' d'
+  }
+  else if (diff < values.year) {
+    ret = recipeDate.getUTCDate() + '. ' + (recipeDate.getMonth() + 1) + '. '
+  }
+  else if (diff > values.year){
+    ret = recipeDate.getUTCDate() + '. ' + (recipeDate.getMonth() + 1) + '. ' + recipeDate.getFullYear()
+  }
+  return ret
+}
+
+export const Recipe = ({ recipe, type }) => {
 
   const defaultReview = {
     text: '',
@@ -152,6 +189,9 @@ export const Recipe = ({ recipe }) => {
   const [tab, setTab] = useState(1)
 
   const [loading, setLoading] = useState(true)
+  
+  const [recipeImage, setRecipeImage] = useState()
+  const [userImage, setUserImage] = useState()
 
   const [selectedIngredient, setSelectedIngredient] = useState(null)
 
@@ -213,11 +253,30 @@ export const Recipe = ({ recipe }) => {
     })
   }
 
+  
+  const getRecipeImage = () => {
+    if (recipe.pathToImage !== null && recipe.pathToImage !== '') {   
+      axios.get('http://localhost:8080/' + recipe.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+        var imageUrl = URL.createObjectURL(new Blob([response.data]))
+        setRecipeImage(imageUrl)
+      })
+    }
+  }
+
+  const getUserImage = () => {
+    if (recipe.appUser.pathToImage !== null && recipe.appUser.pathToImage !== '') {
+      axios.get('http://localhost:8080/' + recipe.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+        var imageUrl = URL.createObjectURL(new Blob([response.data]))
+        setUserImage(imageUrl)
+        setLoading(false)
+      })
+    }
+  }
+
   useEffect(() => {
     getFollowCheck()
     getFavoriteCheck()
     getReviewCheck()
-    getRecipeIngredients()
     // eslint-disable-next-line
   }, [])
   
@@ -226,11 +285,16 @@ export const Recipe = ({ recipe }) => {
     getCommentCount()
     getAverageRating()
     getRecipeIngredients()
+    getRecipeImage()
+    getUserImage()
 
     const interval = setInterval(() => {
       getReviewCount()
       getCommentCount()
       getAverageRating()
+      getRecipeImage()
+      getRecipeImage()
+      getUserImage()
     }, 10000)
 
     return () => clearInterval(interval)
@@ -542,6 +606,25 @@ export const Recipe = ({ recipe }) => {
     handleOpenReviewDialog()
   }
 
+  const handleRecipeDelete = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+
+    axios.delete('http://localhost:8080/api/v1/recipes/delete/' + recipe.id, { withCredentials: true }).then((response) => {
+      
+      setAlertMessage(response.data.message)
+      setAlertType('success')
+      setOpenAlert(true)
+      setTimeout(() => {
+        navigate('/')  
+      }, 3000)
+    }).catch((error) => {
+      setAlertMessage(error.response.data.message)
+      setAlertType('error')
+      setOpenAlert(true)      
+    })
+  }
+
   const handleExpandClick = (e) => {
     e.stopPropagation()
     e.preventDefault()
@@ -564,15 +647,6 @@ export const Recipe = ({ recipe }) => {
       case 1:
         return (
           <Box>
-            <Box display='flex'>
-              <Typography paragraph mr={1}>
-                Instructions
-              </Typography>
-              <ReceiptLongOutlined/>
-            </Box>
-            <Typography paragraph sx={{ mb: 4, ml: 2, mt: 2 }} variant='body2'>
-              {recipe.instructions}
-            </Typography>
             <Box display='flex'>
               <Typography paragraph mr={1}>
                 Type
@@ -600,10 +674,20 @@ export const Recipe = ({ recipe }) => {
             <Typography paragraph sx={{ ml: 2, mt: 2 }} variant='body2'>
               {recipe.timeToCook} minutes 
             </Typography>
+            <Box display='flex'>
+              <Typography paragraph mr={1}>
+                Instructions
+              </Typography>
+              <ReceiptLongOutlined/>
+            </Box>
+            <Typography paragraph sx={{ ml: 2, mt: 2 }} variant='body2'>
+              {recipe.instructions}
+            </Typography>
           </Box>
         )
       case 2:
         return (
+          recipe.categories.length > 0 ?
           <TableContainer>
             <Table>
               <TableBody>
@@ -615,6 +699,10 @@ export const Recipe = ({ recipe }) => {
             </TableBody>            
           </Table>
         </TableContainer>
+        :
+        <Box display='flex' justifyContent='center'>
+          <Typography>This recipe has no categories.</Typography>
+        </Box>     
         )
       case 3:
         if (!recipeIngredients.length > 0 ) {
@@ -677,51 +765,13 @@ export const Recipe = ({ recipe }) => {
     return words.join(' ')
   }
 
-  const convertToTimestamp = (date) => {
-    let ret
-
-    if (date !== undefined) {
-      ret = Math.floor(new Date(date).getTime() / 1000)
-    }
-    else {
-      ret = Math.floor(new Date().getTime() / 1000)
-    }
-    return ret
-  }
-
-  const calculateDifference = (date1, date2) => {
-    let recipeDate = new Date(date2 * 1000)
-    let diff = date1 - date2
-    let ret = ''
-
-    if (diff < values.minute) {
-      ret = diff + ' s'
-    }
-    else if (diff < values.hour) {
-      ret = (Math.floor(diff / values.minute)) + ' m'
-    }
-    else if (diff < values.day) {
-      ret = (Math.floor(diff / values.hour)) + ' h'
-    }
-    else if (diff < values.month) {
-      ret = (Math.floor(diff/ values.day)) + ' d'
-    }
-    else if (diff < values.year) {
-      ret = recipeDate.getUTCDate() + '. ' + (recipeDate.getMonth() + 1) + '. '
-    }
-    else if (diff > values.year){
-      ret = recipeDate.getUTCDate() + '. ' + (recipeDate.getMonth() + 1) + '. ' + recipeDate.getFullYear()
-    }
-    return ret
-  }
-
   return (
     <React.Fragment>
+      {type === 'feed' ?
       <Card sx={{margin: {md: 5, xs: 2}, borderRadius: 5}} elevation={10}>
-        <CardActionArea 
-          component={Link}
-          href='https://mui.com/'
-          target='_blank'
+        <CardActionArea
+          component={RouterLink}
+          to={'/recipe/' + recipe.id}
         >
         <CardHeader
          avatar={
@@ -733,10 +783,16 @@ export const Recipe = ({ recipe }) => {
             onClick={e => {
               e.stopPropagation()
               e.preventDefault()
+              navigate('/user/' + recipe.appUser.id)
             }}
             onMouseDown={e => e.stopPropagation()}
           >
-            <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)} />
+            {
+            userImage ?
+            <Avatar src={userImage}/>     
+            :
+            <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)}/>
+            }
           </IconButton>
          }
           action={
@@ -756,10 +812,11 @@ export const Recipe = ({ recipe }) => {
             ) 
             :
             <React.Fragment>
+              <Box display='flex' flexDirection={tiny ? 'column' : 'row'} alignItems='center'>
                 <CardText
                 sx={{
                   fontWeight: 'bold',
-                  fontSize: 20
+                  fontSize: { xs: 16, sm: 18, md: 20 },
                 }}
               >
                 {(recipe.appUser.firstName && recipe.appUser.lastName) ? recipe.appUser.firstName + ' ' + recipe.appUser.lastName : recipe.appUser.userName}
@@ -767,23 +824,28 @@ export const Recipe = ({ recipe }) => {
               {(recipe.appUser.firstName && recipe.appUser.lastName) &&
               <CardText
                 sx={{
-                  color: 'text.secondary'
+                  color: 'text.secondary',
+                  fontSize: { xs: 15, sm: 16, md: 18 }
                   }}
                 >
                   @{recipe.appUser.userName}
-              </CardText> 
+              </CardText>
+              }
+              {!tiny &&
+              <CardText
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: { xs: 16, sm: 18, md: 20 }
+                }}
+              >·</CardText>
               }
               <CardText
                 sx={{
                   color: 'text.secondary',
-                  fontSize: 20
+                  fontSize: { xs: 16, sm: 18, md: 20 }
                 }}
-              >·</CardText>  
-              <CardText
-                sx={{
-                  color: 'text.secondary'
-                }}
-              >{calculateDifference(convertToTimestamp(), convertToTimestamp(recipe.updatedAt))}</CardText>     
+              >{calculateDifference(convertToTimestamp(), convertToTimestamp(recipe.updatedAt))}</CardText>
+              </Box>
             </React.Fragment>
           }
         />
@@ -851,8 +913,15 @@ export const Recipe = ({ recipe }) => {
                   Delete your review
                 </MenuItem>
               }
+              {(user && recipe.appUser.id === user.id) &&
+                <MenuItem onClick={handleRecipeDelete}>
+                <ListItemIcon>
+                  <Delete fontSize="small" />
+                </ListItemIcon>
+                Delete this recipe
+              </MenuItem>        
+              }
             </Menu>
-        {/*{p.appUser.pathToImage &&*/}
         {loading ? 
         (
         <Skeleton variant="rectangular" width="100%">
@@ -864,13 +933,12 @@ export const Recipe = ({ recipe }) => {
           component="img"
           height={'20%'}
           width='auto'
-          image="https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-          alt="Paella dish"
+          image={recipeImage ? recipeImage : '/resources/recipe-default.jpeg'}
+          alt="Recipe image"
         />
         }
-        {/*}*/}
         <CardContent>
-          <Box display='flex' flexDirection='row' justifyContent='space-between'>
+          <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
             {loading ?
             (
               <Skeleton
@@ -880,7 +948,9 @@ export const Recipe = ({ recipe }) => {
               />
             )     
             :
-            <Typography variant='h6'>
+            <Typography 
+              variant='h6'
+              sx={{ fontSize: { xs: 18, sm: 22, md: 20, lg: 22, xl: 24 } }}>
               {recipe.name}
             </Typography>
             }
@@ -895,15 +965,19 @@ export const Recipe = ({ recipe }) => {
             :
             averageRating >= 1.0 ?
             <Box display='flex' alignItems='center'>     
-              <Typography variant='h6' sx={{ mr: 1, fontWeight: 'bold' }}>{averageRating}</Typography>
-              <Rating readOnly value={averageRating} precision={0.5} size='large' />
+              <Typography variant='h6' sx={{ mr: 1, fontWeight: 'bold', fontSize: { xs: 16, md: 24 } }}>{averageRating}</Typography>
+              <Rating readOnly value={averageRating} precision={0.5} size={tiny ? 'small' : 'large'} />
             </Box>
             :
             <Box display='flex' alignItems='center'>
-              <Typography variant='body1' sx={{ mr: 1 }}>No reviews yet.</Typography>
+              <Typography 
+                variant='body1' 
+                sx={{ fontSize: { xs: 18, sm: 22, md: 20, lg: 22, xl: 24 }, mr: 1 }}
+              >
+                {tiny ? '0' : 'No reviews yet.'}
+              </Typography>
               <StarBorderOutlined sx={{ width: 35, height: 35 }} />
-            </Box>
-             
+            </Box>     
             }       
           </Box>
           <Divider sx={{ mt: 2, mb: 2 }}/>
@@ -916,7 +990,10 @@ export const Recipe = ({ recipe }) => {
               />
           )
           :
-          <Typography variant="body1">
+          <Typography 
+            variant="body1"
+            sx={{ fontSize: { xs: 16, sm: 20, md: 18, lg: 20, xl: 22 }, mr: 1 }}
+          >
             {recipe.description}
           </Typography> 
           }  
@@ -997,8 +1074,314 @@ export const Recipe = ({ recipe }) => {
           <CardContent>
             {loadTabsContent(tab)}
           </CardContent>
-      </Collapse>
+        </Collapse>
       </Card>
+      :
+      <Card sx={{margin: {md: 5, xs: 2}, borderRadius: 5}} elevation={10}>
+      <CardHeader
+       avatar={
+        loading ? 
+        ( <Skeleton animation="wave" variant="circular" width={40} height={40} /> )
+        :
+        <IconButton 
+          sx={{ p: 0 }} 
+          onClick={e => {
+            e.stopPropagation()
+            e.preventDefault()
+            navigate('/user/' + recipe.appUser.id)
+          }}
+          onMouseDown={e => e.stopPropagation()}
+        >
+          {
+          userImage ?
+          <Avatar src={userImage}/>
+          :
+          <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)}/>
+          }
+        </IconButton>
+       }
+        action={
+          loading ? null :
+          user &&
+          <IconButton aria-label="settings" onClick={handleOpenMenuMore} onMouseDown={e => e.stopPropagation()}>
+            <MoreVert />
+          </IconButton>
+        }
+        title={
+          loading ? 
+          ( <Skeleton
+              animation="wave"
+              height={34}
+              width="20%"
+            />
+          ) 
+          :
+          <React.Fragment>
+              <Box display='flex' flexDirection={tiny ? 'column' : 'row'} alignItems='center'>
+                <CardText
+                sx={{
+                  fontWeight: 'bold',
+                  fontSize: { xs: 16, sm: 18, md: 20 },
+                }}
+              >
+                {(recipe.appUser.firstName && recipe.appUser.lastName) ? recipe.appUser.firstName + ' ' + recipe.appUser.lastName : recipe.appUser.userName}
+              </CardText>
+              {(recipe.appUser.firstName && recipe.appUser.lastName) &&
+              <CardText
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: { xs: 15, sm: 16, md: 18 }
+                  }}
+                >
+                  @{recipe.appUser.userName}
+              </CardText>
+              }
+              {!tiny &&
+              <CardText
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: { xs: 16, sm: 18, md: 20 }
+                }}
+              >·</CardText>
+              }
+              <CardText
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: { xs: 16, sm: 18, md: 20 }
+                }}
+              >{calculateDifference(convertToTimestamp(), convertToTimestamp(recipe.updatedAt))}</CardText>
+              </Box>
+            </React.Fragment>
+        }
+      />
+      <Menu
+            sx={{ mt: '45px' }}
+            id="menu-appbar"
+            anchorEl={menuItem}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            open={Boolean(menuItem)}
+            onClose={handleCloseMenuMore}
+            onClick={e => e.stopPropagation()}
+            onMouseDown={e => e.stopPropagation()}
+          >
+            {checkFollow === false ?
+            <MenuItem onClick={handleFollow} disabled={checkFollow === null ? true : false}>
+              <ListItemIcon>
+                <PersonAdd fontSize="small"/>
+              </ListItemIcon>
+              Follow user @{recipe.appUser.userName}
+            </MenuItem>
+            :
+            <MenuItem onClick={handleUnfollow} disabled={checkFollow === null ? true : false}>
+              <ListItemIcon>
+                <PersonRemove fontSize="small"/>
+              </ListItemIcon>
+              Unfollow user @{recipe.appUser.userName}
+            </MenuItem>
+            }
+            {checkFavorite === false ?
+            <MenuItem onClick={handleFavorite} disabled={checkFavorite === null ? true : false}>
+              <ListItemIcon>
+                <BookmarkAdd fontSize="small" />
+              </ListItemIcon>
+              Favorite this recipe
+            </MenuItem>
+            :
+            <MenuItem onClick={handleUnfavorite} disabled={checkFavorite === null ? true : false}>
+              <ListItemIcon>
+                <BookmarkRemove fontSize="small" />
+              </ListItemIcon>
+              Unfavorite this recipe
+            </MenuItem>
+            }
+            {checkReview === true &&
+              <MenuItem onClick={handleReviewEdit}>
+                <ListItemIcon>
+                  <Edit fontSize="small" />
+                </ListItemIcon>
+                Edit your review
+              </MenuItem>
+            }     
+            {checkReview === true &&
+              <MenuItem onClick={handleReviewDelete}>
+                <ListItemIcon>
+                  <Delete fontSize="small" />
+                </ListItemIcon>
+                Delete your review
+              </MenuItem>
+            }
+            <Divider/>
+              {(user && recipe.appUser.id === user.id) &&
+                <MenuItem onClick={handleRecipeDelete}>
+                <ListItemIcon>
+                  <Delete fontSize="small" />
+                </ListItemIcon>
+                Delete this recipe
+              </MenuItem>        
+              }
+          </Menu>
+      {loading ? 
+      (
+      <Skeleton variant="rectangular" width="100%">
+        <div style={{ paddingTop: '57%' }} />
+      </Skeleton>     
+      ) 
+      :
+      <CardMedia
+        component="img"
+        height={'20%'}
+        width='auto'
+        image={recipeImage ? recipeImage : '/resources/recipe-default.jpeg'}
+        alt="Recipe image"
+      />
+      }
+      <CardContent>
+          <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
+            {loading ?
+            (
+              <Skeleton
+                animation="wave"
+                height={34}
+                width="50%"
+              />
+            )     
+            :
+            <Typography 
+              variant='h6'
+              sx={{ fontSize: { xs: 18, sm: 22, md: 20, lg: 22, xl: 24 } }}>
+              {recipe.name}
+            </Typography>
+            }
+            {loading ? 
+            (
+              <Skeleton
+                animation="wave"
+                height={34}
+                width="20%"
+              />
+            )
+            :
+            averageRating >= 1.0 ?
+            <Box display='flex' alignItems='center'>     
+              <Typography variant='h6' sx={{ mr: 1, fontWeight: 'bold', fontSize: { xs: 16, md: 24 } }}>{averageRating}</Typography>
+              <Rating readOnly value={averageRating} precision={0.5} size={tiny ? 'small' : 'large'} />
+            </Box>
+            :
+            <Box display='flex' alignItems='center'>
+              <Typography 
+                variant='body1' 
+                sx={{ fontSize: { xs: 18, sm: 22, md: 20, lg: 22, xl: 24 }, mr: 1 }}
+              >
+                {tiny ? '0' : 'No reviews yet.'}
+              </Typography>
+              <StarBorderOutlined sx={{ width: 35, height: 35 }} />
+            </Box>     
+            }       
+          </Box>
+          <Divider sx={{ mt: 2, mb: 2 }}/>
+          {loading ? 
+          (
+            <Skeleton
+                animation="wave"
+                height={34}
+                width="100%"
+              />
+          )
+          :
+          <Typography 
+            variant="body1"
+            sx={{ fontSize: { xs: 16, sm: 20, md: 18, lg: 20, xl: 22 }, mr: 1 }}
+          >
+            {recipe.description}
+          </Typography> 
+          }  
+        </CardContent>
+      <CardActions sx={{ ml: 1, display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>
+        <Box display='flex' flexDirection='row'>
+          {loading ? 
+          (<Skeleton animation="wave" variant="circular" width={45} height={45} sx={{ m: 2 }} />)
+          :
+          <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
+            <Tooltip title='Add a review'>
+              <IconButton 
+                aria-label="reviews" 
+                onClick={user ? handleReviewAdd : handleOpenErrorDialog} 
+                onMouseDown={e => e.stopPropagation()}
+              >
+                <RateReviewOutlined sx={{ width: 38, height: 38, color: 'text.primary' }} />
+              </IconButton>
+            </Tooltip>
+            {reviewCount > 0 ? 
+            <Typography sx={{ mr: 3, ml: 1 }}>{reviewCount}</Typography>
+            :
+            <Typography sx={{ mr: 4, ml: 1 }}></Typography>       
+          } 
+          </Box>
+          }
+          {loading ? 
+          (<Skeleton animation="wave" variant="circular" width={45} height={45} sx={{ m: 2 }} />)
+          :
+          <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
+            <Tooltip title='Add a comment'>
+              <IconButton
+                aria-label="comments" 
+                onClick={user ? handleOpenCommentDialog : handleOpenErrorDialog} 
+                onMouseDown={e => e.stopPropagation()}
+              >
+                <ChatOutlined sx={{ width: 38, height: 38, color: 'text.primary' }}/>
+              </IconButton>
+            </Tooltip>
+            {commentCount > 0 ?
+            <Typography sx={{ mr: 3, ml: 1 }}>{commentCount}</Typography>
+            :
+            <Typography sx={{ mr: 4, ml: 1 }}></Typography>
+            }
+          </Box>
+          }
+        </Box>
+        {loading ? (<Skeleton animation="wave" variant="circular" width={45} height={45} sx={{ m: 2 }} />)
+        : 
+        <ExpandMore
+          aria-label="show more"
+          expand={expanded}
+          onClick={handleExpandClick}
+          aria-expanded={expanded}
+          onMouseDown={e => e.stopPropagation()}
+        >
+          <Tooltip title={expanded ? 'Hide details' : 'Show details'}>
+            <ExpandMoreIcon sx={{ width: 38, height: 38, color: 'text.primary' }}/>
+          </Tooltip>
+        </ExpandMore>
+        }  
+      </CardActions>
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <Divider/>
+        <Tabs
+          value={tab}
+          onChange={handleTabChange}
+          textColor="primary"
+          indicatorColor="primary"
+          variant='fullWidth'
+          orientation={tiny ? 'vertical' : 'horizontal'}
+        >
+          <Tab value={1} label="Details" sx={{ typography: 'body1' }}/>
+          <Tab value={2} label="Categories" sx={{ typography: 'body1' }}/>
+          <Tab value={3} label="Ingredients" sx={{ typography: 'body1' }}/>
+        </Tabs>
+        <CardContent>
+          {loadTabsContent(tab)}
+        </CardContent>
+      </Collapse>
+    </Card>
+      }
       <Dialog
         disableRestoreFocus
         open={openReviewDialog}
@@ -1016,6 +1399,9 @@ export const Recipe = ({ recipe }) => {
             <CardHeader
               sx={{ p: 0 }}
               avatar={
+                userImage ?
+                <Avatar src={userImage}/>
+                :
                 <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)}/>
               }
               title={
@@ -1023,7 +1409,7 @@ export const Recipe = ({ recipe }) => {
                   <CardText
                     sx={{
                       fontWeight: 'bold',
-                      fontSize: 20
+                      fontSize: { xs: 16, sm: 18, md: 20 },
                     }}
                   >
                     {(recipe.appUser.firstName && recipe.appUser.lastName) ? recipe.appUser.firstName + ' ' + recipe.appUser.lastName : recipe.appUser.userName}
@@ -1031,7 +1417,8 @@ export const Recipe = ({ recipe }) => {
                   {(recipe.appUser.firstName && recipe.appUser.lastName) &&
                   <CardText
                     sx={{
-                      color: 'text.secondary'
+                      color: 'text.secondary',
+                      fontSize: { xs: 15, sm: 16, md: 18 }
                       }}
                     >
                       @{recipe.appUser.userName}
@@ -1045,13 +1432,14 @@ export const Recipe = ({ recipe }) => {
                   <CardText
                     sx={{
                       color: 'text.secondary',
-                      fontSize: 20
+                      fontSize: { xs: 16, sm: 18, md: 20 },
                     }}
                   >·</CardText>
                   }
                   <CardText
                     sx={{
-                      color: 'text.primary'
+                      color: 'text.primary',
+                      fontSize: { xs: 16, sm: 18, md: 20 },
                     }}
                   >{recipe.name}</CardText>               
             </Box>
@@ -1111,6 +1499,9 @@ export const Recipe = ({ recipe }) => {
             <CardHeader
                 sx={{ p: 0 }}
                 avatar={
+                  userImage ?
+                  <Avatar src={userImage}/>
+                  :
                   <Avatar {...AvatarService.stringAvatar(recipe.appUser.userName)}/>
                 }
                 title={
@@ -1118,7 +1509,7 @@ export const Recipe = ({ recipe }) => {
                     <CardText
                       sx={{
                         fontWeight: 'bold',
-                        fontSize: 20
+                        fontSize: { xs: 16, sm: 18, md: 20 },
                       }}
                     >
                       {(recipe.appUser.firstName && recipe.appUser.lastName) ? recipe.appUser.firstName + ' ' + recipe.appUser.lastName : recipe.appUser.userName}
@@ -1126,7 +1517,8 @@ export const Recipe = ({ recipe }) => {
                     {(recipe.appUser.firstName && recipe.appUser.lastName) &&
                     <CardText
                       sx={{
-                        color: 'text.secondary'
+                        color: 'text.secondary',
+                        fontSize: { xs: 15, sm: 16, md: 18 }
                         }}
                       >
                         @{recipe.appUser.userName}
@@ -1140,13 +1532,14 @@ export const Recipe = ({ recipe }) => {
                     <CardText
                       sx={{
                         color: 'text.secondary',
-                        fontSize: 20
+                        fontSize: { xs: 16, sm: 18, md: 20 },
                       }}
                     >·</CardText>
                     }
                     <CardText
                       sx={{
-                        color: 'text.primary'
+                        color: 'text.primary',
+                        fontSize: { xs: 16, sm: 18, md: 20 },
                       }}
                     >{recipe.name}</CardText>               
               </Box>

@@ -1,13 +1,9 @@
 import { 
   Box,
   Typography,
-  List, 
-  ListItem, 
-  ListItemText, 
-  ListItemAvatar, 
+  List,  
   Avatar, 
   styled, 
-  IconButton, 
   Button,
   CircularProgress,
   Link,
@@ -16,8 +12,8 @@ import axios from 'axios'
 import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { getCurrentUser } from '../services/Authentication'
-import AvatarService from '../services/AvatarService'
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { FriendsListItem } from './FriendsListItem'
 
 export const UserAvatar = styled(Avatar)({
   width: 45, 
@@ -30,64 +26,18 @@ export const UserText = styled(Typography)({
   display: 'inline'
 })
 
-const FriendsListItem = ({ firstname, lastname, username, picture }) => {
-
-  return (
-    <Box display='flex' alignItems='center'>
-    <ListItem>
-        <ListItemAvatar>
-          <IconButton>
-            <UserAvatar src={picture} {...AvatarService.stringAvatar(username)}/>
-          </IconButton>
-        </ListItemAvatar>
-        {(firstname === null && lastname === null) ?
-          <ListItemText primary={
-            <UserText component={'span'}
-              sx={{
-                fontWeight: 'bold',
-                fontSize: 20,
-                ml: 1
-              }}
-            >
-              {username}
-            </UserText>         
-          }
-        />
-        :
-        <ListItemText primary={
-          <UserText component={'span'}
-            sx={{
-              fontWeight: 'bold',
-              fontSize: 20,
-              ml: 1
-            }}
-          >
-            {firstname} {lastname}
-          </UserText>         
-        }
-        secondary={
-          <UserText component={'span'}
-            sx={{
-              color: 'gray',
-              ml: 1
-              }}
-            >
-              @{username}
-          </UserText>
-        }
-      />
-      }
-    </ListItem>
-    </Box>
-  )  
-}
-
 export const Rightbar = ({ page }) => {
 
   const [follows, setFollows] = useState([])
   const [suggestions, setSuggestions] = useState([])
   const [user, setUser] = useState(localStorage.getItem('user') ? getCurrentUser : null)
   const [loading, setLoading] = useState(true)
+
+  let navgiate = useNavigate()
+
+  const handleNavigate = () => {
+    navgiate('/following/' + user.id)
+  }
  
   useEffect(() => {
     const currentUser = getCurrentUser()
@@ -110,26 +60,37 @@ export const Rightbar = ({ page }) => {
     axios.get('http://localhost:8080/api/v1/users/get5Random').then((response) => {
       let result = []
       let users = []
-      if (user) {
-        result = response.data.filter(appUser => {
-          return appUser.id !== user.id
-        })      
+
+      if (response.data.length > 0) {
+        if (user) {
+          result = response.data.filter(appUser => {
+            return appUser.id !== user.id
+          })      
+        }
+        else {
+          result = response.data
+        }
+  
+        for (let i = 0; i < result.length; i++) {
+          users.push(result.at(i))
+        }
+  
+        setSuggestions(users)
       }
       else {
-        result = response.data
+        setSuggestions(response.data)
       }
-
-      for (let i = 0; i < 3; i++) {
-        users.push(result.at(i))
-      }
-
-      setSuggestions(users)
+      
       if (page === 'discover' && !user) {
         setLoading(false)
       }
     })
-
   }
+  
+  useEffect(() => {
+    getSuggestions()
+    // eslint-disable-next-line
+  }, [])
   
   useEffect(() => {
     getFollows()
@@ -141,11 +102,6 @@ export const Rightbar = ({ page }) => {
     return () => clearInterval(interval)
     // eslint-disable-next-line
   }, [user])
-
-  useEffect(() => {
-    getSuggestions()
-    // eslint-disable-next-line
-  }, [])
 
   if (loading) {
     return (
@@ -182,12 +138,12 @@ export const Rightbar = ({ page }) => {
           </Typography>
           <List sx={{ width: '100%', maxWidth: 360,  }}>
             {follows.slice(0, 5).map(f => (
-              <FriendsListItem key={f.id} firstname={f.followed.firstName} lastname={f.followed.lastName} username={f.followed.userName}/>
+              <FriendsListItem key={f.id} user={f.followed}/>
             ))}
           </List>
           {follows.length >= 5 &&
             <Box display='flex' justifyContent='center'>
-              <Button sx={{ width: '80%', m: 1 }} variant='contained'>Show more</Button>
+              <Button sx={{ width: '80%', m: 1 }} variant='contained' onClick={handleNavigate}>Show more</Button>
             </Box> 
           }
         </React.Fragment>
@@ -200,13 +156,10 @@ export const Rightbar = ({ page }) => {
             You might like
           </Typography>
           <List sx={{ width: '100%', maxWidth: 360,  }}>
-            {suggestions.map(s => (
-              <FriendsListItem key={s.id} firstname={s.firstName} lastname={s.lastName} username={s.userName}/>
+            {suggestions.slice(0, 3).map(s => (
+              <FriendsListItem key={s.id} user={s}/>
             ))}
-          </List>
-          <Box display='flex' justifyContent='center'>
-            <Button sx={{ width: '80%', m: 1 }} variant='contained'>Show more</Button>
-          </Box>              
+          </List>           
         </React.Fragment>
         }
       </Box>
@@ -220,9 +173,9 @@ export const Rightbar = ({ page }) => {
         </Typography>
         {suggestions.length > 0 ?
         <List sx={{ width: '100%', maxWidth: 360,  }}>
-          {suggestions.map(s => (
-            <FriendsListItem key={s.id} firstname={s.firstName} lastname={s.lastName} username={s.userName} />
-          ))}
+          {suggestions.slice(0, 3).map(s => (
+            <FriendsListItem key={s.id} user={s} />
+          ))}  
         </List>
         :
         <Box sx={{ mt: 2, mb: 2 }}>
@@ -234,7 +187,7 @@ export const Rightbar = ({ page }) => {
         }
         {follows.length >= 5 &&
         <Box display='flex' justifyContent='center'>
-          <Button sx={{ width: '80%', m: 1 }} variant='contained'>Show more</Button>
+          <Button sx={{ width: '80%', m: 1 }} variant='contained' onClick={handleNavigate}>Show more</Button>
         </Box> 
         }
       </Box>

@@ -16,14 +16,26 @@ import {
   Select,
   InputLabel,
   MenuItem,
-  Chip
+  Chip,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  useMediaQuery
  } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Recipe } from './Recipe'
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useParams } from 'react-router-dom';
 import { getCurrentUser } from '../services/Authentication';
 import axios from 'axios'
-import { AccessAlarm, Clear, FilterList, FormatListBulleted, Restaurant } from '@mui/icons-material';
+import { 
+  AccessAlarm, 
+  Clear, 
+  FilterList, 
+  FormatListBulleted, 
+  Restaurant 
+}
+from '@mui/icons-material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTheme } from '@emotion/react';
 
 export const Feed = ({ page }) => {
@@ -31,8 +43,10 @@ export const Feed = ({ page }) => {
   const [recipes, setRecipes] = useState([])
   const [filteredRecipes, setFilteredRecipes] = useState(null)
 
-  const [user, setUser] = useState()
+  const [user, setUser] = useState(localStorage.getItem('user') ? getCurrentUser : null)
   const [loading, setLoading] = useState(true)
+
+  const { id } = useParams()
 
   const [openFilterDialog, setOpenFilterDialog] = useState(false)
 
@@ -76,11 +90,32 @@ export const Feed = ({ page }) => {
 
   const theme = useTheme()
 
+  const tiny = useMediaQuery(theme.breakpoints.down(500))
+
   const [filterInputs, setFilterInputs] = useState(noFilters)
+
+  useEffect(() => {
+    const currentUser = getCurrentUser()
+    if (currentUser) {
+      setUser(currentUser)
+    }
+  }, [])
 
   const getRecipes = () => {
     if (page === 'discover') {
       axios.get('http://localhost:8080/api/v1/recipes/getAll').then((response) => {
+        setRecipes(response.data)
+        setLoading(false)
+      })
+    }
+    else if (page === 'favorites') {
+      axios.get('http://localhost:8080/api/v1/users/getFavoriteRecipes/' + user.id,  {withCredentials: true }).then((response) => {
+        setRecipes(response.data)
+        setLoading(false)
+      })
+    }
+    else if (page === 'profile') {
+      axios.get('http://localhost:8080/api/v1/recipes/getAllByUser/' + id).then((response) => {
         setRecipes(response.data)
         setLoading(false)
       })
@@ -103,14 +138,7 @@ export const Feed = ({ page }) => {
     return () => clearInterval(interval)
 
     // eslint-disable-next-line
-  }, [])
-
-  useEffect(() => {
-    const currentUser = getCurrentUser()
-    if (currentUser) {
-      setUser(currentUser)
-    }
-  }, [])
+  }, [id])
 
   const handleOpenDialog = (e) => {
     setOpenFilterDialog(true)
@@ -118,7 +146,6 @@ export const Feed = ({ page }) => {
 
   const handleCloseDialog = (e) => {
     setOpenFilterDialog(false)
-    console.log(filteredRecipes)
   }
 
   const handleInputsChange = (e) => {
@@ -238,10 +265,11 @@ export const Feed = ({ page }) => {
   if (recipes.length > 0 ) {
     return (
       <Box sx={{ flex: 4, padding: { xs: 2, md: 4 }, width: '100%', boxSizing: 'border-box'}}>
+        {(page === 'discover' || page === 'home' || page === 'profile') ?
         <Box display='flex' justifyContent='space-between'>
           <Paper 
             elevation={4}        
-            sx={{ width: 60, height: 60, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', ml: 6, mb: 2 }}
+            sx={{ width: { xs: 40, sm: 60 }, height: { xs: 40, sm: 60 }, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', ml: tiny ? 0 : 6, mb: 2,}}
           >
             <Tooltip title='Filter your feed'>
               <IconButton onClick={handleOpenDialog}>
@@ -250,9 +278,73 @@ export const Feed = ({ page }) => {
             </Tooltip>
           </Paper>
           {filteredRecipes &&
+          <Accordion 
+            elevation={10}      
+            sx={{
+              maxWidth: 180,
+              ml: 2,
+              mr: 2,
+              borderRadius: 5,
+              '&:before': {
+                  display: 'none',
+              }
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <Typography variant='body1' align='center' sx={{ fontWeight: 'bold' }}>Active filters</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box>
+                {filterInputs.meal.length > 0 &&
+                <Box display='flex' flexDirection='row' alignItems='center'>
+                  <Restaurant/>
+                  <Typography sx={{ m: 1 }}>Meal type</Typography>
+                </Box>
+                }
+                {filterInputs.meal.length > 0 && filterInputs.meal.map(m => (
+                  <Chip sx={{ m: 1 }} key={m} label={m} />
+                ))}
+                {filterInputs.categories.length > 0 &&
+                <Box display='flex' flexDirection='row' alignItems='center'>
+                  <FormatListBulleted/>
+                  <Typography sx={{ m: 1 }}>Categories</Typography>
+                </Box>
+                }
+                {filterInputs.categories.length > 0 &&  filterInputs.categories.map(c => (
+                  <Chip sx={{ m: 1 }} key={c} label={editStringFormat(c)} />
+                ))}
+                {filterInputs.prepTime !== '' && 
+                <Box display='flex' flexDirection='row' alignItems='center'>
+                  <AccessAlarm/>
+                  <Typography sx={{ m: 1 }}>Prep time</Typography>
+                </Box>
+                }
+                {filterInputs.prepTime !== '' &&
+                  <Box display='flex' justifyContent='center'>
+                    <Chip sx={{ m: 1, fontWeight: 'bold' }} label={filterInputs.prepTime}/>
+                  </Box>
+                }
+                {filterInputs.cookTime !== '' && 
+                <Box display='flex' flexDirection='row' alignItems='center'>
+                  <AccessAlarm/>
+                  <Typography sx={{ m: 1 }}>Cook time</Typography>
+                </Box>
+                }
+                {filterInputs.cookTime !== '' && 
+                <Box display='flex' justifyContent='center'>
+                  <Chip sx={{ m: 1, fontWeight: 'bold' }} label={filterInputs.cookTime}/>
+                </Box>
+                }
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+          }    
+          {filteredRecipes &&
           <Paper 
             elevation={4} 
-            sx={{ width: 60, height: 60, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', mr: 6, mb: 2, background: theme.palette.error.main }}
+            sx={{ width: { xs: 40, sm: 60 }, height: { xs: 40, sm: 60 }, display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '50%', mr: tiny ? 0 : 6, mb: 2, background: theme.palette.error.main }}
           >
             <Tooltip title='Clear all filters'>
               <IconButton onClick={clearFilters}>
@@ -260,7 +352,7 @@ export const Feed = ({ page }) => {
               </IconButton>
             </Tooltip>
           </Paper>
-          }          
+          }      
           <Dialog
           disableRestoreFocus
           open={openFilterDialog}
@@ -268,12 +360,12 @@ export const Feed = ({ page }) => {
           scroll='paper'
           fullWidth
           maxWidth="md"  
-        >
+          >
           <Box bgcolor={'background.default'} color={'text.primary'} p={3}>
             <Typography textAlign='center' variant='h6' sx={{ fontWeight: 'bold', mb: 5 }}>Filter your feed</Typography>
             <Box display='flex' flexDirection='row' alignItems='center'>
               <Restaurant/>
-              <Typography sx={{ m: 1 }}>Filter by meal type <b>(each can be included)</b></Typography>
+              <Typography sx={{ m: 1, fontSize: { xs: 16, md: 18 } }}>Filter by meal type</Typography>
             </Box>
             <FormControl sx={{ m: 2, mt: 3, mb: 3, width: '50%' }}>
               <InputLabel>Meal</InputLabel>
@@ -304,7 +396,7 @@ export const Feed = ({ page }) => {
             </FormControl>
             <Box display='flex' flexDirection='row' alignItems='center'>
               <FormatListBulleted/>
-              <Typography sx={{ m: 1 }}>Filter by categories <b>(each has to be included)</b></Typography>
+              <Typography sx={{ m: 1, fontSize: { xs: 16, md: 18 } }}>Filter by categories</Typography>
             </Box>
             <FormControl sx={{ m: 2, mt: 3, mb: 3, width: '50%' }}>
               <InputLabel>Categories</InputLabel>
@@ -335,7 +427,7 @@ export const Feed = ({ page }) => {
             </FormControl>
             <Box display='flex' flexDirection='row' alignItems='center'>
               <AccessAlarm/>
-              <Typography sx={{ m: 1 }}>Filter by prepartion time</Typography>
+              <Typography sx={{ m: 1, fontSize: { xs: 16, md: 18 } }}>Filter by prepartion time</Typography>
             </Box>
             <FormControl sx={{ m: 2 }}>
               <RadioGroup
@@ -343,14 +435,14 @@ export const Feed = ({ page }) => {
                 value={filterInputs.prepTime}
                 onChange={handleInputsChange}
               >
-                <FormControlLabel value="quick" control={<Radio />} label="Quick (< 10 minutes)" />
-                <FormControlLabel value="normal" control={<Radio />} label="Normal (10 to 20 minutes)" />
-                <FormControlLabel value="long" control={<Radio />} label="Long (> 20 minutes)" />
+                <FormControlLabel value="quick" control={<Radio />} label={<Typography sx={{ fontSize: { xs: 16, md: 18 } }}>{'Quick (< 10 mins)'}</Typography>} />
+                <FormControlLabel value="normal" control={<Radio />} label={<Typography sx={{ fontSize: { xs: 16, md: 18 } }}>{'Normal (10 to 20 mins)'}</Typography>} />
+                <FormControlLabel value="long" control={<Radio />} label={<Typography sx={{ fontSize: { xs: 16, md: 18 } }}>{'Long (> 20 mins)'}</Typography>} />
               </RadioGroup>
             </FormControl>
             <Box display='flex' flexDirection='row' alignItems='center'>
               <AccessAlarm/>
-              <Typography sx={{ m: 1, }}>Filter by cooking time</Typography>
+              <Typography sx={{ m: 1, fontSize: { xs: 16, md: 18 } }}>Filter by cooking time</Typography>
             </Box>
             <FormControl sx={{ m: 2 }}>
               <RadioGroup
@@ -358,9 +450,9 @@ export const Feed = ({ page }) => {
                 value={filterInputs.cookTime}
                 onChange={handleInputsChange}
               >
-                <FormControlLabel value="quick" control={<Radio />} label="Quick (< 10 minutes)" />
-                <FormControlLabel value="normal" control={<Radio />} label="Normal (10 to 30 minutes)" />
-                <FormControlLabel value="long" control={<Radio />} label="Long (> 30 minutes)" />
+                <FormControlLabel value="quick" control={<Radio />} label={<Typography sx={{ fontSize: { xs: 16, md: 18 } }}>{'Quick (< 10 mins)'}</Typography>} />
+                <FormControlLabel value="normal" control={<Radio />} label={<Typography sx={{ fontSize: { xs: 16, md: 18 } }}>{'Normal (10 to 30 mins)'}</Typography>} />
+                <FormControlLabel value="long" control={<Radio />} label={<Typography sx={{ fontSize: { xs: 16, md: 18 } }}>{'Long (> 30 mins)'}</Typography>} />
               </RadioGroup>
             </FormControl>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -368,10 +460,15 @@ export const Feed = ({ page }) => {
               <Button variant='contained' sx={{ mt: 3, ml: 1, mr: 1 }} onClick={handleCloseDialog}>Close</Button>
             </Box>
           </Box>
-          </Dialog> 
+          </Dialog>
         </Box>
+        :
+        <Typography variant='h4' align='center' sx={{ m: 4, mb: 5, fontSize: { xs: 22, sm: 28, md: 26, lg: 26, xl: 32 }, fontWeight: 'bold' }}>
+          Favorite recipes
+        </Typography>
+        }
         {
-          filteredRecipes ? (filteredRecipes.length > 0 ? filteredRecipes.map(r => (<Recipe key={r.id} recipe={r} loading={loading}/>)) 
+          filteredRecipes ? (filteredRecipes.length > 0 ? filteredRecipes.map(r => (<Recipe key={r.id} recipe={r} type='feed'/>)) 
           : 
           <Box sx={{ padding: 4 }}>
             <Typography variant='h5' align='center' sx={{ mb: 2, fontWeight: 'bold' }}>No recipes found.</Typography>
@@ -380,25 +477,64 @@ export const Feed = ({ page }) => {
             </Typography>
           </Box>
         ) 
-          : recipes.map(r => (<Recipe key={r.id} recipe={r} loading={loading}/>))
+          : recipes.map(r => (<Recipe key={r.id} recipe={r} type='feed'/>))
         }
       </Box>     
     )
   }
   else { 
-    return (
-      <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}}>
-        <Typography variant='h5' align='center' sx={{ mb: 2, fontWeight: 'bold' }}>Welcome to Food Square!</Typography>
+    if (page === 'discover') {
+      return (
+        <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}}>
+          <Typography variant='h5' align='center' sx={{ mb: 2, fontWeight: 'bold' }}>Welcome to Food Square!</Typography>
+          <Typography component='p' variant='body1' align='center' sx={{ mb: 1 }}>
+            Unfortunately, at this momement, we couldn't find any recipes.
+          </Typography>
+          {user ?
+          <Typography component='p' variant='body2' align='center'>You can click the add button to create a new recipe.</Typography>
+          :
+          <Typography component='p' variant='body2' align='center'>You can create your very own recipe today by registering&nbsp;
+            <Link component={RouterLink} to="/register">here.</Link>
+          </Typography>}
+        </Box>
+      )
+    }
+    else if (page === 'home') {
+      return (
+        <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}}>
+          <Typography variant='h5' align='center' sx={{ mb: 2, fontWeight: 'bold' }}>Welcome to Food Square!</Typography>
+          <Typography component='p' variant='body1' align='center' sx={{ mb: 1 }}>
+            Unfortunately, at this momement, your feed is empty.
+          </Typography>
+          <Typography component='p' variant='body2' align='center'>
+            Content in your home feed consits of your recipes and recipes of people you follow.
+          </Typography>
+          <Typography component='p' variant='body2' align='center'>You can click the add button to create a new recipe.</Typography>
+        </Box>
+      )
+    }
+    else if (page === 'profile') {
+      return (
+        <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}}>
+          <Typography component='p' variant='body1' align='center' sx={{ mb: 1 }}>          
+            Unfortunately, at this momement, the feed is empty.
+          </Typography>
+          <Typography component='p' variant='body1' align='center'>
+            This user has not created any recipes yet.         
+          </Typography>
+        </Box>
+      )    
+    }
+    else {
+      return (
+        <Box sx={{ flex: 4, padding: 4, width: '100%', boxSizing: 'border-box'}}>
+        <Typography variant='h5' align='center' sx={{ mb: 2, fontWeight: 'bold' }}>Your favorite recipes</Typography>
         <Typography component='p' variant='body1' align='center' sx={{ mb: 1 }}>
-          Unfortunately, at this momement, we couldn't find any recipes.
+          Your list of favorite recipes is empty at this moment.
         </Typography>
-        {user ?
-        <Typography component='p' variant='body2' align='center'>You can click the add button to create a new recipe.</Typography>
-        :
-        <Typography component='p' variant='body2' align='center'>You can create your very own recipe today by registering&nbsp;
-          <Link component={RouterLink} to="/register">here.</Link>
-        </Typography>}
-      </Box>
-    )
+        <Typography component='p' variant='body2' align='center'>You can add any recipe you like to favorite to display it here.</Typography>
+      </Box>      
+      )
+    }  
   }
 }

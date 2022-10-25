@@ -33,7 +33,7 @@ export const Error = () => {
           The page you're looking for was not found.
         </Typography>
         <Box sx={{ m: 3 }}>
-          <Button variant="contained" sx={{ m: 2 }} onClick={handleClick}>Back home</Button>
+          <Button variant="contained" sx={{ m: 2 }} onClick={handleClick}>Go back</Button>
         </Box>
       </Box>
     </Box>

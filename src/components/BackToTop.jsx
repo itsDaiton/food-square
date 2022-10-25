@@ -1,5 +1,11 @@
 import { ArrowUpward } from '@mui/icons-material'
-import { Fade, useScrollTrigger, Fab, Tooltip } from '@mui/material'
+import { 
+  Fade, 
+  useScrollTrigger, 
+  Fab, 
+  Tooltip 
+} 
+from '@mui/material'
 import React from 'react'
 
 export const BackToTop = () => {

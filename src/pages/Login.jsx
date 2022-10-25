@@ -1,10 +1,32 @@
-import { Visibility, VisibilityOff, Login as LoginIcon } from '@mui/icons-material'
-import { Avatar, Button, CssBaseline, Grid, Link, Paper, TextField, Typography, Box, InputAdornment, IconButton, Snackbar, Alert } from '@mui/material'
+import { 
+  Visibility, 
+  VisibilityOff, 
+  Login as LoginIcon,
+  Navigation as NavigationIcon
+} 
+from '@mui/icons-material'
+import { 
+  Avatar, 
+  Button, 
+  CssBaseline,
+  Grid, 
+  Link, 
+  Paper, 
+  TextField, 
+  Typography, 
+  Box, 
+  InputAdornment, 
+  IconButton, 
+  Snackbar, 
+  Alert, 
+  Fab, 
+  Tooltip 
+} 
+from '@mui/material'
 import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { getCurrentUser } from '../services/Authentication';
 
 export const Login = () => {
 
@@ -48,16 +70,13 @@ export const Login = () => {
     setOpen(false)
   }
 
+  const handleNavigate = () => {
+    navigate('/discover')
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
-
-    if (getCurrentUser() !== null) {
-      setOpen(true)
-      setTimeout(() => {
-        navigate('/home')
-      }, 3000)
-    }
-    else {    
+  
     axios.post('http://localhost:8080/api/v1/auth/login', values, { withCredentials: true }).then((response) => {
       clearError()
       if (response.data.username) {
@@ -69,8 +88,7 @@ export const Login = () => {
         clearError()  
         setError(error.response.data.message) 
       }  
-    }) 
-    }  
+    })  
   }
 
   return (
@@ -82,7 +100,7 @@ export const Login = () => {
         sm={5}
         md={7}
         sx={{
-          backgroundImage: 'url(https://picsum.photos/800)',
+          backgroundImage: 'url(https://source.unsplash.com/random/800×800/?food,recipe)',
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -168,6 +186,16 @@ export const Login = () => {
                   <Link href="#" variant="body2" component={RouterLink} to="/register">
                     {"Don't have an account yet? Sign Up"}
                   </Link>
+                </Grid>
+                <Grid item mt={2}>
+                  <Tooltip title='Back to discover'>
+                    <Fab color="primary" variant='extended' size='medium' onClick={handleNavigate}>
+                      <NavigationIcon sx={{ mr: 1 }} />
+                      <Box sx={{ mr: 1, ml: 1 }}>
+                        Discover
+                      </Box>
+                    </Fab>
+                  </Tooltip>
                 </Grid>
               </Grid>
             </Box>

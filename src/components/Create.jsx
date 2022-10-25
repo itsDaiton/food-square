@@ -61,7 +61,6 @@ export const Create = () => {
     instructions: '',
     timeToPrepare: '',
     timeToCook: '',
-    image: null,
     inputs: {
       gluten: false,
       crustaceans: false,
@@ -81,7 +80,7 @@ export const Create = () => {
     }
   }
 
-  const steps = ['Information', 'Ingredients', 'Details', 'Composition']
+  const steps = ['Information', 'Ingredients', 'Details', 'Composition', 'Image']
   const meals = ['Breakfast', 'Lunch', 'Dinner', 'Snack']
   const gluten = ['Bread', 'Baked goods', 'Baking mixes', 'Pasta', 'Crackers', 'Cereals', 'Condiments', 'Biscuits', 'Sauces']
   const crustaceans = ['Paella', 'Chinese products', 'Thai curry', 'Sauces', 'Soups', 'Asian salads', 'Fried rice', 'Fish paste', 'Fish soup']
@@ -127,7 +126,7 @@ export const Create = () => {
 
   const [activeStep, setActiveStep] = useState(0)
 
-  let formRef = useRef()
+  let fileRef = useRef(null)
 
   const mobile = useMediaQuery(theme.breakpoints.down(500))
 
@@ -290,87 +289,64 @@ export const Create = () => {
     e.preventDefault()
     setIngredientsError(false)
     
-    /*
     const formData = new FormData()
-    formData.append('name', recipeInputs.name)
-    formData.append('description', recipeInputs.description)
-    formData.append('instructions', recipeInputs.instructions)
-    formData.append('timeToPrepare', recipeInputs.timeToPrepare)
-    formData.append('timeToCook', recipeInputs.timeToCook)
-    formData.append('image', recipeInputs.image)
-    formData.append('appUser', recipeInputs.appUser)
-    formData.append('meal', recipeInputs.meal)
-    formData.append('inputs', recipeInputs.inputs)
-    console.log([...formData])
-    */
+    formData.append('image', fileRef.current.files[0])
 
-    /*
-    headers: {
-      'content-type': 'multipart/form-data'
-    }
-    */
-
-    console.log(recipeInputs)
-
-    if(addedIngredients.length > 0) {
-      axios.post('http://localhost:8080/api/v1/recipes/add', recipeInputs, { withCredentials: true }).then((response) => {
-      if (response.data) {
-        const JSONbody = addedIngredients.map(item =>(
-          {
-            recipe: response.data.id,
-            ingredient: item.id,
-            amount: item.amount      
-          }     
-        ))
-        const recipeIngredients = {
-          recipeIngredients: JSONbody
+    axios.post('http://localhost:8080/api/v1/recipes/add', recipeInputs, { withCredentials: true }).then((response) => {
+    if (response.data) {
+      const JSONbody = addedIngredients.map(item =>(
+        {
+          recipe: response.data.id,
+          ingredient: item.id,
+          amount: item.amount      
+        }     
+      ))
+      const recipeIngredients = {
+        recipeIngredients: JSONbody
+      }
+      if (fileRef.current.files[0]) {
+        axios.put('http://localhost:8080/api/v1/recipes/addImage/' + response.data.id, formData, { withCredentials: true })
+      }
+      var msg = response.data.message
+      clearRecipeErrors()
+      axios.post('http://localhost:8080/api/v1/recipe-ingredients/addAll', recipeIngredients, { withCredentials: true}).then((response) => {
+          handleCloseDialog()
+          setSuccessResponse(msg)
+          setOpenAlertSuccess(true)
         }
-        var msg = response.data.message
-        clearRecipeErrors()
-        axios.post('http://localhost:8080/api/v1/recipe-ingredients/addAll', recipeIngredients, { withCredentials: true}).then((response) => {
-            handleCloseDialog()
-            setSuccessResponse(msg)
-            setOpenAlertSuccess(true)
-          }
-        )
-      }
-    }).catch((error) => {
-      console.log(error.response)
-      if(error.response.data.errorList) {
-        clearRecipeErrors()
-        error.response.data.errorList.forEach(err => {
-          if (err.field === 'name') {
-            setNameError(err.message)
-          }
-          if (err.field === 'description') {
-            setDescriptionError(err.message)
-          }
-          if (err.field === 'meal') {
-            setMealError(err.message)
-          }
-          if (err.field === 'instructions') {
-            setInstructionsError(err.message)
-          }
-          if (err.field === 'timeToPrepare') {
-            setTimeToPrepError(err.message)
-          }
-          if (err.field === 'timeToCook') {
-            setTimeToCookError(err.message)
-          }
-        })
-        setErrorResponse('Something went wrong. Please check individual fields for error description.')
-        setOpenAlertError(true)
-      }
-      else {
-        setErrorResponse(error.response.data.message)
-        setOpenAlertError(true)
-      }
-    })
-    } 
-    else {
-      setIngredientsError(true)
-      setActiveStep(1)
+      )
     }
+  }).catch((error) => {
+    if(error.response.data.errorList) {
+      clearRecipeErrors()
+      error.response.data.errorList.forEach(err => {
+        if (err.field === 'name') {
+          setNameError(err.message)
+        }
+        if (err.field === 'description') {
+          setDescriptionError(err.message)
+        }
+        if (err.field === 'meal') {
+          setMealError(err.message)
+        }
+        if (err.field === 'instructions') {
+          setInstructionsError(err.message)
+        }
+        if (err.field === 'timeToPrepare') {
+          setTimeToPrepError(err.message)
+        }
+        if (err.field === 'timeToCook') {
+          setTimeToCookError(err.message)
+        }
+      })
+      setErrorResponse('Something went wrong. Please check individual fields for error description.')
+      setOpenAlertError(true)
+    }
+    else {
+      setErrorResponse(error.response.data.message)
+      setOpenAlertError(true)
+    }
+  })
   }
 
   const handleOpenDialog = () => {
@@ -414,7 +390,7 @@ export const Create = () => {
     switch (step) {
       case 0:
         return ( 
-        <FormControl fullWidth ref={formRef}>
+        <FormControl fullWidth>
           <Typography variant='body1' gutterBottom sx={{ fontWeight: 'bold' }}>
             Recipe information
           </Typography>
@@ -502,6 +478,9 @@ export const Create = () => {
                 error={amountError ? true : false} 
                 helperText={amountError}
               />
+              <Typography variant='body2' sx={{ pl: 1 }} color={theme.palette.warning.main}>
+                * 1 x amount = 100g edible portion
+              </Typography>
               <Button variant='contained' sx={{ width: 175, ml: 1, mt: 2 }} onClick={addIngredient}>Add ingredient</Button>
             </FormGroup>
             <FormGroup sx={{ mt: 5 }}>
@@ -635,19 +614,34 @@ export const Create = () => {
               <Typography variant='body1' sx={{ mt: 3, mb: 1 }}>Other</Typography>
               <Divider sx={{ mb: 2 }} />
               <FormControlLabel control={<Switch checked={recipeInputs.inputs.meat} onChange={handleSwitch} name='meat'/>} label="Meat"/>
-              <input
-                name='image'
-                type="file"
-                accept='image/*'
-                onChange={e => {
-                  setRecipeInputs({
-                    ...recipeInputs,
-                    [e.target.name]: e.target.files[0]
-                  })
-                }}
-              />
             </FormGroup>
           </FormControl>  
+        )
+      case 4:
+        return (
+          <FormControl>
+            <Typography variant='body1' gutterBottom sx={{ fontWeight: 'bold' }}>
+                Recipe image
+              </Typography>
+              <Typography variant='body2' sx={{ mt: 1, mb: 1 }} color='text.secondary'>
+                *Adding image to your recipe is optional.
+              </Typography>
+              <Typography variant='body2' sx={{ mb: 1 }} color='text.secondary'>
+                Maximum file size is 2 MB.
+              </Typography>
+              <Typography variant='body2' sx={{ mb: 1 }} color='text.secondary'>
+                Supported formats are JPEG, GIF and PNG.
+              </Typography>
+              <Typography variant='body2' sx={{ mb: 1 }} color={theme.palette.warning.main}>
+                Failure to meet above stated conditions will result in image not uploading.
+              </Typography>
+            <input
+              name='image'
+              type="file"
+              accept='image/*'
+              ref={fileRef}
+            />
+          </FormControl>
         )
       default:
         throw new Error('Unknow step')
