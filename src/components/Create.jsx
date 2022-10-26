@@ -43,7 +43,7 @@ import AddIcon from '@mui/icons-material/Add';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import ClearIcon from '@mui/icons-material/Clear';
 import axios from 'axios';
-import { Error} from '@mui/icons-material';
+import { Equalizer, Error} from '@mui/icons-material';
 import { useRef } from 'react';
 import validator from 'validator';
 
@@ -113,6 +113,9 @@ export const Create = () => {
 
   const [openDialog, setOpenDialog] = useState(false)
   const [openHelp, setOpenHelp] = useState(false)
+  const [openIngredient, setOpenIngredient] = useState(false)
+
+  const [clickedIngredient, setClickedIngredient] = useState(null)
 
   const [ingredientError, setIngredientError] = useState('')
   const [amountError, setAmountError] = useState('')
@@ -372,6 +375,15 @@ export const Create = () => {
     setOpenHelp(false)
   }
 
+  const handleOpenIngredient = () => {
+    setOpenIngredient(true)
+  }
+
+  const handleCloseIngredient = () => {
+    setOpenIngredient(false)
+    setClickedIngredient(null)
+  }
+
   const handleCloseErrorAlert = (e, reason) => {
     if (reason === 'clickaway') {
       return
@@ -495,6 +507,7 @@ export const Create = () => {
                       <TableRow>
                         <TableCell>Name</TableCell>
                         <TableCell align='center'>Amount</TableCell>
+                        <TableCell align='center'>Composition</TableCell> 
                         <TableCell align='center'>Actions</TableCell>
                       </TableRow>
                     </TableHead>
@@ -508,11 +521,22 @@ export const Create = () => {
                             {ai.name}
                           </TableCell>   
                           <TableCell align='center'>{ai.amount}</TableCell>
+                          <TableCell align="center">
+                            <Tooltip title='Show full details'>
+                              <IconButton onClick={() => {
+                                setClickedIngredient(ingredients.find(item => item.id === ai.id))
+                                handleOpenIngredient()
+                                }}
+                              >
+                                <Equalizer sx={{ width: 38, height: 38, color: 'text.primary' }}/>
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>   
                           <TableCell align='center'>
                             <IconButton onClick={() => removeIngredient(ai.id)}>
                               <ClearIcon color='error' />
                             </IconButton>
-                          </TableCell>                              
+                          </TableCell>                            
                           </TableRow>
                           ))}
                     </TableBody>
@@ -1046,6 +1070,92 @@ export const Create = () => {
           <Button variant='contained' onClick={handleCloseHelp}>Close</Button>
         </DialogActions>
     </Dialog>
+    {clickedIngredient &&
+    <Dialog
+      disableRestoreFocus
+      open={openIngredient}
+      onClose={handleCloseIngredient}
+      scroll='paper'
+      fullWidth
+      maxWidth="md"
+    >
+              <Box bgcolor={'background.default'} color={'text.primary'} p={3}>
+          <Typography textAlign='center' variant='h6' sx={{ fontWeight: 'bold' }}>{clickedIngredient.name}</Typography>
+          <Typography sx={{ m: 2 }}>Content per <b>100g</b> edible portion.</Typography>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Component</TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>Value</TableCell>                
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell>Calories</TableCell>
+                  <TableCell align="center">{clickedIngredient.calories} [kcal]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Fat</TableCell>
+                  <TableCell align="center">{clickedIngredient.fat} [g]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Fatty acids, saturated</TableCell>
+                  <TableCell align="center">{clickedIngredient.saturatedFattyAcids} [g]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Fatty acids, monounsaturated</TableCell>
+                  <TableCell align="center">{clickedIngredient.monounsaturatedFattyAcids} [g]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Fatty acids, polyunsaturated</TableCell>
+                  <TableCell align="center">{clickedIngredient.polyunsaturatedFattyAcids} [g]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Fatty acids, trans</TableCell>
+                  <TableCell align="center">{clickedIngredient.transFattyAcids} [g]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Carbohydrate (total)</TableCell>
+                  <TableCell align="center">{clickedIngredient.carbohydrateTotal} [g]</TableCell>
+                </TableRow>    
+                <TableRow>
+                  <TableCell>Carbohydrate (available)</TableCell>
+                  <TableCell align="center">{clickedIngredient.carbohydrateAvailable} [g]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Fibre</TableCell>
+                  <TableCell align="center">{clickedIngredient.fibre} [g]</TableCell>
+                </TableRow> 
+                <TableRow>
+                  <TableCell>Sugar</TableCell>
+                  <TableCell align="center">{clickedIngredient.sugar} [g]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Protein</TableCell>
+                  <TableCell align="center">{clickedIngredient.protein} [g]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Sodium</TableCell>
+                  <TableCell align="center">{clickedIngredient.sodium} [mg]</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Salt</TableCell>
+                  <TableCell align="center">{clickedIngredient.salt} [g]</TableCell>
+                </TableRow>  
+                <TableRow>
+                  <TableCell>Water</TableCell>
+                  <TableCell align="center">{clickedIngredient.water} [g]</TableCell>
+                </TableRow>         
+              </TableBody>
+            </Table>
+          </TableContainer> 
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button variant='contained' sx={{ mt: 3, ml: 1, mr: 1 }} onClick={handleCloseIngredient}>Close</Button>
+          </Box>
+        </Box>
+     </Dialog>
+    }
 
     <Snackbar open={openAlertSuccess} autoHideDuration={5000} onClose={handleCloseSuccessAlert}>
       <Alert onClose={handleCloseSuccessAlert} variant='filled' severity="success" sx={{ width: '100%' }}>
