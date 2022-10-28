@@ -10,6 +10,7 @@ import { Home } from "./pages/Home";
 import { Ingredient } from "./pages/Ingredient";
 import { Ingredients } from "./pages/Ingredients";
 import { Login } from "./pages/Login";
+import { MealPlanning } from "./pages/MealPlanning";
 import { Profile } from "./pages/Profile";
 import { RecipePage } from "./pages/RecipePage";
 import { Register } from "./pages/Register";
@@ -82,6 +83,7 @@ function App() {
         <Route path='/following/:id' element={<Following mode={mode} setMode={setMode}/>}/>
         <Route path='/user/:id' element={<Profile mode={mode} setMode={setMode}/>}/>
         <Route path='/settings/' element={<Settings mode={mode} setMode={setMode}/>}/>
+        <Route path='/meal-planning/' element={<MealPlanning mode={mode} setMode={setMode}/>}/>
         <Route path="/" element={user ? <Navigate to="/home" replace/> : <Navigate to="/discover" replace/>}/>
         <Route path="*" element={<Error/>}/>
       </Routes>

@@ -151,14 +151,25 @@ export const Navigation = () => {
           />
         </CustomListItemButton>
       </CustomListItem>
-      <ListItem disablePadding>
+      <CustomListItem
+        sx={{ background: route.pathname === '/meal-planning' ? alpha(theme.palette.primary.main, 0.2)  : ''}}
+        disablePadding
+        component={RouterLink}
+        to='/meal-planning'
+        style={{ color: 'inherit' }}
+      >
         <CustomListItemButton>
           <ListItemIcon>
-            <Restaurant sx={{ fontSize: 30, color: route.pathname === '/mealplan' ? 'text.primary' : ''  }} />
+            <Restaurant sx={{ fontSize: 30, color: route.pathname === '/meal-planning' ? 'text.primary' : ''  }} />
           </ListItemIcon>
-          <ListItemText primary="Meal planning" primaryTypographyProps={{ fontSize: 20 }} />
+          <ListItemText 
+            primary="Meal planning" 
+            primaryTypographyProps={{
+              fontSize: 20, 
+              fontWeight: route.pathname === '/meal-planning' ? 'bold' : '' }} 
+          />
         </CustomListItemButton>
-      </ListItem>
+      </CustomListItem>
       {user &&
       <>
       <CustomListItem 
