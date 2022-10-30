@@ -1,5 +1,6 @@
-import { Refresh } from '@mui/icons-material';
+import { Refresh, SaveAlt } from '@mui/icons-material';
 import { 
+	Alert,
 	Box, 
 	Button, 
 	Chip, 
@@ -11,6 +12,7 @@ import {
 	OutlinedInput, 
 	Paper, 
 	Select, 
+	Snackbar, 
 	styled, 
 	Table, 
 	TableBody, 
@@ -18,6 +20,7 @@ import {
 	TableContainer, 
 	TableRow, 
 	TextField,  
+	Tooltip,  
 	Typography,
 	useTheme
 } 
@@ -27,6 +30,8 @@ import React from 'react'
 import { useState } from 'react'
 import { categoriesTypes, editStringFormat } from './Feed';
 import { MealPlanRecipe } from './MealPlanRecipe';
+import { useReactToPrint } from 'react-to-print';
+import { useRef } from 'react';
 
 const CustomTableCell = styled(TableCell)({
 	fontWeight: 'bold'
@@ -56,6 +61,17 @@ export const MealPlanner = () => {
 	const [dataLoaded, setDataLoaded] = useState(false)
 	const [mealPlan, setMealPlan] = useState()
 
+	const [openAlert, setOpenAlert] = useState(false)
+  const [alertType, setAlertType] = useState(null)
+  const [alertMessage, setAlertMessage] = useState('')
+
+	const printRef = useRef()
+
+	const handlePrint = useReactToPrint({
+			content: () => printRef.current,
+			documentTitle: 'Your meal plan',
+	})
+
 	const theme = useTheme()
 
 	const handleInputsChange = (e) => {
@@ -69,16 +85,23 @@ export const MealPlanner = () => {
 		e.preventDefault()
 		setDataLoaded(false)
 		setLoading(true)
-		console.log(inputs)
 		axios.put('http://localhost:8080/api/v1/meal-planning/generate', inputs).then((response) => {
 			setMealPlan(response.data)
 			setLoading(false)
 			setDataLoaded(true)
-			console.log(response.data)
 		}).catch((error) => {
-			console.log(error.response.data)
+			setAlertMessage(error.response.data.message)
+			setAlertType('error')
+			setOpenAlert(true) 
 		})
 	}
+
+	const handleCloseAlert = (e, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setOpenAlert(false)
+  }
 
   return (
 		<Box sx={{ flex: 4, padding: { xs: 2, md: 4 }, width: '100%', height: '100%', boxSizing: 'border-box'}}>
@@ -166,19 +189,19 @@ export const MealPlanner = () => {
 						</Box>
 					}
 					{dataLoaded &&
-					<Box>
+					<Box ref={printRef}>
 						<Typography variant='h4' align='center' sx={{ m: 4, mb: 5, mt: 10, fontSize: { xs: 20, sm: 26, md: 24, lg: 24, xl: 30 }, fontWeight: 'bold' }}>
 							Your meal plan for today
 						</Typography>
 						<Box display='flex' justifyContent='center'>
 							<Paper elevation={10} sx={{ borderRadius: 5, width: '100%' }}>
 							{mealPlan.recipes.map(r => (
-								<Box key={r.id}>
-									<Typography sx={{ mt: 3, ml: 3, fontWeight: 'bold' }} variant='h6'>{editStringFormat(r.meal)}</Typography>
+								<Box key={r.id} sx={{ pageBreakAfter: 'always' }}>
+									<Typography sx={{ mt: 5, ml: 3, mb: 3, fontWeight: 'bold' }} variant='h6'>{editStringFormat(r.meal)}</Typography>
 									<MealPlanRecipe recipe={r}/>
 								</Box>
 							))}
-						<Typography variant='h4' align='center' sx={{ m: 4, mb: 5, mt: 10, fontSize: { xs: 18, sm: 24, md: 22, lg: 22, xl: 28 }, fontWeight: 'bold' }}>
+						<Typography variant='h4' align='center' sx={{ m: 4, mb: 5, mt: 10, fontSize: { xs: 18, sm: 24, md: 22, lg: 22, xl: 28 }, fontWeight: 'bold', pageBreakBefore: 'always' }}>
 							Nutritional values - main
 						</Typography>
 						<Box display='flex' justifyContent='center'>
@@ -205,7 +228,7 @@ export const MealPlanner = () => {
 								</Table>
 							</TableContainer> 
 						</Box>
-						<Typography variant='h4' align='center' sx={{ m: 4, mb: 5, mt: 5, fontSize: { xs: 18, sm: 24, md: 22, lg: 22, xl: 28 }, fontWeight: 'bold' }}>
+						<Typography variant='h4' align='center' sx={{ m: 4, mb: 5, mt: 5, fontSize: { xs: 18, sm: 24, md: 22, lg: 22, xl: 28 }, fontWeight: 'bold', pageBreakBefore: 'always' }}>
 							Nutritional values - secondary
 						</Typography>
 						<Box display='flex' justifyContent='center'>
@@ -255,11 +278,23 @@ export const MealPlanner = () => {
 									</TableBody>     
 								</Table>
 							</TableContainer> 
-						</Box>						
+						</Box>
+						<Box display='flex' justifyContent='center' sx={{ mb: 5, displayPrint: 'none' }}>
+							<Tooltip title='Print your meal plan or save it as PDF file'>
+								<Button color='info' variant='contained' size='large' endIcon={<SaveAlt/>} onClick={handlePrint}>
+									Print
+								</Button>		
+							</Tooltip>
+						</Box>				
 							</Paper>
 						</Box>
 					</Box>
 					}
+				<Snackbar open={openAlert} autoHideDuration={5000} onClose={handleCloseAlert} sx={{ displayPrint: 'none' }}>
+					<Alert onClose={handleCloseAlert} variant='filled' severity={alertType} sx={{ width: '100%' }}>
+						{alertMessage}        
+					</Alert>
+      	</Snackbar>
 				</Box>
 		</Box>
   )
