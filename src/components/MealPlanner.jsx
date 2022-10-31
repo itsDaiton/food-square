@@ -90,9 +90,10 @@ export const MealPlanner = () => {
 			setLoading(false)
 			setDataLoaded(true)
 		}).catch((error) => {
+      setLoading(false)
 			setAlertMessage(error.response.data.message)
 			setAlertType('error')
-			setOpenAlert(true) 
+			setOpenAlert(true)
 		})
 	}
 
@@ -285,7 +286,7 @@ export const MealPlanner = () => {
 									Print
 								</Button>		
 							</Tooltip>
-						</Box>				
+						</Box>
 							</Paper>
 						</Box>
 					</Box>
