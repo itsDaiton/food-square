@@ -177,7 +177,7 @@ export const Navbar = ({ mode, setMode }) => {
               textDecoration: 'none',
             }}
           >
-            {tiny ? '' : 'Food Sqaure'}
+            {tiny ? '' : 'Food Square'}
           </Typography>
           <Box 
           sx={{ 

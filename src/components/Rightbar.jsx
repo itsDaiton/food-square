@@ -155,11 +155,17 @@ export const Rightbar = ({ page }) => {
           >
             You might like
           </Typography>
+          {suggestions.length > 0 ?
           <List sx={{ width: '100%', maxWidth: 360,  }}>
             {suggestions.slice(0, 3).map(s => (
               <FriendsListItem key={s.id} user={s}/>
             ))}
-          </List>           
+          </List>
+          :
+          <Box sx={{ mt: 2, mb: 2 }}>
+            <Typography sx={{ mt: 1, mb: 1 }}>We could not find any suggestions for you.</Typography>    
+          </Box>
+          }          
         </React.Fragment>
         }
       </Box>
