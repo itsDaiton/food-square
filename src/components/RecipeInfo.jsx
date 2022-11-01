@@ -78,7 +78,7 @@ export const RecipeInfo = () => {
   const [loading, setLoading] = useState(true)
 
   const getRecipe = () => {
-    axios.get('http://localhost:8080/api/v1/recipes/get/' + id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/recipes/' + id).then((response) => {
       setRecipe(response.data)
       setLoading(false)
     }).catch(error => {
@@ -87,19 +87,19 @@ export const RecipeInfo = () => {
   }
 
   const getReviews = () => {
-    axios.get('http://localhost:8080/api/v1/reviews/getAllByRecipe/' + id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/reviews/recipe/' + id).then((response) => {
       setReviews(response.data)
     })
   }
 
   const getComments = () => {
-    axios.get('http://localhost:8080/api/v1/comments/getAllByRecipe/' + id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/comments/recipe/' + id).then((response) => {
       setComments(response.data)
     })
   }
 
   const getNutritionAnalysis = () => {
-    axios.get('http://localhost:8080/api/v1/recipe-ingredients/calculateNutritionAnalysis/' + id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/recipe-ingredients/recipe/' + id + '/nutrition-analysis').then((response) => {
       setNutritionAnalysis(response.data)
     })
   }

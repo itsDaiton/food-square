@@ -22,7 +22,7 @@ export const IngredientList = () => {
   let navigate = useNavigate()
 
   const getIngredient = () => {
-    axios.get('http://localhost:8080/api/v1/ingredients/get/' + id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/ingredients/' + id).then((response) => {
       setIngredient(response.data)
       setLoading(false)
     }).catch(error => {

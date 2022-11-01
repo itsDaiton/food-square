@@ -66,7 +66,7 @@ export const Comment = ({ comment, page }) => {
 
   const getLikeBoolean = () => {
     if (user && comment) {
-      axios.get('http://localhost:8080/api/v1/comments/isLikedByUser/' + comment.id, { withCredentials: true }).then((response) => {
+      axios.get('http://localhost:8080/api/v1/comments/' + comment.id + '/check-like', { withCredentials: true }).then((response) => {
         setLiked(response.data)
       })
     }
@@ -74,7 +74,7 @@ export const Comment = ({ comment, page }) => {
 
   const getLikeCount = () => {
     if (comment) {
-      axios.get('http://localhost:8080/api/v1/comments/getLikes/' + comment.id).then((response) => {
+      axios.get('http://localhost:8080/api/v1/comments/' + comment.id + '/likes').then((response) => {
         setLikeCount(response.data)
         setLoading(false)
       })
@@ -150,7 +150,7 @@ export const Comment = ({ comment, page }) => {
       })
     }
     else {
-      axios.put('http://localhost:8080/api/v1/users/deleteLike', 
+      axios.put('http://localhost:8080/api/v1/users/unlike', 
       {appUser: user.id, content: comment.id, type: 'comment' }, 
       { withCredentials: true }).then((response) => {
         getLikeCount()
@@ -176,7 +176,7 @@ export const Comment = ({ comment, page }) => {
   const handleDeleteComment = (e) => {
     e.preventDefault()
     
-    axios.delete('http://localhost:8080/api/v1/comments/delete/' + comment.id, { withCredentials: true}).then((response) => {
+    axios.delete('http://localhost:8080/api/v1/comments/' + comment.id, { withCredentials: true}).then((response) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)

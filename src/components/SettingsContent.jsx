@@ -68,7 +68,7 @@ export const SettingsContent = ({ userId }) => {
   }
 
   const getUserData = () => {
-    axios.get('http://localhost:8080/api/v1/users/get/' + userId).then((response) => {
+    axios.get('http://localhost:8080/api/v1/users/' + userId).then((response) => {
       setPersonalInfo({
         firstName: response.data.firstName,
         lastName: response.data.lastName
@@ -112,7 +112,7 @@ export const SettingsContent = ({ userId }) => {
       data.lastName = personalInfo.lastName
     }
     
-    axios.put('http://localhost:8080/api/v1/users/updateInfo/' + userId, data, { withCredentials: true }).then((response) => {
+    axios.put('http://localhost:8080/api/v1/users/' + userId, data, { withCredentials: true }).then((response) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)
@@ -131,7 +131,7 @@ export const SettingsContent = ({ userId }) => {
     const formData = new FormData()
     formData.append('image', fileRef.current.files[0])
 
-    axios.put('http://localhost:8080/api/v1/users/addImage/' + userId, formData, { withCredentials: true }).then((response) => {
+    axios.put('http://localhost:8080/api/v1/users/' + userId + '/image', formData, { withCredentials: true }).then((response) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)
@@ -146,7 +146,7 @@ export const SettingsContent = ({ userId }) => {
     e.preventDefault()
     handleCloseDialog()
 
-    axios.delete('http://localhost:8080/api/v1/users/deleteImage/' + userId, { withCredentials: true }).then((response) => {
+    axios.delete('http://localhost:8080/api/v1/users/' + userId + '/image', { withCredentials: true }).then((response) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)       

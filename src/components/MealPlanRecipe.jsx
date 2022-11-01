@@ -41,7 +41,7 @@ export const MealPlanRecipe = ({ recipe }) => {
 	const tiny = useMediaQuery(theme.breakpoints.down(500))
 
   const getRecipeIngredients = () => {
-    axios.get('http://localhost:8080/api/v1/recipe-ingredients/getByRecipe/' + recipe.id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/recipe-ingredients/recipe/' + recipe.id).then((response) => {
       setIngredients(response.data)
       setLoading(false)
     })

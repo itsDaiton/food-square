@@ -205,26 +205,26 @@ export const Recipe = ({ recipe, type }) => {
   }, [])
 
   const getReviewCount = () => {
-    axios.get('http://localhost:8080/api/v1/reviews/getCountByRecipe/' + recipe.id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/reviews/recipe/' + recipe.id + '/count').then((response) => {
       setReviewCount(response.data)
     })
   }
 
   const getCommentCount = () => {
-    axios.get('http://localhost:8080/api/v1/comments/getCountByRecipe/' + recipe.id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/comments/recipe/' + recipe.id + '/count').then((response) => {
       setCommentCount(response.data)
     })
   }
 
   const getAverageRating = () => {
-    axios.get('http://localhost:8080/api/v1/reviews/getAvgRating/' + recipe.id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/reviews/recipe/' + recipe.id + '/avg-rating').then((response) => {
       setAverageRating(response.data)
     })
   }
 
   const getFollowCheck = () => {
     if (user) {
-      axios.get('http://localhost:8080/api/v1/follows/follows/' + recipe.appUser.id , { withCredentials: true }).then((response) => {
+      axios.get('http://localhost:8080/api/v1/follows/' + recipe.appUser.id + '/follow-check' , { withCredentials: true }).then((response) => {
         setCheckFollow(response.data)
       })
     }
@@ -232,7 +232,7 @@ export const Recipe = ({ recipe, type }) => {
 
   const getFavoriteCheck = () => {
     if (user) {
-      axios.get('http://localhost:8080/api/v1/users/checkFavorite/' + recipe.id, { withCredentials: true }).then((response) => {
+      axios.get('http://localhost:8080/api/v1/recipes/' + recipe.id + '/check-favorite', { withCredentials: true }).then((response) => {
         setCheckFavorite(response.data)
       })
     }
@@ -240,14 +240,14 @@ export const Recipe = ({ recipe, type }) => {
 
   const getReviewCheck = () => {
     if (user) {
-      axios.get('http://localhost:8080/api/v1/reviews/containsReview/' + recipe.id, { withCredentials: true }).then((response) => {
+      axios.get('http://localhost:8080/api/v1/reviews/recipe/' + recipe.id + '/my-review-check', { withCredentials: true }).then((response) => {
         setCheckReview(response.data)
       })
     }
   }
 
   const getRecipeIngredients = () => {
-    axios.get('http://localhost:8080/api/v1/recipe-ingredients/getByRecipe/' + recipe.id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/recipe-ingredients/recipe/' + recipe.id).then((response) => {
       setRecipeIngredients(response.data)
       setLoading(false)
     })
@@ -433,7 +433,7 @@ export const Recipe = ({ recipe, type }) => {
       })
     }
     else {
-      axios.put('http://localhost:8080/api/v1/reviews/update/' + reviewId, 
+      axios.put('http://localhost:8080/api/v1/reviews/' + reviewId, 
       { text: reviewInputs.text, rating: reviewInputs.rating },
       { withCredentials: true }).then((response) => {
         handleCloseReviewDialog()
@@ -512,7 +512,7 @@ export const Recipe = ({ recipe, type }) => {
   const handleUnfollow = (e) => {
     e.preventDefault()
     
-    axios.delete('http://localhost:8080/api/v1/follows/unfollow/' + recipe.appUser.id, { withCredentials: true }).then((response) => {
+    axios.delete('http://localhost:8080/api/v1/follows/' + recipe.appUser.id, { withCredentials: true }).then((response) => {
       setAlertMessage(response.data.message)
       handleCloseMenuMore() 
       setAlertType('success')
@@ -528,7 +528,7 @@ export const Recipe = ({ recipe, type }) => {
   const handleFavorite = (e) => {
     e.preventDefault()
 
-    axios.put('http://localhost:8080/api/v1/users/favoriteRecipe',
+    axios.put('http://localhost:8080/api/v1/users/recipes/favorite',
     { appUser: user.id, recipe: recipe.id },
     { withCredentials: true }).then((response) => {
       handleCloseMenuMore()
@@ -546,7 +546,7 @@ export const Recipe = ({ recipe, type }) => {
   const handleUnfavorite = (e) => {
     e.preventDefault()
 
-    axios.put('http://localhost:8080/api/v1/users/unfavoriteRecipe',
+    axios.put('http://localhost:8080/api/v1/users/recipes/unfavorite',
     { appUser: user.id, recipe: recipe.id },
     { withCredentials: true }).then((response) => {
       handleCloseMenuMore()
@@ -564,7 +564,7 @@ export const Recipe = ({ recipe, type }) => {
   const handleReviewDelete = (e) => {
     e.preventDefault()
 
-    axios.delete('http://localhost:8080/api/v1/reviews/deleteForUser/' + recipe.id, { withCredentials: true }).then((response) => {
+    axios.delete('http://localhost:8080/api/v1/reviews/user/' + recipe.id, { withCredentials: true }).then((response) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)
@@ -591,7 +591,7 @@ export const Recipe = ({ recipe, type }) => {
     e.preventDefault()
     setMode('edit')
 
-    axios.get('http://localhost:8080/api/v1/reviews/getByRecipe/' + recipe.id, { withCredentials: true }).then((response) => {
+    axios.get('http://localhost:8080/api/v1/reviews/recipe/' + recipe.id, { withCredentials: true }).then((response) => {
       setReviewInputs({
         ...reviewInputs,
         text: response.data.text,
@@ -610,7 +610,7 @@ export const Recipe = ({ recipe, type }) => {
     e.stopPropagation()
     e.preventDefault()
 
-    axios.delete('http://localhost:8080/api/v1/recipes/delete/' + recipe.id, { withCredentials: true }).then((response) => {
+    axios.delete('http://localhost:8080/api/v1/recipes/' + recipe.id, { withCredentials: true }).then((response) => {
       
       setAlertMessage(response.data.message)
       setAlertType('success')

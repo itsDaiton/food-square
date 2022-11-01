@@ -22,16 +22,16 @@ export const UserList = ({ type }) => {
   let navigate = useNavigate();
 
   const getUsers = () => {
-    axios.get('http://localhost:8080/api/v1/users/get/' + id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/users/' + id).then((response) => {
       setUser(response.data)    
       if (type === 'followers') {
-        axios.get('http://localhost:8080/api/v1/users/getFollowers/' + id).then((response) => {
+        axios.get('http://localhost:8080/api/v1/users/' + id + '/followers').then((response) => {
           setUsers(response.data)
           setLoading(false)
         })
       }
       else {
-        axios.get('http://localhost:8080/api/v1/users/getFollowing/' + id).then((response) => {
+        axios.get('http://localhost:8080/api/v1/users/' + id + '/following').then((response) => {
           setUsers(response.data)
           setLoading(false)
         })

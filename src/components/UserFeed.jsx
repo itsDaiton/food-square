@@ -21,14 +21,14 @@ export const UserFeed = () => {
   const [loading, setLoading] = useState(true)
 
   const getUserInfo = () => {
-    axios.get('http://localhost:8080/api/v1/users/get/' + id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/users/' + id).then((response) => {
       setUser(response.data)
 
-      axios.get('http://localhost:8080/api/v1/users/countFollowers/' + id).then((response) => {
+      axios.get('http://localhost:8080/api/v1/users/' + id + '/followers-count').then((response) => {
         setFollowersCount(response.data)
       })
 
-      axios.get('http://localhost:8080/api/v1/users/countFollowing/' + id).then((response) => {
+      axios.get('http://localhost:8080/api/v1/users/' + id + '/following-count').then((response) => {
         setFollowingCount(response.data)
       })
 

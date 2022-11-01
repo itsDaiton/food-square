@@ -20,7 +20,7 @@ export const IngredientsTable = () => {
   const theme = useTheme()
 
   const getIngredients = () => {
-    axios.get('http://localhost:8080/api/v1/ingredients/getAll').then((response) => {
+    axios.get('http://localhost:8080/api/v1/ingredients').then((response) => {
       setIngredients(response.data)
       setLoading(false)
     })

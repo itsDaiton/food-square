@@ -49,7 +49,7 @@ export const Rightbar = ({ page }) => {
   
   const getFollows = () => {
     if (user) {
-      axios.get('http://localhost:8080/api/v1/follows/following/' + user.id).then((response) => {
+      axios.get('http://localhost:8080/api/v1/follows/user/' + user.id + '/following').then((response) => {
         setFollows(response.data)
         setLoading(false)
       })
@@ -57,7 +57,7 @@ export const Rightbar = ({ page }) => {
   }
 
   const getSuggestions = () => {
-    axios.get('http://localhost:8080/api/v1/users/get5Random').then((response) => {
+    axios.get('http://localhost:8080/api/v1/users/random').then((response) => {
       let result = []
       let users = []
 

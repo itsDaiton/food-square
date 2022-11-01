@@ -34,7 +34,7 @@ export const UserPanel = ({ appUser }) => {
 
 	const getFollowCheck = () => {
     if (user) {
-      axios.get('http://localhost:8080/api/v1/follows/follows/' + appUser.id , { withCredentials: true }).then((response) => {
+      axios.get('http://localhost:8080/api/v1/follows/' + appUser.id + '/follow-check', { withCredentials: true }).then((response) => {
         setCheckFollow(response.data)
         setLoading(false)
       })
@@ -77,7 +77,7 @@ export const UserPanel = ({ appUser }) => {
   const handleUnfollow = (e) => {
     e.preventDefault()
     
-    axios.delete('http://localhost:8080/api/v1/follows/unfollow/' + appUser.id, { withCredentials: true }).then((response) => {
+    axios.delete('http://localhost:8080/api/v1/follows/' + appUser.id, { withCredentials: true }).then((response) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)
