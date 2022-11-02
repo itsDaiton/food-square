@@ -8,6 +8,7 @@ from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
+import { getApiUrl } from '../services/VariablesService'
 import { FriendsListItem } from './FriendsListItem'
 import { UserPanel } from './UserPanel'
 
@@ -22,16 +23,16 @@ export const UserList = ({ type }) => {
   let navigate = useNavigate();
 
   const getUsers = () => {
-    axios.get('http://localhost:8080/api/v1/users/' + id).then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/users/` + id).then((response) => {
       setUser(response.data)    
       if (type === 'followers') {
-        axios.get('http://localhost:8080/api/v1/users/' + id + '/followers').then((response) => {
+        axios.get(`${getApiUrl()}/api/v1/users/` + id + '/followers').then((response) => {
           setUsers(response.data)
           setLoading(false)
         })
       }
       else {
-        axios.get('http://localhost:8080/api/v1/users/' + id + '/following').then((response) => {
+        axios.get(`${getApiUrl()}/api/v1/users/` + id + '/following').then((response) => {
           setUsers(response.data)
           setLoading(false)
         })

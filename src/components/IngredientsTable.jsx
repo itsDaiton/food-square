@@ -3,13 +3,15 @@ import {
   CircularProgress,
   Typography, 
   useTheme, 
-  Link } 
+  Link 
+} 
 from '@mui/material'
 import React, { useEffect } from 'react'
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useState } from 'react';
 import axios from 'axios';
 import { Link as RouterLink } from 'react-router-dom';
+import { getApiUrl } from '../services/VariablesService'
 
 export const IngredientsTable = () => {
 
@@ -20,7 +22,7 @@ export const IngredientsTable = () => {
   const theme = useTheme()
 
   const getIngredients = () => {
-    axios.get('http://localhost:8080/api/v1/ingredients').then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/ingredients`).then((response) => {
       setIngredients(response.data)
       setLoading(false)
     })

@@ -32,6 +32,7 @@ import { categoriesTypes, editStringFormat } from './Feed';
 import { MealPlanRecipe } from './MealPlanRecipe';
 import { useReactToPrint } from 'react-to-print';
 import { useRef } from 'react';
+import { getApiUrl } from '../services/VariablesService';
 
 const CustomTableCell = styled(TableCell)({
 	fontWeight: 'bold'
@@ -85,7 +86,7 @@ export const MealPlanner = () => {
 		e.preventDefault()
 		setDataLoaded(false)
 		setLoading(true)
-		axios.put('http://localhost:8080/api/v1/meal-planning/generate', inputs).then((response) => {
+		axios.put(`${getApiUrl()}/api/v1/meal-planning/generate`, inputs).then((response) => {
 			setMealPlan(response.data)
 			setLoading(false)
 			setDataLoaded(true)

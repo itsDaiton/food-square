@@ -27,6 +27,7 @@ import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { getApiUrl } from '../services/VariablesService';
 
 export const Login = () => {
 
@@ -77,7 +78,7 @@ export const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
   
-    axios.post('http://localhost:8080/api/v1/auth/login', values, { withCredentials: true }).then((response) => {
+    axios.post(`${getApiUrl()}/api/v1/auth/login`, values, { withCredentials: true }).then((response) => {
       clearError()
       if (response.data.username) {
         localStorage.setItem('user', JSON.stringify(response.data))

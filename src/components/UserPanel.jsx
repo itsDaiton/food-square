@@ -17,6 +17,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { getCurrentUser } from '../services/Authentication'
 import { FriendsListItem } from './FriendsListItem'
+import { getApiUrl } from '../services/VariablesService'
 
 export const UserPanel = ({ appUser }) => {
 
@@ -34,7 +35,7 @@ export const UserPanel = ({ appUser }) => {
 
 	const getFollowCheck = () => {
     if (user) {
-      axios.get('http://localhost:8080/api/v1/follows/' + appUser.id + '/follow-check', { withCredentials: true }).then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/follows/` + appUser.id + '/follow-check', { withCredentials: true }).then((response) => {
         setCheckFollow(response.data)
         setLoading(false)
       })
@@ -60,7 +61,7 @@ export const UserPanel = ({ appUser }) => {
 	const handleFollow = (e) => {
     e.preventDefault()
 
-    axios.post('http://localhost:8080/api/v1/follows/follow', 
+    axios.post(`${getApiUrl()}/api/v1/follows/follow`, 
     { follower: user.id, followed: appUser.id }, 
     { withCredentials: true }).then((response) => {
       setAlertMessage(response.data.message)
@@ -77,7 +78,7 @@ export const UserPanel = ({ appUser }) => {
   const handleUnfollow = (e) => {
     e.preventDefault()
     
-    axios.delete('http://localhost:8080/api/v1/follows/' + appUser.id, { withCredentials: true }).then((response) => {
+    axios.delete(`${getApiUrl()}/api/v1/follows/` + appUser.id, { withCredentials: true }).then((response) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)

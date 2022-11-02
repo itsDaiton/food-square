@@ -6,6 +6,7 @@ from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
+import { getApiUrl } from '../services/VariablesService'
 import { UserProfile } from './UserProfile'
 
 export const UserFeed = () => {
@@ -21,14 +22,14 @@ export const UserFeed = () => {
   const [loading, setLoading] = useState(true)
 
   const getUserInfo = () => {
-    axios.get('http://localhost:8080/api/v1/users/' + id).then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/users/` + id).then((response) => {
       setUser(response.data)
 
-      axios.get('http://localhost:8080/api/v1/users/' + id + '/followers-count').then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/users/` + id + '/followers-count').then((response) => {
         setFollowersCount(response.data)
       })
 
-      axios.get('http://localhost:8080/api/v1/users/' + id + '/following-count').then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/users/` + id + '/following-count').then((response) => {
         setFollowingCount(response.data)
       })
 

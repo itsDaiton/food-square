@@ -46,6 +46,7 @@ import axios from 'axios';
 import { Equalizer, Error} from '@mui/icons-material';
 import { useRef } from 'react';
 import validator from 'validator';
+import { getApiUrl } from '../services/VariablesService';
 
 export const CustomTextField = styled(TextField)({
   margin: 8 
@@ -163,7 +164,7 @@ export const Create = () => {
   }
 
   const getIngredients = () => {
-    axios.get('http://localhost:8080/api/v1/ingredients').then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/ingredients`).then((response) => {
       setIngredients(response.data)
     })
   }
@@ -295,7 +296,7 @@ export const Create = () => {
     const formData = new FormData()
     formData.append('image', fileRef.current.files[0])
 
-    axios.post('http://localhost:8080/api/v1/recipes/add', recipeInputs, { withCredentials: true }).then((response) => {
+    axios.post(`${getApiUrl()}/api/v1/recipes/add`, recipeInputs, { withCredentials: true }).then((response) => {
     if (response.data) {
       const JSONbody = addedIngredients.map(item =>(
         {
@@ -308,11 +309,11 @@ export const Create = () => {
         recipeIngredients: JSONbody
       }
       if (fileRef.current.files[0]) {
-        axios.put('http://localhost:8080/api/v1/recipes/' + response.data.id + '/image', formData, { withCredentials: true })
+        axios.put(`${getApiUrl()}/api/v1/recipes/` + response.data.id + '/image', formData, { withCredentials: true })
       }
       var msg = response.data.message
       clearRecipeErrors()
-      axios.post('http://localhost:8080/api/v1/recipe-ingredients/addAll', recipeIngredients, { withCredentials: true}).then((response) => {
+      axios.post(`${getApiUrl()}/api/v1/recipe-ingredients/addAll`, recipeIngredients, { withCredentials: true}).then((response) => {
           handleCloseDialog()
           setSuccessResponse(msg)
           setOpenAlertSuccess(true)

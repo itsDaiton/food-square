@@ -16,6 +16,7 @@ import { Review } from './Review'
 import { Comment } from './Comment';
 import { UserPanel } from './UserPanel'
 import { useNavigate, useParams } from 'react-router'
+import { getApiUrl } from '../services/VariablesService'
 
 export const UserProfile = ({ user, followingCount, followersCount }) => {
 
@@ -30,13 +31,13 @@ export const UserProfile = ({ user, followingCount, followersCount }) => {
   let navigate = useNavigate()
 
   const getReviews = () => {
-    axios.get('http://localhost:8080/api/v1/reviews/user/' + id).then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/reviews/user/` + id).then((response) => {
       setReviews(response.data)
     })
   }
 
   const getComments = () => {
-    axios.get('http://localhost:8080/api/v1/comments/user/' + id).then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/comments/user/` + id).then((response) => {
       setComments(response.data)
     })
   }

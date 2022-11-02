@@ -34,6 +34,7 @@ import AvatarService from '../services/AvatarService'
 import { CustomTextField } from './Create'
 import { calculateDifference, CardText, convertToTimestamp } from './Recipe'
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { getApiUrl } from '../services/VariablesService'
 
 export const Comment = ({ comment, page }) => {
 
@@ -66,7 +67,7 @@ export const Comment = ({ comment, page }) => {
 
   const getLikeBoolean = () => {
     if (user && comment) {
-      axios.get('http://localhost:8080/api/v1/comments/' + comment.id + '/check-like', { withCredentials: true }).then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/comments/' + comment.id + '/check-like`, { withCredentials: true }).then((response) => {
         setLiked(response.data)
       })
     }
@@ -74,7 +75,7 @@ export const Comment = ({ comment, page }) => {
 
   const getLikeCount = () => {
     if (comment) {
-      axios.get('http://localhost:8080/api/v1/comments/' + comment.id + '/likes').then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/comments/` + comment.id + '/likes').then((response) => {
         setLikeCount(response.data)
         setLoading(false)
       })
@@ -83,7 +84,7 @@ export const Comment = ({ comment, page }) => {
 
   const getUserImage = () => {
     if (comment.recipe.appUser.pathToImage !== null && comment.recipe.appUser.pathToImage !== '') {
-      axios.get('http://localhost:8080/' + comment.recipe.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+      axios.get(`${getApiUrl()}/` + comment.recipe.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
         var imageUrl = URL.createObjectURL(new Blob([response.data]))
         setUserImage(imageUrl)
       })
@@ -92,7 +93,7 @@ export const Comment = ({ comment, page }) => {
 
   const getCommenterImage = () => {
     if (comment.appUser.pathToImage !== null && comment.appUser.pathToImage !== '') {
-      axios.get('http://localhost:8080/' + comment.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+      axios.get(`${getApiUrl()}/` + comment.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
         var imageUrl = URL.createObjectURL(new Blob([response.data]))
         setCommenterImage(imageUrl)
       })
@@ -135,7 +136,7 @@ export const Comment = ({ comment, page }) => {
 
   const handleCheck = (e) => {
     if (e.target.checked === true) {   
-      axios.put('http://localhost:8080/api/v1/users/like', 
+      axios.put(`${getApiUrl()}/api/v1/users/like`, 
       {appUser: user.id, content: comment.id, type: 'comment' }, 
       { withCredentials: true }).then((response) => {
         getLikeCount()
@@ -150,7 +151,7 @@ export const Comment = ({ comment, page }) => {
       })
     }
     else {
-      axios.put('http://localhost:8080/api/v1/users/unlike', 
+      axios.put(`${getApiUrl()}/api/v1/users/unlike`, 
       {appUser: user.id, content: comment.id, type: 'comment' }, 
       { withCredentials: true }).then((response) => {
         getLikeCount()
@@ -176,7 +177,7 @@ export const Comment = ({ comment, page }) => {
   const handleDeleteComment = (e) => {
     e.preventDefault()
     
-    axios.delete('http://localhost:8080/api/v1/comments/' + comment.id, { withCredentials: true}).then((response) => {
+    axios.delete(`${getApiUrl()}/api/v1/comments/` + comment.id, { withCredentials: true}).then((response) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)

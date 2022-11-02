@@ -25,6 +25,7 @@ import { useNavigate, useParams } from 'react-router'
 import { Recipe } from './Recipe'
 import { Review } from './Review';
 import { Comment } from './Comment';
+import { getApiUrl } from '../services/VariablesService';
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -78,7 +79,7 @@ export const RecipeInfo = () => {
   const [loading, setLoading] = useState(true)
 
   const getRecipe = () => {
-    axios.get('http://localhost:8080/api/v1/recipes/' + id).then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/recipes/` + id).then((response) => {
       setRecipe(response.data)
       setLoading(false)
     }).catch(error => {
@@ -87,19 +88,19 @@ export const RecipeInfo = () => {
   }
 
   const getReviews = () => {
-    axios.get('http://localhost:8080/api/v1/reviews/recipe/' + id).then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/reviews/recipe/` + id).then((response) => {
       setReviews(response.data)
     })
   }
 
   const getComments = () => {
-    axios.get('http://localhost:8080/api/v1/comments/recipe/' + id).then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/comments/recipe/` + id).then((response) => {
       setComments(response.data)
     })
   }
 
   const getNutritionAnalysis = () => {
-    axios.get('http://localhost:8080/api/v1/recipe-ingredients/recipe/' + id + '/nutrition-analysis').then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/recipe-ingredients/recipe/` + id + '/nutrition-analysis').then((response) => {
       setNutritionAnalysis(response.data)
     })
   }

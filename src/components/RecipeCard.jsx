@@ -24,6 +24,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { CardText, ExpandMore } from './Recipe'
 import { Review } from './Review'
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { getApiUrl } from '../services/VariablesService'
 
 export const RecipeCard = ({ recipe }) => {
 
@@ -42,13 +43,13 @@ export const RecipeCard = ({ recipe }) => {
   let navigate = useNavigate()
 
   const getReviewCount = () => {
-    axios.get('http://localhost:8080/api/v1/reviews/recipe/' + recipe.id + '/count').then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/reviews/recipe/` + recipe.id + '/count').then((response) => {
       setReviewCount(response.data)
     })
   }
 
   const getReviewsInRecipe = () => {
-    axios.get('http://localhost:8080/api/v1/reviews/recipe/' + recipe.id).then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/reviews/recipe/` + recipe.id).then((response) => {
       setReviews(response.data)
       setLoading(false)
     })
@@ -56,7 +57,7 @@ export const RecipeCard = ({ recipe }) => {
 
   const getUserImage = () => {
     if (recipe.appUser.pathToImage !== null && recipe.appUser.pathToImage !== '') {
-      axios.get('http://localhost:8080/' + recipe.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+      axios.get(`${getApiUrl()}/` + recipe.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
         var imageUrl = URL.createObjectURL(new Blob([response.data]))
         setUserImage(imageUrl)
       })

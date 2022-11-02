@@ -14,6 +14,7 @@ import { useState } from 'react'
 import { getCurrentUser } from '../services/Authentication'
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { FriendsListItem } from './FriendsListItem'
+import { getApiUrl } from '../services/VariablesService'
 
 export const UserAvatar = styled(Avatar)({
   width: 45, 
@@ -49,7 +50,7 @@ export const Rightbar = ({ page }) => {
   
   const getFollows = () => {
     if (user) {
-      axios.get('http://localhost:8080/api/v1/follows/user/' + user.id + '/following').then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/follows/user/` + user.id + '/following').then((response) => {
         setFollows(response.data)
         setLoading(false)
       })
@@ -57,7 +58,7 @@ export const Rightbar = ({ page }) => {
   }
 
   const getSuggestions = () => {
-    axios.get('http://localhost:8080/api/v1/users/random').then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/users/random`).then((response) => {
       let result = []
       let users = []
 

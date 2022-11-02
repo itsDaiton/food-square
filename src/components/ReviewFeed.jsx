@@ -22,6 +22,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { RecipeCard } from './RecipeCard';
 import SearchIcon from '@mui/icons-material/Search';
+import { getApiUrl } from '../services/VariablesService';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -82,7 +83,7 @@ export const ReviewFeed = () => {
   const tiny = useMediaQuery(theme.breakpoints.down(500))
 
   const getRecipes = () => {
-    axios.get('http://localhost:8080/api/v1/recipes/extended').then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/recipes/extended`).then((response) => {
       setRecipes(response.data)
       setLoading(false)
     })

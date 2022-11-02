@@ -25,6 +25,7 @@ import {
 from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
+import { getApiUrl } from '../services/VariablesService'
 
 export const SettingsContent = ({ userId }) => {
 
@@ -68,7 +69,7 @@ export const SettingsContent = ({ userId }) => {
   }
 
   const getUserData = () => {
-    axios.get('http://localhost:8080/api/v1/users/' + userId).then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/users/` + userId).then((response) => {
       setPersonalInfo({
         firstName: response.data.firstName,
         lastName: response.data.lastName
@@ -112,7 +113,7 @@ export const SettingsContent = ({ userId }) => {
       data.lastName = personalInfo.lastName
     }
     
-    axios.put('http://localhost:8080/api/v1/users/' + userId, data, { withCredentials: true }).then((response) => {
+    axios.put(`${getApiUrl()}/api/v1/users/` + userId, data, { withCredentials: true }).then((response) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)
@@ -131,7 +132,7 @@ export const SettingsContent = ({ userId }) => {
     const formData = new FormData()
     formData.append('image', fileRef.current.files[0])
 
-    axios.put('http://localhost:8080/api/v1/users/' + userId + '/image', formData, { withCredentials: true }).then((response) => {
+    axios.put(`${getApiUrl()}/api/v1/users/` + userId + '/image', formData, { withCredentials: true }).then((response) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)
@@ -146,7 +147,7 @@ export const SettingsContent = ({ userId }) => {
     e.preventDefault()
     handleCloseDialog()
 
-    axios.delete('http://localhost:8080/api/v1/users/' + userId + '/image', { withCredentials: true }).then((response) => {
+    axios.delete(`${getApiUrl()}/api/v1/users/` + userId + '/image', { withCredentials: true }).then((response) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)       

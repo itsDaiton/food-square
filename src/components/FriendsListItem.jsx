@@ -12,6 +12,7 @@ import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import AvatarService from '../services/AvatarService'
+import { getApiUrl } from '../services/VariablesService'
 import { UserAvatar, UserText } from './Rightbar'
 
 export const FriendsListItem = ({ user }) => {
@@ -23,7 +24,7 @@ export const FriendsListItem = ({ user }) => {
 
   const getUserImage = () => {
     if (user.pathToImage !== null && user.pathToImage !== '') {
-      axios.get('http://localhost:8080/' + user.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+      axios.get(`${getApiUrl()}/` + user.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
         var imageUrl = URL.createObjectURL(new Blob([response.data]))
         setUserImage(imageUrl)
       })

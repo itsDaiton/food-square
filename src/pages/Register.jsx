@@ -28,6 +28,7 @@ import React from 'react'
 import { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../services/Authentication';
+import { getApiUrl } from '../services/VariablesService';
 
 export const Register = () => {
   
@@ -90,9 +91,9 @@ export const Register = () => {
       }, 3000)
     }
     else {    
-      axios.post('http://localhost:8080/api/v1/auth/register', values).then((response) => {
+      axios.post(`${getApiUrl()}/api/v1/auth/register`, values).then((response) => {
         clearErrors()
-        axios.post('http://localhost:8080/api/v1/auth/login', {username: values.username, password: values.password}, { withCredentials: true }).then((response) => {
+        axios.post(`${getApiUrl()}/api/v1/auth/login`, {username: values.username, password: values.password}, { withCredentials: true }).then((response) => {
           localStorage.setItem('user', JSON.stringify(response.data))
           navigate('/')
         })

@@ -30,6 +30,7 @@ import { getCurrentUser } from '../services/Authentication';
 import { Delete, Favorite, FavoriteBorder, MoreVert } from '@mui/icons-material';
 import axios from 'axios';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { getApiUrl } from '../services/VariablesService';
 
 export const CustomTextField = styled(TextField)({
   margin: 8,
@@ -66,7 +67,7 @@ export const Review = ({ review, page }) => {
 
   const getLikeBoolean = () => {
     if (user && review) {
-      axios.get('http://localhost:8080/api/v1/reviews/' + review.id + '/like-check', { withCredentials: true }).then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/reviews/` + review.id + '/like-check', { withCredentials: true }).then((response) => {
         setLiked(response.data)
       })
     }
@@ -74,7 +75,7 @@ export const Review = ({ review, page }) => {
 
   const getLikeCount = () => {
     if (review) {
-      axios.get('http://localhost:8080/api/v1/reviews/' + review.id + '/likes').then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/reviews/` + review.id + '/likes').then((response) => {
         setLikeCount(response.data)
         setLoading(false)
       })
@@ -83,7 +84,7 @@ export const Review = ({ review, page }) => {
 
   const getUserImage = () => {
     if (review.recipe.appUser.pathToImage !== null && review.recipe.appUser.pathToImage !== '') {
-      axios.get('http://localhost:8080/' + review.recipe.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+      axios.get(`${getApiUrl()}/` + review.recipe.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
         var imageUrl = URL.createObjectURL(new Blob([response.data]))
         setUserImage(imageUrl)
       })
@@ -92,7 +93,7 @@ export const Review = ({ review, page }) => {
 
   const getReviewerImage = () => {
     if (review.appUser.pathToImage !== null && review.appUser.pathToImage !== '') {
-      axios.get('http://localhost:8080/' + review.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+      axios.get(`${getApiUrl()}/` + review.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
         var imageUrl = URL.createObjectURL(new Blob([response.data]))
         setReviewerImage(imageUrl)
       })
@@ -135,7 +136,7 @@ export const Review = ({ review, page }) => {
 
   const handleCheck = (e) => {
     if (e.target.checked === true) {   
-      axios.put('http://localhost:8080/api/v1/users/like', 
+      axios.put(`${getApiUrl()}/api/v1/users/like`, 
       {appUser: user.id, content: review.id, type: 'review' }, 
       { withCredentials: true }).then((response) => {
         getLikeCount()
@@ -150,7 +151,7 @@ export const Review = ({ review, page }) => {
       })
     }
     else {
-      axios.put('http://localhost:8080/api/v1/users/unlike', 
+      axios.put(`${getApiUrl()}/api/v1/users/unlike`, 
       {appUser: user.id, content: review.id, type: 'review' }, 
       { withCredentials: true }).then((response) => {
         getLikeCount()
@@ -169,7 +170,7 @@ export const Review = ({ review, page }) => {
   const handleDeleteReview = (e) => {
     e.preventDefault()
     
-    axios.delete('http://localhost:8080/api/v1/reviews/' + review.id, { withCredentials: true}).then((response) => {
+    axios.delete(`${getApiUrl()}/api/v1/reviews/` + review.id, { withCredentials: true}).then((response) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)

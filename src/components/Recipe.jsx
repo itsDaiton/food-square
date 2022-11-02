@@ -60,6 +60,7 @@ import { getCurrentUser } from '../services/Authentication';
 import AvatarService from '../services/AvatarService'
 import { useNavigate } from 'react-router';
 import { Link as RouterLink } from 'react-router-dom';
+import { getApiUrl } from '../services/VariablesService';
 
 export const CardText = styled(Typography)({
   fontFamily: 'Poppins',
@@ -205,26 +206,26 @@ export const Recipe = ({ recipe, type }) => {
   }, [])
 
   const getReviewCount = () => {
-    axios.get('http://localhost:8080/api/v1/reviews/recipe/' + recipe.id + '/count').then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/reviews/recipe/` + recipe.id + '/count').then((response) => {
       setReviewCount(response.data)
     })
   }
 
   const getCommentCount = () => {
-    axios.get('http://localhost:8080/api/v1/comments/recipe/' + recipe.id + '/count').then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/comments/recipe/` + recipe.id + '/count').then((response) => {
       setCommentCount(response.data)
     })
   }
 
   const getAverageRating = () => {
-    axios.get('http://localhost:8080/api/v1/reviews/recipe/' + recipe.id + '/avg-rating').then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/reviews/recipe/` + recipe.id + '/avg-rating').then((response) => {
       setAverageRating(response.data)
     })
   }
 
   const getFollowCheck = () => {
     if (user) {
-      axios.get('http://localhost:8080/api/v1/follows/' + recipe.appUser.id + '/follow-check' , { withCredentials: true }).then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/follows/` + recipe.appUser.id + '/follow-check', { withCredentials: true }).then((response) => {
         setCheckFollow(response.data)
       })
     }
@@ -232,7 +233,7 @@ export const Recipe = ({ recipe, type }) => {
 
   const getFavoriteCheck = () => {
     if (user) {
-      axios.get('http://localhost:8080/api/v1/recipes/' + recipe.id + '/check-favorite', { withCredentials: true }).then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/recipes/` + recipe.id + '/check-favorite', { withCredentials: true }).then((response) => {
         setCheckFavorite(response.data)
       })
     }
@@ -240,14 +241,14 @@ export const Recipe = ({ recipe, type }) => {
 
   const getReviewCheck = () => {
     if (user) {
-      axios.get('http://localhost:8080/api/v1/reviews/recipe/' + recipe.id + '/my-review-check', { withCredentials: true }).then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/reviews/recipe/` + recipe.id + '/my-review-check', { withCredentials: true }).then((response) => {
         setCheckReview(response.data)
       })
     }
   }
 
   const getRecipeIngredients = () => {
-    axios.get('http://localhost:8080/api/v1/recipe-ingredients/recipe/' + recipe.id).then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/recipe-ingredients/recipe/` + recipe.id).then((response) => {
       setRecipeIngredients(response.data)
       setLoading(false)
     })
@@ -256,7 +257,7 @@ export const Recipe = ({ recipe, type }) => {
   
   const getRecipeImage = () => {
     if (recipe.pathToImage !== null && recipe.pathToImage !== '') {   
-      axios.get('http://localhost:8080/' + recipe.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+      axios.get(`${getApiUrl()}/` + recipe.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
         var imageUrl = URL.createObjectURL(new Blob([response.data]))
         setRecipeImage(imageUrl)
       })
@@ -265,7 +266,7 @@ export const Recipe = ({ recipe, type }) => {
 
   const getUserImage = () => {
     if (recipe.appUser.pathToImage !== null && recipe.appUser.pathToImage !== '') {
-      axios.get('http://localhost:8080/' + recipe.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+      axios.get(`${getApiUrl()}/` + recipe.appUser.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
         var imageUrl = URL.createObjectURL(new Blob([response.data]))
         setUserImage(imageUrl)
         setLoading(false)
@@ -402,7 +403,7 @@ export const Recipe = ({ recipe, type }) => {
     e.preventDefault()
 
     if (mode === 'add') {
-      axios.post('http://localhost:8080/api/v1/reviews/add', reviewInputs, { withCredentials: true }).then((response) => {
+      axios.post(`${getApiUrl()}/api/v1/reviews/add`, reviewInputs, { withCredentials: true }).then((response) => {
         handleCloseReviewDialog()
         setAlertMessage(response.data.message)
         setAlertType('success')
@@ -433,7 +434,7 @@ export const Recipe = ({ recipe, type }) => {
       })
     }
     else {
-      axios.put('http://localhost:8080/api/v1/reviews/' + reviewId, 
+      axios.put(`${getApiUrl()}/api/v1/reviews/` + reviewId, 
       { text: reviewInputs.text, rating: reviewInputs.rating },
       { withCredentials: true }).then((response) => {
         handleCloseReviewDialog()
@@ -470,7 +471,7 @@ export const Recipe = ({ recipe, type }) => {
   const handleCommentSubmit = (e) => {
     e.preventDefault()
 
-    axios.post('http://localhost:8080/api/v1/comments/add', commentInputs, { withCredentials: true }).then((response) => {
+    axios.post(`${getApiUrl()}/api/v1/comments/add`, commentInputs, { withCredentials: true }).then((response) => {
       handleCloseCommentDialog()
       setAlertMessage(response.data.message)
       setAlertType('success')
@@ -494,7 +495,7 @@ export const Recipe = ({ recipe, type }) => {
   const handleFollow = (e) => {
     e.preventDefault()
 
-    axios.post('http://localhost:8080/api/v1/follows/follow', 
+    axios.post(`${getApiUrl()}/api/v1/follows/follow`, 
     { follower: user.id, followed: recipe.appUser.id }, 
     { withCredentials: true }).then((response) => {
       handleCloseMenuMore()
@@ -512,7 +513,7 @@ export const Recipe = ({ recipe, type }) => {
   const handleUnfollow = (e) => {
     e.preventDefault()
     
-    axios.delete('http://localhost:8080/api/v1/follows/' + recipe.appUser.id, { withCredentials: true }).then((response) => {
+    axios.delete(`${getApiUrl()}/api/v1/follows/` + recipe.appUser.id, { withCredentials: true }).then((response) => {
       setAlertMessage(response.data.message)
       handleCloseMenuMore() 
       setAlertType('success')
@@ -528,7 +529,7 @@ export const Recipe = ({ recipe, type }) => {
   const handleFavorite = (e) => {
     e.preventDefault()
 
-    axios.put('http://localhost:8080/api/v1/users/recipes/favorite',
+    axios.put(`${getApiUrl()}/api/v1/users/recipes/favorite`,
     { appUser: user.id, recipe: recipe.id },
     { withCredentials: true }).then((response) => {
       handleCloseMenuMore()
@@ -546,7 +547,7 @@ export const Recipe = ({ recipe, type }) => {
   const handleUnfavorite = (e) => {
     e.preventDefault()
 
-    axios.put('http://localhost:8080/api/v1/users/recipes/unfavorite',
+    axios.put(`${getApiUrl()}/api/v1/users/recipes/unfavorite`,
     { appUser: user.id, recipe: recipe.id },
     { withCredentials: true }).then((response) => {
       handleCloseMenuMore()
@@ -564,7 +565,7 @@ export const Recipe = ({ recipe, type }) => {
   const handleReviewDelete = (e) => {
     e.preventDefault()
 
-    axios.delete('http://localhost:8080/api/v1/reviews/user/' + recipe.id, { withCredentials: true }).then((response) => {
+    axios.delete(`${getApiUrl()}/api/v1/reviews/user/` + recipe.id, { withCredentials: true }).then((response) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)
@@ -591,7 +592,7 @@ export const Recipe = ({ recipe, type }) => {
     e.preventDefault()
     setMode('edit')
 
-    axios.get('http://localhost:8080/api/v1/reviews/recipe/' + recipe.id, { withCredentials: true }).then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/reviews/recipe/` + recipe.id, { withCredentials: true }).then((response) => {
       setReviewInputs({
         ...reviewInputs,
         text: response.data.text,
@@ -610,7 +611,7 @@ export const Recipe = ({ recipe, type }) => {
     e.stopPropagation()
     e.preventDefault()
 
-    axios.delete('http://localhost:8080/api/v1/recipes/' + recipe.id, { withCredentials: true }).then((response) => {
+    axios.delete(`${getApiUrl()}/api/v1/recipes/` + recipe.id, { withCredentials: true }).then((response) => {
       
       setAlertMessage(response.data.message)
       setAlertType('success')

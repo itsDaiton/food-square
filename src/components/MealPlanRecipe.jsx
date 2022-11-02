@@ -29,6 +29,7 @@ import axios from 'axios';
 import React, { useEffect } from 'react'
 import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { getApiUrl } from '../services/VariablesService';
 import { editStringFormat } from './Feed';
 import { CardText } from './Recipe';
 
@@ -41,7 +42,7 @@ export const MealPlanRecipe = ({ recipe }) => {
 	const tiny = useMediaQuery(theme.breakpoints.down(500))
 
   const getRecipeIngredients = () => {
-    axios.get('http://localhost:8080/api/v1/recipe-ingredients/recipe/' + recipe.id).then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/recipe-ingredients/recipe/` + recipe.id).then((response) => {
       setIngredients(response.data)
       setLoading(false)
     })

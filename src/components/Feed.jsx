@@ -37,6 +37,7 @@ import {
 from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTheme } from '@emotion/react';
+import { getApiUrl } from '../services/VariablesService';
 
 export const categoriesTypes = [
   'GLUTEN_FREE',
@@ -114,25 +115,25 @@ export const Feed = ({ page }) => {
 
   const getRecipes = () => {
     if (page === 'discover') {
-      axios.get('http://localhost:8080/api/v1/recipes').then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/recipes`).then((response) => {
         setRecipes(response.data)
         setLoading(false)
       })
     }
     else if (page === 'favorites') {
-      axios.get('http://localhost:8080/api/v1/users/' + user.id + '/favorite-recipes',  {withCredentials: true }).then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/users/` + user.id + '/favorite-recipes',  {withCredentials: true }).then((response) => {
         setRecipes(response.data)
         setLoading(false)
       })
     }
     else if (page === 'profile') {
-      axios.get('http://localhost:8080/api/v1/recipes/user/' + id).then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/recipes/user/` + id).then((response) => {
         setRecipes(response.data)
         setLoading(false)
       })
     }
     else {
-      axios.get('http://localhost:8080/api/v1/recipes/my-feed', { withCredentials: true }).then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/recipes/my-feed`, { withCredentials: true }).then((response) => {
         setRecipes(response.data)
         setLoading(false)
       })

@@ -6,12 +6,13 @@ import {
   TableContainer, 
   TableHead, 
   TableRow, 
-  Typography
+  Typography,
+  Box
 } from '@mui/material'
-import { Box } from '@mui/system'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
+import { getApiUrl } from '../services/VariablesService'
 
 export const IngredientList = () => {
 
@@ -22,7 +23,7 @@ export const IngredientList = () => {
   let navigate = useNavigate()
 
   const getIngredient = () => {
-    axios.get('http://localhost:8080/api/v1/ingredients/' + id).then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/ingredients/` + id).then((response) => {
       setIngredient(response.data)
       setLoading(false)
     }).catch(error => {

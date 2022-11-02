@@ -38,6 +38,7 @@ import AvatarService from '../services/AvatarService'
 import { getCurrentUser } from '../services/Authentication';
 import { Navigation } from './Navigation';
 import axios from 'axios';
+import { getApiUrl } from '../services/VariablesService';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -73,9 +74,9 @@ export const Navbar = ({ mode, setMode }) => {
 
   const getUserImage = () => {
     if (user) {
-      axios.get('http://localhost:8080/api/v1/users/' + user.id).then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/users/` + user.id).then((response) => {
         if (response.data.pathToImage !== null && response.data.pathToImage !== '') {
-          axios.get('http://localhost:8080/' + response.data.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
+          axios.get(`${getApiUrl()}/` + response.data.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
             var imageUrl = URL.createObjectURL(new Blob([response.data]))
             setUserImage(imageUrl)
           })
@@ -121,7 +122,7 @@ export const Navbar = ({ mode, setMode }) => {
 
   const handleLogout = () => {
     localStorage.removeItem('user')
-    axios.post('http://localhost:8080/api/v1/auth/logout', {}, {withCredentials: true}).then((response) => {
+    axios.post(`${getApiUrl()}/api/v1/auth/logout`, {}, {withCredentials: true}).then((response) => {
       navigate("/login")
     })
   }
