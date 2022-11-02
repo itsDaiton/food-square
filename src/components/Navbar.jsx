@@ -10,7 +10,6 @@ import {
   styled, 
   Switch,
   Avatar,
-  Container,
   Typography,
   IconButton,
   Toolbar,
@@ -21,12 +20,15 @@ import {
   Skeleton,
   useMediaQuery,
   useTheme,
+  Tooltip,
 } 
 from '@mui/material';
 import { 
   DarkMode,
+  Login,
   Logout,  
   Person, 
+  PersonAdd, 
   Settings,
 } 
 from '@mui/icons-material';
@@ -63,7 +65,8 @@ export const Navbar = ({ mode, setMode }) => {
   const [openDrawer, setOpenDrawer] = useState(false)
 
   const theme = useTheme()
-  const tiny = useMediaQuery(theme.breakpoints.down(350))
+  const tiny = useMediaQuery(theme.breakpoints.down(500))
+  const small = useMediaQuery(theme.breakpoints.down(600))
 
   let navigate = useNavigate()
   const route = useLocation()
@@ -108,6 +111,14 @@ export const Navbar = ({ mode, setMode }) => {
     }
   }
 
+  const toLogin = () => {
+    navigate('/login')
+  }
+
+  const toRegister = () => {
+    navigate('/register')
+  }
+
   const handleLogout = () => {
     localStorage.removeItem('user')
     axios.post('http://localhost:8080/api/v1/auth/logout', {}, {withCredentials: true}).then((response) => {
@@ -130,18 +141,18 @@ export const Navbar = ({ mode, setMode }) => {
         onClose={() => setOpenDrawer(false)}
         anchor='left'
       >
-        <Box p={2} width={250} textAlign='center' role='presentation'>
+        <Box p={2} width={285} textAlign='center' role='presentation'>
           <Navigation/>
         </Box>
-      </Drawer>
-      <Container maxWidth="xxl">
-        <Toolbar disableGutters>
-          <Box display='flex' alignItems='center'>
+      </Drawer>   
+        <Toolbar>
+          <Box sx={{ display: 'flex', flex: '33.33%'}}>
             <IconButton sx={{ p: 0, color: 'inherit' }} onClick={handleBackToDiscover}>
-            <FastfoodIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+              <FastfoodIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
             </IconButton>
             <Typography
               component="a"
+              noWrap
               sx={{
                 mr: 2,
                 display: { xs: 'none', md: 'flex' },
@@ -152,8 +163,7 @@ export const Navbar = ({ mode, setMode }) => {
             >
               Food Square
             </Typography>
-          </Box>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               onClick={() => setOpenDrawer(true)}
               size="large"
@@ -164,28 +174,30 @@ export const Navbar = ({ mode, setMode }) => {
             >
               <MenuIcon sx={{ width: 40, height: 40 }}/>
             </IconButton>
+            </Box>
           </Box>
-          <FastfoodIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-          <Typography
-            component="a"
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontWeight: 700,
-              fontSize: 24,
-              textDecoration: 'none',
-            }}
-          >
-            {tiny ? '' : 'Food Square'}
-          </Typography>
-          <Box 
-          sx={{ 
-            flexGrow: 1,
-            display: { xs: 'none', md: 'flex' },
-          }}>
+          <Box sx={{ flex: '33.33%', justifyContent: 'center', display: { xs: 'flex', md: 'none' }}}>
+            <Box display='flex' alignItems='center' justifyContent='center'>
+              <FastfoodIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+              {!tiny &&
+              <Typography
+                component="a"
+                noWrap
+                sx={{
+                  mr: 2,
+                  display: { xs: 'flex', md: 'none' },
+                  flexGrow: 1,
+                  fontWeight: 700,
+                  fontSize: 24,
+                  textDecoration: 'none',
+                }}
+              >
+                Food Square
+              </Typography>
+              }
+            </Box>
           </Box>
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ display: 'flex', flex: '33.33%', justifyContent: 'right'}}>
             {user ?
             <Box display='flex' alignItems='center'>
               {loading ?
@@ -211,15 +223,27 @@ export const Navbar = ({ mode, setMode }) => {
             <Box sx={{
               display: 'flex',
               flexWrap: 'wrap',
-              justifyContent: 'center',
-              typography: 'body1',
-              '& > :not(style) + :not(style)': {
-                mr: 2,
-                ml: 2
-              }
+              justifyContent: 'right'
             }}>
-              <Link underline='none' variant='body1' component={RouterLink} to="/register" sx={{ color: 'white' }}>Register</Link>
-              <Link underline='none' variant='body1' component={RouterLink} to="/login" sx={{ color: 'white' }}>Login</Link>   
+              {!small ? 
+              <Box>
+                <Link underline='none' variant='body1' component={RouterLink} to="/register" sx={{ color: 'white', mr: 1, ml: 1 }}>Register</Link>
+                <Link underline='none' variant='body1' component={RouterLink} to="/login" sx={{ color: 'white', mr: 1, ml: 1 }}>Login</Link>
+              </Box>
+              :
+              <Box>
+                <Tooltip title='Register'>
+                  <IconButton sx={{ p: 0, color: 'inherit', ml: 1, mr: 1 }} onClick={toRegister}>
+                    <PersonAdd/>
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title='Login'>
+                  <IconButton sx={{ p: 0, color: 'inherit', ml: 1, mr: 1 }} onClick={toLogin}>
+                    <Login/>
+                  </IconButton>
+                </Tooltip>
+              </Box>
+              }
             </Box>       
             }
             {user ?
@@ -272,7 +296,6 @@ export const Navbar = ({ mode, setMode }) => {
             : '' }
           </Box>
         </Toolbar>
-      </Container>
-    </AppBar>
+      </AppBar>
   )
 }
