@@ -66,7 +66,7 @@ export const Review = ({ review, page }) => {
 
   const getLikeBoolean = () => {
     if (user && review) {
-      axios.get('http://localhost:8080/api/v1/reviews/isLikedByUser/' + review.id, { withCredentials: true }).then((response) => {
+      axios.get('http://localhost:8080/api/v1/reviews/' + review.id + '/like-check', { withCredentials: true }).then((response) => {
         setLiked(response.data)
       })
     }
@@ -74,7 +74,7 @@ export const Review = ({ review, page }) => {
 
   const getLikeCount = () => {
     if (review) {
-      axios.get('http://localhost:8080/api/v1/reviews/getLikes/' + review.id).then((response) => {
+      axios.get('http://localhost:8080/api/v1/reviews/' + review.id + '/likes').then((response) => {
         setLikeCount(response.data)
         setLoading(false)
       })
@@ -150,7 +150,7 @@ export const Review = ({ review, page }) => {
       })
     }
     else {
-      axios.put('http://localhost:8080/api/v1/users/deleteLike', 
+      axios.put('http://localhost:8080/api/v1/users/unlike', 
       {appUser: user.id, content: review.id, type: 'review' }, 
       { withCredentials: true }).then((response) => {
         getLikeCount()
@@ -169,7 +169,7 @@ export const Review = ({ review, page }) => {
   const handleDeleteReview = (e) => {
     e.preventDefault()
     
-    axios.delete('http://localhost:8080/api/v1/reviews/delete/' + review.id, { withCredentials: true}).then((response) => {
+    axios.delete('http://localhost:8080/api/v1/reviews/' + review.id, { withCredentials: true}).then((response) => {
       setAlertMessage(response.data.message)
       setAlertType('success')
       setOpenAlert(true)

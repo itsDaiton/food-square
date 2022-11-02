@@ -163,7 +163,7 @@ export const Create = () => {
   }
 
   const getIngredients = () => {
-    axios.get('http://localhost:8080/api/v1/ingredients/getAll').then((response) => {
+    axios.get('http://localhost:8080/api/v1/ingredients').then((response) => {
       setIngredients(response.data)
     })
   }
@@ -308,7 +308,7 @@ export const Create = () => {
         recipeIngredients: JSONbody
       }
       if (fileRef.current.files[0]) {
-        axios.put('http://localhost:8080/api/v1/recipes/addImage/' + response.data.id, formData, { withCredentials: true })
+        axios.put('http://localhost:8080/api/v1/recipes/' + response.data.id + '/image', formData, { withCredentials: true })
       }
       var msg = response.data.message
       clearRecipeErrors()

@@ -82,7 +82,7 @@ export const ReviewFeed = () => {
   const tiny = useMediaQuery(theme.breakpoints.down(500))
 
   const getRecipes = () => {
-    axios.get('http://localhost:8080/api/v1/recipes/getAllExtended').then((response) => {
+    axios.get('http://localhost:8080/api/v1/recipes/extended').then((response) => {
       setRecipes(response.data)
       setLoading(false)
     })

@@ -30,13 +30,13 @@ export const UserProfile = ({ user, followingCount, followersCount }) => {
   let navigate = useNavigate()
 
   const getReviews = () => {
-    axios.get('http://localhost:8080/api/v1/reviews/getAllByUser/' + id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/reviews/user/' + id).then((response) => {
       setReviews(response.data)
     })
   }
 
   const getComments = () => {
-    axios.get('http://localhost:8080/api/v1/comments/getAllByUser/' + id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/comments/user/' + id).then((response) => {
       setComments(response.data)
     })
   }

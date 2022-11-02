@@ -70,7 +70,7 @@ export const Navbar = ({ mode, setMode }) => {
 
   const getUserImage = () => {
     if (user) {
-      axios.get('http://localhost:8080/api/v1/users/get/' + user.id).then((response) => {
+      axios.get('http://localhost:8080/api/v1/users/' + user.id).then((response) => {
         if (response.data.pathToImage !== null && response.data.pathToImage !== '') {
           axios.get('http://localhost:8080/' + response.data.pathToImage, { responseType: 'arraybuffer' }).then((response) => {
             var imageUrl = URL.createObjectURL(new Blob([response.data]))

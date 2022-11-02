@@ -42,13 +42,13 @@ export const RecipeCard = ({ recipe }) => {
   let navigate = useNavigate()
 
   const getReviewCount = () => {
-    axios.get('http://localhost:8080/api/v1/reviews/getCountByRecipe/' + recipe.id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/reviews/recipe/' + recipe.id + '/count').then((response) => {
       setReviewCount(response.data)
     })
   }
 
   const getReviewsInRecipe = () => {
-    axios.get('http://localhost:8080/api/v1/reviews/getAllByRecipe/' + recipe.id).then((response) => {
+    axios.get('http://localhost:8080/api/v1/reviews/recipe/' + recipe.id).then((response) => {
       setReviews(response.data)
       setLoading(false)
     })
