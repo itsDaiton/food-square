@@ -66,6 +66,9 @@ export const MealPlanner = () => {
   const [alertType, setAlertType] = useState(null)
   const [alertMessage, setAlertMessage] = useState('')
 
+  const [amountError, setAmountError] = useState('')
+  const [caloriesError, setCaloriesError] = useState('')
+
 	const printRef = useRef()
 
 	const handlePrint = useReactToPrint({
@@ -82,8 +85,14 @@ export const MealPlanner = () => {
     })
   }
 
+  const clearErrors = () => {
+    setAmountError('')
+    setCaloriesError('')
+  }
+
 	const handleSubmit = (e) => {
 		e.preventDefault()
+    clearErrors()
 		setDataLoaded(false)
 		setLoading(true)
 		axios.put(`${getApiUrl()}/api/v1/meal-planning/generate`, inputs).then((response) => {
@@ -92,9 +101,22 @@ export const MealPlanner = () => {
 			setDataLoaded(true)
 		}).catch((error) => {
       setLoading(false)
-			setAlertMessage(error.response.data.message)
-			setAlertType('error')
-			setOpenAlert(true)
+      if(error.response.data.errorList) {
+        clearErrors()
+        error.response.data.errorList.forEach(err => {
+          if (err.field === 'amount') {
+            setAmountError(err.message)
+          }
+          if (err.field === 'calories') {
+            setCaloriesError(err.message)
+          }
+        })
+      }
+      else {
+        setAlertMessage(error.response.data.message)  
+			  setAlertType('error')
+			  setOpenAlert(true)
+      }
 		})
 	}
 
@@ -140,9 +162,12 @@ export const MealPlanner = () => {
 						</Select>
 					</FormControl>
 					<FormControl sx={{ mt: 5, ml: 5, width: '50%' }}>
-						<InputLabel>Amount</InputLabel>
-							<Select
+
+							<TextField
+                select
 								name='amount'
+                error={amountError ? true : false}
+                helperText={amountError}
 								value={inputs.amount}
 								label="Amount"
 								onChange={handleInputsChange}
@@ -152,12 +177,14 @@ export const MealPlanner = () => {
 								<MenuItem value={3}>3 meals</MenuItem>
 								<MenuItem value={4}>4 meals</MenuItem>
 								<MenuItem value={5}>5 meals</MenuItem>
-							</Select>
+              </TextField>
 					</FormControl>
 					<FormControl sx={{ mt: 5, ml: 5, width: '50%' }}>
 						<TextField
 								name='calories'
 								label="Calories"
+                error={caloriesError ? true : false}
+                helperText={caloriesError}
 								type="number"
 								value={inputs.calories}
 								onChange={handleInputsChange}
