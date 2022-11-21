@@ -162,7 +162,6 @@ export const MealPlanner = () => {
 						</Select>
 					</FormControl>
 					<FormControl sx={{ mt: 5, ml: 5, width: '50%' }}>
-
 							<TextField
                 select
 								name='amount'

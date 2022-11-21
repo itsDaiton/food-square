@@ -490,10 +490,8 @@ export const Create = () => {
                 type="number"
                 error={amountError ? true : false} 
                 helperText={amountError}
+                InputProps={{ endAdornment: <InputAdornment position='end'>g</InputAdornment> }}
               />
-              <Typography variant='body2' sx={{ pl: 1 }} color={theme.palette.warning.main}>
-                * 1 x amount = 100g edible portion
-              </Typography>
               <Button variant='contained' sx={{ width: 175, ml: 1, mt: 2 }} onClick={addIngredient}>Add ingredient</Button>
             </FormGroup>
             <FormGroup sx={{ mt: 5 }}>
@@ -521,7 +519,7 @@ export const Create = () => {
                           <TableCell component="th" scope="row" key={ai.name}>
                             {ai.name}
                           </TableCell>   
-                          <TableCell align='center'>{ai.amount}</TableCell>
+                          <TableCell align='center'>{ai.amount}g</TableCell>
                           <TableCell align="center">
                             <Tooltip title='Show full details'>
                               <IconButton onClick={() => {
@@ -1080,7 +1078,7 @@ export const Create = () => {
       fullWidth
       maxWidth="md"
     >
-              <Box bgcolor={'background.default'} color={'text.primary'} p={3}>
+          <Box bgcolor={'background.default'} color={'text.primary'} p={3}>
           <Typography textAlign='center' variant='h6' sx={{ fontWeight: 'bold' }}>{clickedIngredient.name}</Typography>
           <Typography sx={{ m: 2 }}>Content per <b>100g</b> edible portion.</Typography>
           <TableContainer>

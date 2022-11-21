@@ -711,7 +711,6 @@ export const Recipe = ({ recipe, type }) => {
         }
         return (
           <Box>
-            <Typography sx={{ m: 2 }}>Content per <b>100g</b> edible portion.</Typography>
             <Box justifyContent='center' display='flex'>
             <TableContainer component={Paper}>
               <Table>
@@ -729,7 +728,7 @@ export const Recipe = ({ recipe, type }) => {
                       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                     >
                       <TableCell>{ri.ingredient.name}</TableCell>
-                      <TableCell align="center">{ri.amount}x</TableCell>
+                      <TableCell align="center">{ri.amount}g</TableCell>
                       <TableCell align="center">
                         <Tooltip title='Show full details'>
                           <IconButton onClick={() => {
