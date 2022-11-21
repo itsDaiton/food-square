@@ -148,10 +148,7 @@ export const MealPlanRecipe = ({ recipe }) => {
                 <Typography paragraph mr={1}>
                   Ingredients
                 </Typography>
-              </Box>
-              <Box display='flex' justifyContent='center'>
-                <Typography sx={{ m: 2 }} variant='body2'>Content per <b>100g</b> edible portion.</Typography>
-              </Box>             
+              </Box>           
               {!ingredients.length > 0 ?
               <Typography sx={{ m: 2 }}>This recipe does not contain any ingredients.</Typography>
               :
@@ -172,7 +169,7 @@ export const MealPlanRecipe = ({ recipe }) => {
                           sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                           <TableCell>{ri.ingredient.name}</TableCell>
-                          <TableCell align="center">{ri.amount}x</TableCell>
+                          <TableCell align="center">{ri.amount}g</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
