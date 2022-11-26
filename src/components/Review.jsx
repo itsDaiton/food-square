@@ -407,7 +407,6 @@ export const Review = ({ review, page }) => {
           />
           }
         </Box>
-        {user && 
         <CardActions sx={{ ml: 1, display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>
           {loading ? 
               ( <Skeleton animation="wave" variant="circular" width={40} height={40} />
@@ -422,6 +421,7 @@ export const Review = ({ review, page }) => {
                       onChange={handleCheck}
                       icon={<FavoriteBorder sx={{ width: 30, height: 30}} />}
                       checkedIcon={<Favorite sx={{ color: "red", width: 30, height: 30 }} />}
+                      disabled={user ? false : true}
                     />
                   </IconButton>
                 </Tooltip>
@@ -434,7 +434,6 @@ export const Review = ({ review, page }) => {
           </Box>
           }
         </CardActions>
-        }
       </Card>
       <Snackbar open={openAlert} autoHideDuration={5000} onClose={handleCloseAlert}>
         <Alert onClose={handleCloseAlert} variant='filled' severity={alertType} sx={{ width: '100%' }}>
