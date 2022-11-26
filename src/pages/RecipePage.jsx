@@ -12,7 +12,7 @@ export const RecipePage = ({ mode, setMode }) => {
       <Stack direction="row" justifyContent="center" divider={<Divider orientation="vertical" flexItem sx={{ borderRightWidth: 2 }}/>} flexGrow={1}>
         <Leftbar/>
         <RecipeInfo/>
-        <Rightbar page='home'/>
+        <Rightbar page='discover'/>
       </Stack>
     </Box>
   )
