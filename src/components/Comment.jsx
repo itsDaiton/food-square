@@ -67,7 +67,7 @@ export const Comment = ({ comment, page }) => {
 
   const getLikeBoolean = () => {
     if (user && comment) {
-      axios.get(`${getApiUrl()}/api/v1/comments/' + comment.id + '/check-like`, { withCredentials: true }).then((response) => {
+      axios.get(`${getApiUrl()}/api/v1/comments/` + comment.id + '/check-like', { withCredentials: true }).then((response) => {
         setLiked(response.data)
       })
     }
@@ -399,7 +399,8 @@ export const Comment = ({ comment, page }) => {
               :
           <Box display='flex' flexDirection='row'>
             <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
-              <Tooltip title={liked === true ? 'Remove like from this review' : 'Like this review'}>
+              {user ?
+              <Tooltip title={liked === true ? 'Remove like from this comment' : 'Like this comment'}>
                   <IconButton>
                     <Checkbox
                       checked={liked}
@@ -410,6 +411,15 @@ export const Comment = ({ comment, page }) => {
                     />
                   </IconButton>
                 </Tooltip>
+                :
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 64, width: 64 }}>         
+                  {likeCount > 0 ? 
+                  <Favorite sx={{ color: "red", width: 30, height: 30 }} />
+                  :
+                  <FavoriteBorder sx={{ width: 30, height: 30}} />     
+                  } 
+                </Box>
+                }
                     {likeCount > 0 ? 
                     <Typography>{likeCount}</Typography>
                     :

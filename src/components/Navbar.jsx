@@ -122,9 +122,8 @@ export const Navbar = ({ mode, setMode }) => {
 
   const handleLogout = () => {
     localStorage.removeItem('user')
-    axios.post(`${getApiUrl()}/api/v1/auth/logout`, {}, {withCredentials: true}).then((response) => {
-      navigate("/login")
-    })
+    axios.post(`${getApiUrl()}/api/v1/auth/logout`, {}, { withCredentials: true })
+    navigate("/login")
   }
 
   const navigateProfile = () => {

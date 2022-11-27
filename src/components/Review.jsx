@@ -414,6 +414,7 @@ export const Review = ({ review, page }) => {
               :
           <Box display='flex' flexDirection='row'>
             <Box display='flex' flexDirection='row' justifyContent='space-between' alignItems='center'>
+              {user ?
               <Tooltip title={liked === true ? 'Remove like from this review' : 'Like this review'}>
                   <IconButton>
                     <Checkbox
@@ -425,6 +426,15 @@ export const Review = ({ review, page }) => {
                     />
                   </IconButton>
                 </Tooltip>
+                :
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 64, width: 64 }}>         
+                  {likeCount > 0 ? 
+                  <Favorite sx={{ color: "red", width: 30, height: 30 }} />
+                  :
+                  <FavoriteBorder sx={{ width: 30, height: 30}} />     
+                  } 
+                </Box>
+                }
                     {likeCount > 0 ? 
                     <Typography>{likeCount}</Typography>
                     :
