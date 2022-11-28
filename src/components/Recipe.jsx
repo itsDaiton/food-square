@@ -592,7 +592,7 @@ export const Recipe = ({ recipe, type }) => {
     e.preventDefault()
     setMode('edit')
 
-    axios.get(`${getApiUrl()}/api/v1/reviews/recipe/` + recipe.id, { withCredentials: true }).then((response) => {
+    axios.get(`${getApiUrl()}/api/v1/reviews/recipe/my-review` + recipe.id, { withCredentials: true }).then((response) => {
       setReviewInputs({
         ...reviewInputs,
         text: response.data.text,
