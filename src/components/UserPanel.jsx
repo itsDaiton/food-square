@@ -60,6 +60,7 @@ export const UserPanel = ({ appUser }) => {
 
 	const handleFollow = (e) => {
     e.preventDefault()
+    setOpenAlert(false)
 
     axios.post(`${getApiUrl()}/api/v1/follows/follow`, 
     { follower: user.id, followed: appUser.id }, 
@@ -77,6 +78,7 @@ export const UserPanel = ({ appUser }) => {
 
   const handleUnfollow = (e) => {
     e.preventDefault()
+    setOpenAlert(false)
     
     axios.delete(`${getApiUrl()}/api/v1/follows/` + appUser.id, { withCredentials: true }).then((response) => {
       setAlertMessage(response.data.message)
