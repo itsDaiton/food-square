@@ -110,8 +110,8 @@ Create a production build
 npm run build
 ```
 ### Deployment
-- Create a feature branch for your code
-- Deploy your code to this remote repository
+- Create a feature branch for your changes
+- Deploy your code
 - After your development is done, create a pull request
 ## Contributting
 
