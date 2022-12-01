@@ -9,32 +9,126 @@ The other repository that contains the **server side** of the application can be
 
 ## Features
 
-//TODO
-
-Repository is being deployed to: https://food-square.site/
-
+- **Account**
+  - create account in the application
+  - sign in from multiple devices
+  - edit your account information
+  - upload a profile picture
+  - follow other users
+- **Recipes**
+  - create your own recipes
+    - add ingredients
+    - choose different categories
+  - display details about recipe
+    - meal type
+    - preparation/cooking time
+    - instructions
+    - categories
+    - ingredients and their nutritional values
+  - share your recipe between other users
+  - add recipes to your favorites
+  - filter between recipes based on desired criteria
+- **Reviews**
+  - review other user's recipes
+  - display all existing reviews
+  - sort between best/worst rated recipes
+  - show reviews for a specific recipe
+- **Comments**
+  - add multiple comments to recipes
+- **Ingredients**
+  - display all available ingredients
+  - look up specific ingredients
+- **Liking**
+  - like a comment or a review
+- **Meal planning**
+  - get a generated meal plan based on:
+    - categories
+    - amount of meals
+    - desired calories
+  - save your meal plan
+- **Theming**
+  - switch between light and dark mode
 ## Built With
+### Framework
+- [React.js](https://reactjs.org)
 
-//TODO
+### Styling
+- [Material UI](https://mui.com)
 
-## Tests
+### Package management
+- [npm](https://www.npmjs.com)
 
-//TODO
-
+### Additional packages
+- [axios](https://axios-http.com) - for sending API requests
+- [React Router](https://reactrouter.com) - for client side routing
+- [validator.js](https://www.npmjs.com/package/validator) - for validating form inputs
+- [http-proxy-middleware](https://www.npmjs.com/package/http-proxy-middleware) - for configuring proxy in local development
 ## Get Started
 
-//TODO
+### Prerequisites
 
+- [npm](https://www.npmjs.com)
+
+### Installation
+
+Clone the project
+
+```
+git clone https://github.com/itsDaiton/food-square.git
+```
+
+Open the project
+
+```
+cd food-square
+```
+
+Install dependencies
+
+```
+npm install
+```
+
+Configure project variables
+- for local development, configure `.env` file
+- use `http://localhost:8080` as URL, if you're using API of this project and running it locally
+- guide how to locally run the API of this project can be found [here](https://github.com/itsDaiton/food-square-api/blob/main/README.md).
+```
+REACT_APP_API_URL='local api url' 
+```
+- for production, configure `.env.production` file
+```
+REACT_APP_API_URL='api url'
+```
+
+Start the local server
+```
+npm start
+```
+Create a production build
+```
+npm run build
+```
+### Deployment
+- Create a feature branch for your code
+- Deploy your code to this remote repository
+- After your development is done, create a pull request
 ## Contributting
 
-//TODO
+Contributions, issues, and feature requests are welcome. If you would like to contribute to this project, please see `CONTRIBUTING`.
 
 ## License
 
-//TODO
+Project is distributed under the MIT License. See `LICENSE` for more information.
+
+## Testing
+
+Application testing was carried out using the [***Postman***](https://www.postman.com) software. Collection of all tests can be found [**here**](https://github.com/itsDaiton/food-square-api/tree/main/docs/tests).
 
 ## Contact
 
-//TODO
+You can contact the author of the project under this [e-mail](mailto:david.poslusny@gmail.com).
 
 ## Acknowledgments
+
+- Ing. Vojtěch Růžička 
