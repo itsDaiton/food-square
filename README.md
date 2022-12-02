@@ -7,6 +7,8 @@ This repository contains source code of the **client side** of the application.
 
 The other repository that contains the **server side** of the application can be found [here](https://github.com/itsDaiton/food-square-api).
 
+Live demo of the application can be found here: **https://food-square.site**
+
 ## Features
 
 - **Account**
@@ -101,7 +103,7 @@ REACT_APP_API_URL='local api url'
 REACT_APP_API_URL='api url'
 ```
 
-Start the local server
+Start a local server
 ```
 npm start
 ```
