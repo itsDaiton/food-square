@@ -10,7 +10,7 @@ When you deploy code to this project, you implicitly and irrevocably agree to ad
 
 ### Suggesting a feature
 
-If you've got a good idea for a feature, then please let the author know.
+If you've got a good idea for a feature, then please let the author know. Alternatively, you can open a new issue.
 
 ### Filing a bug report
 
