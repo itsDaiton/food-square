@@ -133,8 +133,8 @@ export const MealPlanner = () => {
 				Meal planner
 			</Typography>
 			<Box display='flex' justifyContent='center'>
-				<Paper elevation={10} sx={{ borderRadius: 5, width: '70%' }}>
-					<FormControl sx={{ mt: 5, ml: 5, width: '50%' }}>
+				<Paper elevation={10} sx={{ borderRadius: 5, width: { xs: '85%', md: '70%'}, justifyContent: 'center', display: 'flex', flexDirection: 'column' }}>
+					<FormControl sx={{ mt: 5, ml: 5, mr: 5 }}>
 						<InputLabel>Categories</InputLabel>
 						<Select
 							name='categories'
@@ -161,7 +161,7 @@ export const MealPlanner = () => {
 						))}
 						</Select>
 					</FormControl>
-					<FormControl sx={{ mt: 5, ml: 5, width: '50%' }}>
+					<FormControl sx={{ mt: 5, ml: 5, mr: 5 }}>
 							<TextField
                 select
 								name='amount'
@@ -178,7 +178,7 @@ export const MealPlanner = () => {
 								<MenuItem value={5}>5 meals</MenuItem>
               </TextField>
 					</FormControl>
-					<FormControl sx={{ mt: 5, ml: 5, width: '50%' }}>
+					<FormControl sx={{ mt: 5, ml: 5, mr: 5 }}>
 						<TextField
 								name='calories'
 								label="Calories"
@@ -187,7 +187,7 @@ export const MealPlanner = () => {
 								type="number"
 								value={inputs.calories}
 								onChange={handleInputsChange}
-								InputProps={{ endAdornment: <InputAdornment position='end'>calories</InputAdornment> }}
+								InputProps={{ endAdornment: <InputAdornment position='end'>kcal</InputAdornment> }}
 								inputProps={{ step: 100, min: 100 }}
 							/>
 					</FormControl>
@@ -237,19 +237,19 @@ export const MealPlanner = () => {
 								<Table>
 									<TableBody>
 										<TableRow sx={{ background: theme.palette.info.main, "& td": { border: 0 } }}>
-											<CustomTableCell>Calories</CustomTableCell>
+											<CustomTableCell width={'50%'}>Calories</CustomTableCell>
 											<CustomTableCell align="center">{mealPlan.analysis.totalCalories} [kcal]</CustomTableCell>
 										</TableRow>
 										<TableRow sx={{ background: theme.palette.error.main, "& td": { border: 0 } }}>
-											<CustomTableCell>Fat</CustomTableCell>
+											<CustomTableCell width={'50%'}>Fat</CustomTableCell>
 											<CustomTableCell align="center">{mealPlan.analysis.totalFat} [g]</CustomTableCell>
 										</TableRow>
 										<TableRow sx={{ background: theme.palette.warning.main, "& td": { border: 0 } }}>
-											<CustomTableCell>Carbohydrate (total)</CustomTableCell>
+											<CustomTableCell width={'50%'}>Carbohydrate (total)</CustomTableCell>
 											<CustomTableCell align="center">{mealPlan.analysis.totalCarbohydrateTotal} [g]</CustomTableCell>
 										</TableRow>    
 										<TableRow sx={{ background: theme.palette.success.main, "& td": { border: 0 } }}>
-											<CustomTableCell>Protein</CustomTableCell>
+											<CustomTableCell width={'50%'}>Protein</CustomTableCell>
 											<CustomTableCell align="center">{mealPlan.analysis.totalProtein} [g]</CustomTableCell>
 										</TableRow>     
 									</TableBody>   

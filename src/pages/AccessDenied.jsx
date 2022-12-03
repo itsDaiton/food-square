@@ -27,13 +27,13 @@ export const AccessDenied = () => {
         alignItems='center'
         flexDirection='column'
         >
-          <Typography variant="h1" sx={{ m: 1 }}>
+          <Typography variant="h1" sx={{ m: 1 }} align='center'>
               403
           </Typography>
-          <Typography variant='h4' sx={{ m: 1 }}>
+          <Typography variant='h4' sx={{ m: 1 }} align='center'>
               Access Denied
           </Typography>
-          <Typography variant="h6" sx={{ m: 1 }}>
+          <Typography variant="h6" sx={{ m: 1 }} align='center'>
               This page is only available to authenticated users.
           </Typography>
           <Box 

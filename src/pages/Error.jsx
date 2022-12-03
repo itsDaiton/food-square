@@ -23,13 +23,13 @@ export const Error = () => {
         alignItems='center'
         flexDirection='column'
       >
-        <Typography variant="h1" sx={{ m: 1 }}>
+        <Typography variant="h1" sx={{ m: 1 }} align='center'>
             404
         </Typography>
-        <Typography variant='h4' sx={{ m: 1 }}>
+        <Typography variant='h4' sx={{ m: 1 }} align='center'>
               Not Found
         </Typography>
-        <Typography variant="h6" sx={{ m: 1 }}>
+        <Typography variant="h6" sx={{ m: 1 }} align='center'>
           The page you're looking for was not found.
         </Typography>
         <Box sx={{ m: 3 }}>
