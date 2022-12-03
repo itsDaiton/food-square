@@ -681,7 +681,7 @@ export const Recipe = ({ recipe, type }) => {
               </Typography>
               <ReceiptLongOutlined/>
             </Box>
-            <Typography paragraph sx={{ ml: 2, mt: 2 }} variant='body2'>
+            <Typography paragraph sx={{ ml: 2, mt: 2, wordBreak: 'break-word', whiteSpace: 'pre-line' }} variant='body2'>
               {recipe.instructions}
             </Typography>
           </Box>

@@ -176,7 +176,7 @@ export const RecipeCard = ({ recipe }) => {
           <Box display='flex' alignItems='center'>     
             <Typography variant='h6' sx={{ mr: 1, fontWeight: 'bold', fontSize: { xs: 16, md: 24 } }}>{recipe.avgRating}</Typography>
             <Rating readOnly value={recipe.avgRating} precision={0.5} size={tiny ? 'small' : 'large'} />
-            <Typography display='flex' alignItems='center' variant='body1' sx={{ ml: 2, height: 34.8, fontSize: { xs: 16, md: 20 }}}>
+            <Typography display='flex' alignItems='center' variant='body1' sx={{ ml: 2, height: 34.8, fontSize: { xs: 16, md: 20 }}} align='center'>
               {reviewCount > 1 ? reviewCount + ' reviews' : reviewCount + ' review'}
               </Typography>
           </Box>
@@ -195,7 +195,7 @@ export const RecipeCard = ({ recipe }) => {
           onMouseDown={e => e.stopPropagation()}
         >
           <Tooltip title={expanded ? 'Hide reviews' : 'Show reviews'}>
-            <ExpandMoreIcon sx={{ width: 38, height: 38, color: 'text.primary' }}/>
+            <ExpandMoreIcon sx={{ width: { xs: 30, sm: 38 }, height: { xs: 30, sm: 38 }, color: 'text.primary' }}/>
           </Tooltip>
         </ExpandMore>
         }

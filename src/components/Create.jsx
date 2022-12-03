@@ -479,7 +479,7 @@ export const Create = () => {
                 getOptionLabel={(option) => option.name}
               />
               <CustomTextField
-                sx={{ width: '50%' }}
+                sx={{ width: '70%' }}
                 value={selectedAmount}
                 onChange={(e) =>
                   setSelectedAmount(e.target.value < 1 ? (e.target.value = 1) : e.target.value)
@@ -606,7 +606,7 @@ export const Create = () => {
                 Please use the tool below to choose which of the components listed are included in your recipe. 
               </Typography>
               <Typography variant='body2' sx={{ mt: 1, mb: 1 }}>
-                By default all allergens and meat are set to false, meaning they are not inclued in the recipe. 
+                By default, all allergens and meat are set to false, meaning they are not included in the recipe. 
               </Typography>
               <Typography variant='body2' sx={{ mt: 1, mb: 1 }}>
                 It is your responsibility to set these values accordingly for your recipe.

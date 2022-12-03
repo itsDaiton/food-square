@@ -101,8 +101,8 @@ export const MealPlanRecipe = ({ recipe }) => {
           </CardActionArea>
           <Divider/>
           <CardContent>
-            <Box display='flex' flexDirection='row' justifyContent='space-around'>
-                <Box display='flex'>
+            <Box display='flex' flexDirection={tiny ? 'column' : 'row'} justifyContent='space-around'>
+                <Box display='flex' justifyContent='center'>
                   <AccessAlarm/>
                   <Typography paragraph mr={1}>
                     Prep:
@@ -111,7 +111,7 @@ export const MealPlanRecipe = ({ recipe }) => {
                   {recipe.timeToPrepare} minutes
                   </Typography>
                 </Box>
-                <Box display='flex'>
+                <Box display='flex' justifyContent='center'>
                   <AccessAlarm/>
                   <Typography paragraph mr={1}>
                     Cook:
@@ -128,7 +128,7 @@ export const MealPlanRecipe = ({ recipe }) => {
                 </Typography>
               </Box>
               <Box display='flex' justifyContent='center'>
-                <Typography paragraph variant='body2' sx={{ fontWeight: 'bold' }}>
+                <Typography paragraph variant='body2' sx={{ fontWeight: 'bold', wordBreak: 'break-word', whiteSpace: 'pre-line' }}>
                   {recipe.instructions}
                 </Typography>
               </Box>

@@ -13,7 +13,9 @@ import {
   TableContainer, 
   TableHead, 
   TableRow, 
-  Typography 
+  Typography, 
+  useMediaQuery,
+  useTheme
 } 
 from '@mui/material'
 import MuiAccordion from '@mui/material/Accordion';
@@ -77,6 +79,9 @@ export const RecipeInfo = () => {
 
   const [expanded, setExpanded] = React.useState();
   const [loading, setLoading] = useState(true)
+
+  const theme = useTheme()
+  const tiny = useMediaQuery(theme.breakpoints.down(500))
 
   const getRecipe = () => {
     axios.get(`${getApiUrl()}/api/v1/recipes/` + id).then((response) => {
@@ -149,7 +154,7 @@ export const RecipeInfo = () => {
                   <TableRow>
                     <TableCell sx={{ fontWeight: 'bold' }}>Component</TableCell>
                     <TableCell align="center" sx={{ fontWeight: 'bold' }}>
-                      <Box display='flex' alignItems='center' flexDirection='row' justifyContent='center'>
+                      <Box display='flex' alignItems='center' flexDirection={tiny ? 'column' : 'row'} justifyContent='center'>
                         <Functions/>
                         <Typography variant='body2' sx={{ fontWeight: 'bold' }}>Total amount</Typography>
                       </Box>
@@ -229,7 +234,7 @@ export const RecipeInfo = () => {
           ))
           :
           <Box display='flex' justifyContent='center' sx={{ m: 1 }}>
-            <Typography>This recipe has not been reviewed yet.</Typography>
+            <Typography align='center'>This recipe has not been reviewed yet.</Typography>
           </Box>
           }
           </AccordionDetails>
@@ -245,7 +250,7 @@ export const RecipeInfo = () => {
           ))
           :
           <Box display='flex' justifyContent='center' sx={{ m: 1 }}>
-            <Typography>This recipe has not been commented yet.</Typography>
+            <Typography align='center'>This recipe has not been commented yet.</Typography>
           </Box>
           }
           </AccordionDetails>

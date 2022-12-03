@@ -368,7 +368,7 @@ export const Feed = ({ page }) => {
               <Restaurant/>
               <Typography sx={{ m: 1, fontSize: { xs: 16, md: 18 } }}>Filter by meal type</Typography>
             </Box>
-            <FormControl sx={{ m: 2, mt: 3, mb: 3, width: '50%' }}>
+            <FormControl sx={{ m: 2, mt: 3, mb: 3, width: {xs: '80%', sm: '50%'} }}>
               <InputLabel>Meal</InputLabel>
               <Select
                 name='meal'
@@ -399,7 +399,7 @@ export const Feed = ({ page }) => {
               <FormatListBulleted/>
               <Typography sx={{ m: 1, fontSize: { xs: 16, md: 18 } }}>Filter by categories</Typography>
             </Box>
-            <FormControl sx={{ m: 2, mt: 3, mb: 3, width: '50%' }}>
+            <FormControl sx={{ m: 2, mt: 3, mb: 3, width: {xs: '80%', sm: '50%'} }}>
               <InputLabel>Categories</InputLabel>
               <Select
                 name='categories'
