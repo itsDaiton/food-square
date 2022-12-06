@@ -91,7 +91,10 @@ export const convertToTimestamp = (date) => {
   let ret
 
   if (date !== undefined) {
-    ret = Math.floor(new Date(date).getTime() / 1000)
+    const datetime = new Date(date)
+    let offset = datetime.getTimezoneOffset()
+    datetime.setMinutes(datetime.getMinutes() - offset)
+    ret = Math.floor(datetime.getTime() / 1000)
   }
   else {
     ret = Math.floor(new Date().getTime() / 1000)
@@ -104,7 +107,10 @@ export const calculateDifference = (date1, date2) => {
   let diff = date1 - date2
   let ret = ''
 
-  if (diff < values.minute) {
+  if (diff < 0) {
+    ret = 'invalid date'
+  }
+  else if (diff < values.minute) {
     ret = diff + ' s'
   }
   else if (diff < values.hour) {
