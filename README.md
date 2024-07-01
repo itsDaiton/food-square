@@ -9,7 +9,9 @@ This repository contains source code of the **client side** of the application
 
 The other repository that contains the **server side** of the application can be found [here](https://github.com/itsDaiton/food-square-api).
 
-Live demo of the application can be found here: **https://food-square.site**
+~~Live demo of the application can be found here: **https://food-square.site**~~
+
+⚠️Due to high hosting costs the **application is not available online at the moment**. To view the application, please clone this repository instead and run the application locally.⚠️
 
 ![image](https://user-images.githubusercontent.com/72783924/222009100-6076bc96-f99f-4a7c-a3d8-d60eb0c47267.png)
 
